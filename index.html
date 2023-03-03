@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-US" prefix="og: http://ogp.me/ns#">
+
+<head>
+    <title>Python Minifier</title>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="Python Minifier" />
+    <meta property="og:description" content="Python minifier is a tool that reduces the size of Python code by removing unnecessary characters, such as white spaces, comments, and line breaks. This can help to reduce the size of Python scripts and make them load faster, especially in web applications."/>
+    <meta property="og:site_name" content="glad432.github.io" />
+    <link rel="canonical" href="https://glad432.github.io" />
+    <meta property="og:image" content="img/favicon.png" />
+    <meta property="og:image:secure_url" content="img/favicon.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous" />
+    <link href="css/style.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="img/favicon.png" />
+    <link rel="apple-touch-icon-precomposed" href="img/favicon.png" />
+    <meta name="msapplication-TileImage" content="img/favicon.png" />
+</head>
+<body>
+    <div class="container"></div>
+    <section>
+        <h1><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16"> <path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8l3.147-3.146zm4.292 0a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8l-3.147-3.146z"/> </svg> Python Minifier <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16"> <path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294l4-13zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0zm6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z"/> </svg></h1>
+        <div>
+            <header>
+                <h1> </h1>
+                <button id="mode"></button>
+                <h2 class="text-bg-primary p-3">Original Source</h2>
+                <p> </p>
+                <h4><span class="badge text-bg-secondary" id="source-size" class="size"></span></h4>
+            </header>
+            <p> </p><textarea class="input-group mb-3 form-control" id="source" autocomplete="off" spellcheck="false" placeholder="Paste the code here.."></textarea>
+            <div class="card">
+                <fieldset class="">
+                    <legend class="badge rounded-pill text-bg-info">Options</legend>
+                    <div class="card-body">
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="combine_imports" checked="" /><label class="form-check-label" for="combine_imports">Combine Import statements</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="remove_pass" checked="" /><label class="form-check-label" for="remove_pass">Remove Pass statements</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="remove_literal_statements" checked="" /><label class="form-check-label" for="remove_literal_statements">Remove literal statements (docstrings)</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="remove_annotations" checked="" /><label for="remove_annotations">Remove Annotations</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="hoist_literals" name="Hoist Literals" checked="" /><label for="hoist_literals">Hoist Literals</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="rename_locals" name="Rename Locals" checked="" /><label for="rename_locals">Rename Locals</label></div>
+                        <div><label class="form-label" for="preserve_locals">Preserved Locals:</label><input placeholder="Enter.." type="text" class="form-control" id="preserve_locals" name="Preserved Locals" checked="" /></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="rename_globals" name="Rename Globals" checked="" /><label for="rename_globals">Rename Globals</label></div>
+                        <div><label class="form-label" for="preserve_globals">Preserved Globals:</label><input type="text" class="form-control" id="preserve_globals" name="Preserved Globals" checked="" value="handler" /></div>
+                        <div class="input-check"><input class="form-check-input" type="checkbox" id="convert_posargs_to_args" name="Convert Positional-Only Arguments to Normal Arguments" checked="" /><label for="convert_posargs_to_args">Convert Positional-Only Arguments to Normal Arguments</label></div>
+                    </div>
+                </fieldset>
+            </div>
+            <div id="options">
+                <h1><button class="btn btn-success" id="minify">Run <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/>
+                      </svg></button></h1>
+            </div>
+            <header>
+                <p> </p>
+                <h2 class="text-bg-danger p-3">Minified Source</h2>
+                <p> </p>
+                <h4><span class="badge text-bg-secondary" id="minified-size" class="size"> Bytes</span></h4>
+            </header>
+            <p> </p><textarea class="input-group mb-3 form-control" id="minified" readonly="" autocomplete="off" spellcheck="false"></textarea><button class="btn btn-primary" id="copy">Copy <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                  </svg></button> </section>
+    <p> </p>
+    <footer>
+        <h3 class="container-fluid"> <a class="navbar-brand" target="_blank" href="https://github.com/gladw-in"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/> </svg> github.com/gladw-in <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-up-right-circle" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.854 10.803a.5.5 0 1 1-.708-.707L9.243 6H6.475a.5.5 0 1 1 0-1h3.975a.5.5 0 0 1 .5.5v3.975a.5.5 0 1 1-1 0V6.707l-4.096 4.096z"/> </svg></a>            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>            </h3>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
+    <script src="js/script.js"></script>
+    </div>
+</body>
+
+</html>
