@@ -13,7 +13,7 @@ const enableDarkMode = () => {
     link.id = "dark-mode";
     link.rel = "stylesheet";
     link.type = "text/css";
-    link.href = "css/dark.css";
+    link.href = "https://glad432.github.io/css/dark.css";
     head.appendChild(link);
 };
 
