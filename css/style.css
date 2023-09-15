@@ -70,6 +70,9 @@ textarea {
   textarea[id="source"] {
     font-size: 10px !important;
   }
+  .simp_border{
+    min-height: 190px !important;
+  }
 }
 .blue_big_box {
   padding: 24px 16px;
