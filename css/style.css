@@ -29,11 +29,6 @@ section {
   max-width: 45em;
   margin: 0 auto;
 }
-fieldset {
-  width: 25em;
-  text-align: left;
-  margin: 1em auto;
-}
 #options,
 footer,
 h1,
@@ -59,12 +54,6 @@ footer {
 }
 section > div {
   margin: auto;
-}
-body {
-  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: #fff;
-  color: #000;
-  font-size: 25px;
 }
 .editable-scrollable-container,
 pre,
