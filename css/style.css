@@ -70,7 +70,7 @@ textarea {
   textarea[id="source"] {
     font-size: 10px !important;
   }
-  .simp_border{
+  .simp_border {
     min-height: 190px !important;
   }
 }
@@ -137,7 +137,6 @@ pre code::before {
 code[class*="language-"],
 pre[class*="language-"],
 textarea[id="source"] {
-  font-size: 18px;
   color: #000;
   text-shadow: 0 1px #fff;
   font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console",
