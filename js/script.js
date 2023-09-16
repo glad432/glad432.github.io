@@ -26,7 +26,7 @@ const reseButton1 = document.getElementById('rm0');
 
 reseButton.addEventListener('click', function() {
 	textarea.value = "";
-	resetSpan.textContent = '0 Bytes';
+	resetSpan.textContent = '0 kB';
 
 	preElement.textContent = "";
 
@@ -34,7 +34,7 @@ reseButton.addEventListener('click', function() {
 
 reseButton0.addEventListener('click', function() {
 	textarea.value = "";
-	resetSpan1.textContent = '0 Bytes';
+	resetSpan1.textContent = '0 kB';
 
 	preElement.textContent = "";
 
@@ -42,7 +42,7 @@ reseButton0.addEventListener('click', function() {
 
 reseButton1.addEventListener('click', function() {
 	textarea.value = "";
-	resetSpan1.textContent = '0 Bytes';
+	resetSpan1.textContent = '0 kB';
 
 	preElement.textContent = "";
 
@@ -87,7 +87,7 @@ const charCountSpan = document.getElementById('minified-size');
 function updateCharacterCount() {
 	const trimmedContent = codeElement.textContent.trim();
 	const characterCount = trimmedContent.length;
-	charCountSpan.textContent = characterCount + " Bytes";
+	charCountSpan.textContent = (characterCount / 1024).toFixed() + " kB";
 }
 
 codeElement.addEventListener('input', () => {
@@ -178,7 +178,7 @@ class MinificationUtil {
 			if (response.ok) {
 				const minified = await response.text();
 				this.minifiedTextArea.value = minified;
-				this.minifiedSizeSpan.innerHTML = minified.length + ' Bytes';
+				this.minifiedSizeSpan.innerHTML = (minified.length / 1024).toFixed(3) + ' kB';
 				this.minifiedTextArea.disabled = false;
 				const highlightedpy = Prism.highlight(minified, Prism.languages.python, 'python');
 				document.getElementById('codeOutput').querySelector('code').innerHTML = highlightedpy;
@@ -201,7 +201,7 @@ class MinificationUtil {
 	}
 
 	updateSourceSize() {
-		this.sourceSizeSpan.innerHTML = this.sourceTextArea.value.length + ' Bytes';
+		this.sourceSizeSpan.innerHTML = (this.sourceTextArea.value.length / 1024).toFixed(3) + ' kB';
 		this.minifiedTextArea.disabled = true;
 	}
 }
@@ -264,7 +264,7 @@ function startClearingText() {
 
 function showOrderedList() {
 	const bbbtn = '<span class="cursor-pointer select-none relative inline-flex items-center justify-center inline-block p-4 px-5 py-3 overflow-hidden font-medium text-blue-500 rounded-lg shadow-2xl group"><span class="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-500 bg-blue-700 rounded-full blur-md ease"></span><span class="absolute inset-0 w-full h-full transition duration-700 group-hover:rotate-180 ease"><span class="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-blue-500 rounded-full blur-md"></span><span class="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-blue-700 rounded-full blur-md"></span></span><span id="up-tx" class="font-semibold relative text-white">Read Again</span>'
-	orderedListElement.innerHTML = `<div class="collapsible" onclick="toggleContent()">${bbbtn}</div><div class="content-l" style="display: none;"><ol class="md:list-disc space-y-1 list-decimal list-inside">${sentences.map(sentence => `<li class="mb-2 text-left">${sentence}</li>`).join("")}</ol></div>`;
+	orderedListElement.innerHTML = `<div class="collapsible" onclick="toggleContent()">${bbbtn}</div><div class="content-l" style="display: none;"><ol class="mt-4 space-y-1 list-decimal list-inside">${sentences.map(sentence => `<li class="mb-2 text-left">${sentence}</li>`).join("")}</ol></div>`;
 }
 
 function startTypingNextSentence() {
