@@ -1,3 +1,8 @@
+@import url(https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap);
+.content-l,
+.typing-container {
+  font-family: "Source Code Pro", monospace;
+}
 .size,
 footer {
   font-size: small;
@@ -64,22 +69,27 @@ textarea {
   border-radius: 10px;
 }
 .typing-container {
-  font-size: 24px;
+  font-size: 22px;
   color: #333;
 }
 @media only screen and (max-width: 600px) {
   .typing-container {
-    font-size: 14px;
+    font-size: 12px;
   }
+  .content-l,
   pre[class*="language-"],
   textarea[id="source"] {
-    font-size: 10px !important;
+    font-size: 12px !important;
   }
   .simp_border {
-    min-height: 190px !important;
+    min-height: 180px !important;
+  }
+  .blue_big_box {
+    width: auto !important;
   }
 }
 .blue_big_box {
+  width: 500px;
   padding: 24px 16px;
   border-radius: 5px;
   box-shadow: 0 1px 3px #999;
@@ -97,7 +107,7 @@ textarea {
   border-radius: 5px;
   padding: 20px;
   margin-bottom: 22px;
-  min-height: 270px;
+  min-height: 230px;
 }
 .blue_black_head,
 .red_black_head {
@@ -115,6 +125,9 @@ textarea {
 }
 .blue_black_head {
   border-left: 5px solid #3b82f6;
+}
+.content-ll {
+  padding-top: 20px;
 }
 pre,
 textarea {
@@ -142,12 +155,10 @@ pre code::before {
 code[class*="language-"],
 pre[class*="language-"],
 textarea[id="source"] {
-  color: #000;
+  color: #454545;
   text-shadow: 0 1px #fff;
-  font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console",
-    "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono",
-    "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier,
-    monospace;
+  font-family: "Source Code Pro", monospace;
+  font-weight: 600;
   text-align: left;
   white-space: pre;
   word-spacing: normal;
