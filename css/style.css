@@ -16,11 +16,6 @@ footer {
 .fix-field {
   height: 350px;
 }
-body {
-  font-smooth: always;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 textarea {
   height: 20em;
   resize: none;
