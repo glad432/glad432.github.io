@@ -1,6 +1,6 @@
 # Python Minifier - Glad432
 
-Welcome to my Python Minifier - Glad432 This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework and Prism.js for code highlighting. Additionally, it utilizes the python-minifier.com API to minify Python files.
+Welcome to my Python Minifier - Glad432 This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework and CodeMirror for code highlighting. Additionally, it utilizes the python-minifier.com API to minify Python files.
 
 ![python minifier - glad432](https://glad432.github.io/img/favicon.png)
 
@@ -10,16 +10,16 @@ Below you'll find more information about the technologies used and the benefits 
 
 - HTML
 - CSS (including Tailwind CSS)
-- JavaScript (including Prism.js)
+- JavaScript (including CodeMirror)
 - [python-minifier.com API](https://www.python-minifier.com/)
 
 ## Tailwind CSS
 
 This project takes advantage of the [Tailwind CSS](https://tailwindcss.com/) framework, which makes styling and designing web pages faster and more efficient. Tailwind CSS provides utility classes that enable you to create beautiful and responsive designs with minimal effort.
 
-## Prism.js
+## CodeMirror
 
-[Prism.js](https://prismjs.com/) is used for code syntax highlighting in this project. It supports a wide range of programming languages and offers a visually appealing way to display code snippets on your web pages.
+[Codemirror](https://codemirror.net/) is used for code syntax highlighting in this project. It supports a wide range of programming languages and offers a visually appealing way to display code snippets on your web pages.
 
 ## Python Minification Benefits
 
@@ -36,7 +36,7 @@ The [python-minifier.com API](https://www.python-minifier.com/) allows you to pr
 ## Credits
 
 - [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework for rapid UI development.
-- [Prism.js](https://prismjs.com/) - A lightweight, extensible syntax highlighter.
+- [Codemirror](https://codemirror.net/) - A lightweight, extensible syntax highlighter.
 - [python-minifier.com](https://www.python-minifier.com/) - API for minifying Python files.
 
 ---
