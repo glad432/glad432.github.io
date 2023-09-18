@@ -3,8 +3,7 @@
 .typing-container {
   font-family: "Source Code Pro", monospace;
 }
-.CodeMirror,
-.edit-pre {
+.CodeMirror {
   font-family: monospace;
 }
 footer {
