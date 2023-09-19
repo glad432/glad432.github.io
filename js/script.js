@@ -156,17 +156,17 @@ function initializeMinifier() {
 	function build_query() {
 		const options = [
 			'combine_imports',
-            'remove_pass',
-            'remove_literal_statements',
+			'remove_pass',
+			'remove_literal_statements',
 			'remove_annotations',
-            'hoist_literals',
-            'rename_locals',
+			'hoist_literals',
+			'rename_locals',
 			'rename_globals',
-            'convert_posargs_to_args',
-            'preserve_shebang',
+			'convert_posargs_to_args',
+			'preserve_shebang',
 			'remove_asserts',
-            'remove_debug',
-            'remove_explicit_return_none'
+			'remove_debug',
+			'remove_explicit_return_none'
 		];
 
 		let query = options.map(option => `${option}=${document.getElementById(option).checked}`).join('&');
@@ -263,44 +263,44 @@ function initializeMinifier() {
 }
 
 function clearSource() {
-    sourceEditor.setValue(''); 
+	sourceEditor.setValue('');
 }
 
 const clearButton = document.getElementById('rm');
 clearButton.addEventListener('click', clearSource);
 
-document.getElementById("rm").addEventListener("click", function () {
+document.getElementById("rm").addEventListener("click", function() {
 
-    document.getElementById("source").textContent = "";
+	document.getElementById("source").textContent = "";
 
-    minifiedEditor.setValue(""); 
+	minifiedEditor.setValue("");
 
 });
 
 const clearButton0 = document.getElementById('rm0');
 clearButton0.addEventListener('click', clearSource);
 
-document.getElementById("rm0").addEventListener("click", function () {
+document.getElementById("rm0").addEventListener("click", function() {
 
-    document.getElementById("source").textContent = "";
+	document.getElementById("source").textContent = "";
 
-    minifiedEditor.setValue(""); 
+	minifiedEditor.setValue("");
 
 });
 
 const minifiedSizeElement = document.getElementById("minified-size");
 const resetButton = document.getElementById("rm");
 
-resetButton.addEventListener("click", function () {
+resetButton.addEventListener("click", function() {
 
-    minifiedSizeElement.textContent = "0 kB";
+	minifiedSizeElement.textContent = "0.000 kB";
 });
 
 const resetButton1 = document.getElementById("rm0");
 
-resetButton1.addEventListener("click", function () {
+resetButton1.addEventListener("click", function() {
 
-    minifiedSizeElement.textContent = "0 kB";
+	minifiedSizeElement.textContent = "0.000 kB";
 });
 
 initializeMinifier();
