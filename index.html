@@ -90,8 +90,8 @@
       </div>
       <p style="display: none !important;">A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks. Its primary purpose is to enhance the loading speed of Python scripts, particularly beneficial for web applications. By reducing the overall size of the code, the minifier contributes to faster script loading times, optimizing web performance. The process of minification streamlines code readability without affecting its functionality or logic. Minified code is more efficiently transmitted and executed across various platforms, aiding developers in delivering smoother user experiences. Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment.</p>
       <h2 class="text-2xl font-bold blue_black_head py-6">Original Code</h2>
-      <span id="line-count" class="font-bold reset0 px-4 py-2 bg-blue-500 rounded text-white">Line Count: 43</span>
-      <span id="text-size" class="font-bold reset0 px-4 py-2 bg-blue-500 rounded text-white"></span>
+      <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Line Count: 42</span>
+      <span id="text-size" class="font-bold px-4 py-2 bg-blue-500 rounded text-white"></span>
       </header>
       <textarea id="source" autocomplete="off" spellcheck="false">class Person:
     def __init__(self, name, age):
@@ -134,9 +134,8 @@ if __name__ == "__main__":
 
     # Using the square lambda function
     number = 5
-    print(f"The square of {number} is {square(number)}")
-						</textarea>
-      <button id="rm" class="text-2xl mt-2 font-bold remove bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Clear</button>
+    print(f"The square of {number} is {square(number)}")</textarea>
+      <button id="rm" class="text-2xl mt-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Clear</button>
       <div class="text-left blue_big_box md:mx-auto md:p-8 ">
         <div class="collapsible" onclick="toggleContent1()">
           <p class="select-none underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
@@ -204,15 +203,15 @@ if __name__ == "__main__":
           </div>
         </div>
       </div>
-      <div id="options" class="mb-2 md:mb-4">
+      <div class="mb-2 md:mb-4">
         <button id="minify" class="text-2xl font-bold bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Minify</button>
         <button id="copy" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Copy</button>
         <button id="rm0" class="text-2xl font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Clear</button>
       </div>
       <header class="mb-2 md:mb-4">
         <h2 class="text-2xl font-bold red_black_head py-6">Minified Code</h2>
-        <span id="line-count-out" class="font-bold reset0 px-4 py-2 bg-red-500 rounded text-white">Line Count: 0</span>
-        <span id="minified-size" class="font-bold reset0 px-4 py-2 bg-red-500 rounded text-white">0 kB</span>
+        <span id="line-count-out" class="font-bold px-4 py-2 bg-red-500 rounded text-white"></span>
+        <span id="minified-size" class="font-bold px-4 py-2 bg-red-500 rounded text-white">0.000 kB</span>
         <textarea id="minified" autocomplete="off" spellcheck="false"></textarea>
         <div id="code_loaded"></div>
       </header>
