@@ -34,13 +34,20 @@
       gtag('config', 'G-HDTEFZ9987');
     </script>
     <script>
-      document.addEventListener("DOMContentLoaded", function() {
-        let e = document.getElementById("darkModeToggle"),
-          t = "false" !== localStorage.getItem("darkMode");
-        e.addEventListener("change", function e() {
-          let t = !document.documentElement.classList.contains("dark");
-          document.documentElement.classList.toggle("dark", t), document.documentElement.classList.toggle("light", !t), localStorage.setItem("darkMode", t.toString())
-        }), document.documentElement.classList.toggle("dark", t), document.documentElement.classList.toggle("light", !t), e.checked = t
+      document.addEventListener("DOMContentLoaded", function () {
+          let e = document.getElementById("darkModeToggle"),
+              t = localStorage.getItem("darkMode") !== "true";
+
+          e.addEventListener("change", function () {
+              let t = !document.documentElement.classList.contains("dark");
+              document.documentElement.classList.toggle("dark", t);
+              document.documentElement.classList.toggle("light", !t);
+              localStorage.setItem("darkMode", t.toString());
+          });
+
+          document.documentElement.classList.toggle("dark", !t);
+          document.documentElement.classList.toggle("light", t);
+          e.checked = !t;
       });
     </script>
   </head>
