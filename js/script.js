@@ -96,6 +96,7 @@ function toggleContent() {
 const currentYear = new Date().getFullYear();
 const yearElement = document.getElementById("year");
 yearElement.textContent = currentYear.toString();
+const errorMessage = document.getElementById('errmsg');
 
 var sourceEditor = CodeMirror.fromTextArea(document.getElementById("source"), {
 	mode: "python",
@@ -109,7 +110,6 @@ var sourceEditor = CodeMirror.fromTextArea(document.getElementById("source"), {
 function setupFileInput() {
 	const dropArea = document.getElementById('dropArea');
 	const fileInput = document.getElementById('fileInput');
-	const errorMessage = document.getElementById('errmsg');
 	const fileNameDisplay = document.getElementById('fileNameDisplay');
 
 	fileInput.addEventListener('change', function(event) {
@@ -122,6 +122,7 @@ function setupFileInput() {
 				handleFile(selectedFile);
 			} else {
 				generateButton.disabled = true;
+				errorMessage.classList.add('font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
 				errorMessage.textContent = "Invalid file format. Please select a .py file.";
 				fileInput.value = '';
 				fileNameDisplay.textContent = '';
@@ -153,7 +154,9 @@ function setupFileInput() {
 				fileNameDisplay.classList.add('font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded');
 				handleFile(droppedFile);
 			} else {
+				errorMessage.classList.add('font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
 				errorMessage.textContent = "Invalid file format. Please select a .py file.";
+
 				fileNameDisplay.textContent = '';
 			}
 		} else {
@@ -176,7 +179,10 @@ function setupFileInput() {
 
 			reader.readAsText(file);
 		} else {
+			errorMessage.classList.add('font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
 			errorMessage.textContent = "File size exceeds 2MB. Please select a smaller file.";
+			fileNameDisplay.textContent = '';
+			fileNameDisplay.classList.remove('font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded');
 			fileInput.value = '';
 		}
 	}
@@ -301,7 +307,9 @@ function initializeMinifier() {
 		try {
 			const response = await fetch(api_url + '?' + build_query(), {
 				method: 'POST',
-				headers: {'Content-Type': 'text/plain'},
+				headers: {
+					'Content-Type': 'text/plain'
+				},
 				body: sourceTextArea.value
 			});
 
@@ -373,6 +381,10 @@ document.getElementById("rm").addEventListener("click", function() {
 
 	fileNameDisplay.classList.remove('font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
 
+	errorMessage.classList.remove('font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
+
+	errorMessage.textContent = '';
+
 	fileNameDisplay.textContent = '';
 
 	fileInput.value = '';
@@ -393,6 +405,10 @@ document.getElementById("rm0").addEventListener("click", function() {
 	generateButton.disabled = true;
 
 	fileNameDisplay.classList.remove('font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
+
+	errorMessage.classList.remove('font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
+
+	errorMessage.textContent = '';
 
 	fileNameDisplay.textContent = '';
 
