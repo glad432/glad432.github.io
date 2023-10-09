@@ -103,8 +103,102 @@ var sourceEditor = CodeMirror.fromTextArea(document.getElementById("source"), {
 	lineNumbers: true,
 	height: 'auto',
 	viewportMargin: 20,
-	placeholder: "Enter orginal code..."
+	placeholder: "Enter original code..."
 });
+
+function setupFileInput() {
+	const dropArea = document.getElementById('dropArea');
+	const fileInput = document.getElementById('fileInput');
+	const errorMessage = document.getElementById('errmsg');
+	const fileNameDisplay = document.getElementById('fileNameDisplay');
+
+	fileInput.addEventListener('change', function(event) {
+		const selectedFile = event.target.files[0];
+
+		if (selectedFile) {
+			if (selectedFile.name.toLowerCase().endsWith('.py')) {
+				fileNameDisplay.textContent = selectedFile.name;
+				fileNameDisplay.classList.add('font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded');
+				handleFile(selectedFile);
+			} else {
+				generateButton.disabled = true;
+				errorMessage.textContent = "Invalid file format. Please select a .py file.";
+				fileInput.value = '';
+				fileNameDisplay.textContent = '';
+			}
+		} else {
+			fileNameDisplay.textContent = '';
+		}
+	});
+
+	dropArea.addEventListener('click', function() {
+		fileInput.click();
+	});
+
+	document.addEventListener('dragover', function(event) {
+		event.preventDefault();
+	});
+
+	document.addEventListener('drop', function(event) {
+		event.preventDefault();
+	});
+
+	dropArea.addEventListener('drop', function(event) {
+		event.preventDefault();
+		const droppedFile = event.dataTransfer.files[0];
+
+		if (droppedFile) {
+			if (droppedFile.name.toLowerCase().endsWith('.py')) {
+				fileNameDisplay.textContent = droppedFile.name;
+				fileNameDisplay.classList.add('font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded');
+				handleFile(droppedFile);
+			} else {
+				errorMessage.textContent = "Invalid file format. Please select a .py file.";
+				fileNameDisplay.textContent = '';
+			}
+		} else {
+			fileNameDisplay.textContent = '';
+		}
+	});
+
+	function handleFile(file) {
+		if (file.size <= 2 * 1024 * 1024) {
+			const reader = new FileReader();
+
+			reader.onload = function(e) {
+				sourceEditor.getDoc().setValue(e.target.result);
+				errorMessage.textContent = '';
+				setTimeout(function() {
+					errorMessage.style.transition = 'opacity 1s';
+					errorMessage.style.opacity = '0';
+				}, 5000);
+			};
+
+			reader.readAsText(file);
+		} else {
+			errorMessage.textContent = "File size exceeds 2MB. Please select a smaller file.";
+			fileInput.value = '';
+		}
+	}
+}
+
+window.addEventListener('load', setupFileInput);
+
+function dw_py() {
+	var originalFileName = document.getElementById('fileNameDisplay').textContent || "default.py";
+	var modifiedFileName = originalFileName.replace(/\.[^/.]+$/, "") + "_min.py";
+	var blob = new Blob([minifiedEditor.getValue()], {
+		type: "text/x-python"
+	});
+	var dataUri = URL.createObjectURL(blob);
+	var downloadLink = document.createElement("a");
+	downloadLink.href = dataUri;
+	downloadLink.download = modifiedFileName;
+	downloadLink.click();
+	URL.revokeObjectURL(dataUri);
+}
+
+document.getElementById('dw').addEventListener('click', dw_py);
 
 sourceEditor.on("change", function(editor) {
 	var codeTextarea = document.getElementById("source");
@@ -148,7 +242,6 @@ updateLineCount_out();
 function initializeMinifier() {
 	const minifyButton = document.getElementById('minify');
 	const sourceTextArea = document.getElementById('source');
-	const minifiedTextArea = document.getElementById('minified');
 	const copyButton = document.getElementById('copy');
 
 	const api_url = 'https://api.python-minifier.com/minify';
@@ -198,6 +291,8 @@ function initializeMinifier() {
 
 	async function minifyClick() {
 		minifyButton.disabled = true;
+		generateButton.disabled = false;
+
 		minifiedEditor.setValue('');
 		const minifiedSizeSpan = document.getElementById('minified-size');
 		const load = '<svg aria-hidden="true" role="status" class="inline font-bold w-4 h-4 mr-4 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"/></svg>';
@@ -206,9 +301,7 @@ function initializeMinifier() {
 		try {
 			const response = await fetch(api_url + '?' + build_query(), {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'text/plain'
-				},
+				headers: {'Content-Type': 'text/plain'},
 				body: sourceTextArea.value
 			});
 
@@ -219,6 +312,7 @@ function initializeMinifier() {
 				copyButton.disabled = false;
 			} else {
 				copyButton.disabled = true;
+				generateButton.disabled = true;
 				minifiedSizeSpan.innerHTML = 'Error';
 
 				try {
@@ -229,6 +323,7 @@ function initializeMinifier() {
 
 		} catch {
 			copyButton.disabled = true;
+			generateButton.disabled = true;
 			minifiedSizeSpan.innerHTML = 'Enter orginal code!!';
 		}
 
@@ -266,14 +361,27 @@ function clearSource() {
 	sourceEditor.setValue('');
 }
 
+const minifiedSizeElement = document.getElementById("minified-size");
+const generateButton = document.getElementById('dw');
+
 const clearButton = document.getElementById('rm');
 clearButton.addEventListener('click', clearSource);
 
 document.getElementById("rm").addEventListener("click", function() {
 
+	generateButton.disabled = true;
+
+	fileNameDisplay.classList.remove('font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
+
+	fileNameDisplay.textContent = '';
+
+	fileInput.value = '';
+
 	document.getElementById("source").textContent = "";
 
 	minifiedEditor.setValue("");
+
+	minifiedSizeElement.textContent = "0.000 kB";
 
 });
 
@@ -282,25 +390,20 @@ clearButton0.addEventListener('click', clearSource);
 
 document.getElementById("rm0").addEventListener("click", function() {
 
+	generateButton.disabled = true;
+
+	fileNameDisplay.classList.remove('font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
+
+	fileNameDisplay.textContent = '';
+
+	fileInput.value = '';
+
 	document.getElementById("source").textContent = "";
 
 	minifiedEditor.setValue("");
 
-});
-
-const minifiedSizeElement = document.getElementById("minified-size");
-const resetButton = document.getElementById("rm");
-
-resetButton.addEventListener("click", function() {
-
 	minifiedSizeElement.textContent = "0.000 kB";
-});
 
-const resetButton1 = document.getElementById("rm0");
-
-resetButton1.addEventListener("click", function() {
-
-	minifiedSizeElement.textContent = "0.000 kB";
 });
 
 initializeMinifier();
