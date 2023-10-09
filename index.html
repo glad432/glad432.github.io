@@ -16,7 +16,7 @@
     <meta property="og:image" content="https://glad432.github.io/img/favicon.png" />
     <meta property="og:image:secure_url" content="https://glad432.github.io/img/favicon.png" />
     <link href="https://glad432.github.io/css/style.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com" rel="stylesheet"></script>
+    <script src="https://cdn.tailwindcss.com/3.3.3" rel="stylesheet"></script>
     <script defer src="https://glad432.github.io/js/alpine.min.js"></script>
     <script src="https://glad432.github.io/js/codemirror.min.js"></script>
     <script src="https://glad432.github.io/js/codemirror.python.min.js"></script>
@@ -114,6 +114,12 @@
       <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Line Count: 42</span>
       <span id="text-size" class="font-bold px-4 py-2 bg-blue-500 rounded text-white"></span>
       </header>
+      <input style="display: none;" type="file" id="fileInput" accept=".py" />
+      <div id="dropArea" class="select-none cursor-pointer rounded-xl border-dashed border-4 border-gray-300 bg-white p-8 m-5">
+          <p id="">Drag and drop a <span class="font-bold">.py file</span> here or click to <span class="text-blue-600 font-bold hover:underline">browse</span></p>
+      </div>
+      <p id="errmsg"></p>
+      <div id="fileNameDisplay" style="max-width: fit-content"></div>
       <textarea id="source" autocomplete="off">class Person:
     def __init__(self, name, age):
         self.name = name
@@ -161,61 +167,61 @@ if __name__ == "__main__":
         <div class="collapsible" onclick="toggleContent1()">
           <p class="select-none underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
         </div>
-        <div class="content-ll" style="display: none;">
+        <div class="content-ll pt-4" style="display: none;">
           <div class="mb-4">
-            <input type="checkbox" id="combine_imports" checked="checked" class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="combine_imports"  class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="combine_imports" class="select-none cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Combine Import statements</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="remove_pass" checked="checked" class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="remove_pass"  class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_pass" class="select-none cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove Pass statements</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="remove_literal_statements" checked="checked" class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="remove_literal_statements"  class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_literal_statements" class="select-none cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove literal statements (docstrings)</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="remove_annotations" checked="checked" class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="remove_annotations"  class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_annotations" class="select-none cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove Annotations</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="hoist_literals" name="Hoist Literals" checked="checked" class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="hoist_literals" name="Hoist Literals"  class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="hoist_literals" class="select-none cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Hoist Literals</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="rename_locals" name="Rename Locals" checked="checked" class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="rename_locals" name="Rename Locals"  class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="rename_locals" class="select-none cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Rename Locals</label>
           </div>
           <div class="mb-4">
             <label for="preserve_locals" class="select-none cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Locals:</label>
-            <input type="text" id="preserve_locals" placeholder="Preserved Locals" name="Preserved Locals" checked="checked" class="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+            <input type="text" id="preserve_locals" placeholder="Preserved Locals" name="Preserved Locals"  class="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="rename_globals" name="Rename Globals" checked="checked" class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="rename_globals" name="Rename Globals"  class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="rename_globals" class="select-none cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Rename Globals</label>
           </div>
           <div class="mb-4">
             <label for="preserve_globals" class="select-none cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Globals:</label>
-            <input type="text" id="preserve_globals" name="Preserved Globals" checked="checked" value="handler" class="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+            <input type="text" id="preserve_globals" name="Preserved Globals"  value="handler" class="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="convert_posargs_to_args" name="Convert Positional-Only Arguments to Normal Arguments" checked="checked" class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="convert_posargs_to_args" name="Convert Positional-Only Arguments to Normal Arguments"  class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="convert_posargs_to_args" class="select-none cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Convert Positional-Only Arguments to Normal Arguments</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="preserve_shebang" name="Preserve any shebang line" checked="checked" class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="preserve_shebang" name="Preserve any shebang line"  class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="preserve_shebang" class="select-none cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Preserve any shebang line</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="remove_asserts" name="Remove assert statements" checked="checked" class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="remove_asserts" name="Remove assert statements"  class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_asserts" class="select-none cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove assert statements</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="remove_debug" name="Remove if statements conditional on __debug__ being True" checked="checked" class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="remove_debug" name="Remove if statements conditional on __debug__ being True"  class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_debug" class="select-none cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove if statements conditional on __debug__ being True</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="remove_explicit_return_none" name="Remove return statements that are not required" checked="checked" class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="remove_explicit_return_none" name="Remove return statements that are not required"  class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_explicit_return_none" class="select-none cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove return statements that are not required</label>
           </div>
           <div class="space-x-2 text-center">
@@ -224,7 +230,7 @@ if __name__ == "__main__":
           </div>
         </div>
       </div>
-      <div class="mb-2 md:mb-4">
+      <div class="mb-2 md:mb-4 select-none">
         <button id="minify" class="text-2xl font-bold bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Minify</button>
         <button id="copy" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Copy</button>
         <button id="rm0" class="text-2xl font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Clear</button>
@@ -235,6 +241,7 @@ if __name__ == "__main__":
         <span id="minified-size" class="font-bold px-4 py-2 bg-red-500 rounded text-white">0.000 kB</span>
         <textarea id="minified"></textarea>
         <div id="code_loaded"></div>
+        <button id="dw" disabled class="px-4 py-2 mt-2 font-bold bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Download</button>
       </header>
     </section>
     <footer class="bg-neutral-200 text-center text-white dark:bg-neutral-600">
