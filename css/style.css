@@ -10,12 +10,13 @@ footer {
   background-color: #000 !important;
   color: #fff !important;
 }
-.collapsible {
-  cursor: pointer;
-}
-.content-l .content-ll,
 .switch input {
   display: none;
+}
+.content-ll {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.6s ease-in-out;
 }
 section {
   max-width: 45em;
@@ -600,7 +601,7 @@ div.cm-s-mdn-like span.CodeMirror-matchingbracket {
 :root {
   --glad-neutral-background: #131516;
   --glad-neutral-text: #d8d4cf;
-  --glad-selection-background: #004daa;
+  --glad-selection-background: #cfc;
   --glad-selection-text: #e8e6e3;
 }
 .dark html {
@@ -711,13 +712,13 @@ div.cm-s-mdn-like span.CodeMirror-matchingbracket {
 .CodeMirror-line > span > span::selection,
 .dark .CodeMirror-line::selection {
   background-image: initial;
-  background-color: #282c2d;
+  background-color: var(--glad-selection-background);
 }
 .cm-s-mdn-like .CodeMirror-line > span::selection,
 .cm-s-mdn-like .CodeMirror-line > span > span::selection,
 .dark .cm-s-mdn-like .CodeMirror-line::selection {
   background-image: initial;
-  background-color: #145200;
+  background-color: var(--glad-selection-background);
 }
 .dark .cm-s-mdn-like .CodeMirror-gutters {
   background-image: initial;
