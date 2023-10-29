@@ -97,6 +97,7 @@ const currentYear = new Date().getFullYear();
 const yearElement = document.getElementById("year");
 yearElement.textContent = currentYear.toString();
 const errorMessage = document.getElementById('errmsg');
+const exctri = '<svg class="select-none inline font-bold w-4 h-6 m-1  text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><style>svg{fill:#ffffff}</style><path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>';
 
 var sourceEditor = CodeMirror.fromTextArea(document.getElementById("source"), {
 	mode: "python",
@@ -111,6 +112,8 @@ function setupFileInput() {
 	const dropArea = document.getElementById('dropArea');
 	const fileInput = document.getElementById('fileInput');
 	const fileNameDisplay = document.getElementById('fileNameDisplay');
+	const exctri1 = '<svg class="select-none inline font-bold w-4 h-6 m-1 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><style>svg{fill:#ffffff}</style><path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>';
+
 
 	fileInput.addEventListener('change', function(event) {
 		const selectedFile = event.target.files[0];
@@ -123,7 +126,7 @@ function setupFileInput() {
 			} else {
 				generateButton.disabled = true;
 				errorMessage.classList.add('font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
-				errorMessage.textContent = "Invalid file format. Please select a .py file.";
+				errorMessage.innerHTML = `${exctri1} Invalid file format. Please select a .py file.`;
 				fileInput.value = '';
 				fileNameDisplay.textContent = '';
 			}
@@ -157,7 +160,7 @@ function setupFileInput() {
 			} else {
 				fileNameDisplay.classList.remove('select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
 				errorMessage.classList.add('select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
-				errorMessage.textContent = "Invalid file format. Please select a .py file.";
+				errorMessage.innerHTML = `${exctri1} Invalid file format. Please select a .py file.`;
 
 				fileNameDisplay.textContent = '';
 			}
@@ -179,7 +182,7 @@ function setupFileInput() {
 		} else {
 			fileNameDisplay.classList.remove('select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded');
 			errorMessage.classList.add('select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
-			errorMessage.textContent = "File size exceeds 2MB. Please select a smaller file.";
+			errorMessage.innerHTML = `${exctri1} File size exceeds 2MB. Please select a smaller file.`;
 			fileNameDisplay.textContent = '';
 			fileInput.value = '';
 		}
@@ -220,6 +223,8 @@ function updateLineCount() {
 
 	document.getElementById("line-count").textContent = `Line Count: ${lineCount}`;
 	document.getElementById("text-size").textContent = (textSizeInBytes / 1024).toFixed(3) + " kB";
+	errorMessage.classList.remove('select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
+	errorMessage.textContent = "";
 }
 
 var minifiedEditor = CodeMirror.fromTextArea(document.getElementById("minified"), {
@@ -299,7 +304,7 @@ function initializeMinifier() {
 
 		minifiedEditor.setValue('');
 		const minifiedSizeSpan = document.getElementById('minified-size');
-		const load = '<svg class="select-none inline font-bold w-4 h-4 mr-1 text-white animate-spin" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#fff"><g fill="none" fill-rule="evenodd"><g transform="translate(1 1)" stroke-width="2"><circle stroke-opacity=".5" cx="18" cy="18" r="18"/><path d="M36 18c0-9.94-8.06-18-18-18"><animateTransform attributeName="transform" type="rotate" from="0 18 18" to="360 18 18" dur="1s" repeatCount="indefinite"/></path></g></g></svg>';
+		const load = '<svg class="select-none inline font-bold w-4 h-4 mb-1 mr-1 text-white animate-spin" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#fff"><g fill="none" fill-rule="evenodd"><g transform="translate(1 1)" stroke-width="2"><circle stroke-opacity=".5" cx="18" cy="18" r="18"/><path d="M36 18c0-9.94-8.06-18-18-18"><animateTransform attributeName="transform" type="rotate" from="0 18 18" to="360 18 18" dur="1s" repeatCount="indefinite"/></path></g></g></svg>';
 		minifiedSizeSpan.innerHTML = `${load} Loading....`;
 
 		try {
@@ -311,26 +316,29 @@ function initializeMinifier() {
 				body: sourceTextArea.value
 			});
 
+			const exctri = '<svg class="select-none inline font-bold w-4 h-6 mb-1 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><style>svg{fill:#ffffff}</style><path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>';
+
+
 			if (response.ok) {
 				const minified = await response.text();
 				minifiedEditor.setValue(minified);
-				minifiedSizeSpan.innerHTML = `${(minified.length / 1024).toFixed(3)}  kB`;
+				minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)}  kB`;
 				copyButton.disabled = false;
 			} else {
 				copyButton.disabled = true;
 				generateButton.disabled = true;
-				minifiedSizeSpan.innerHTML = 'Error';
+				minifiedSizeSpan.innerHTML = `${exctri} Error`;
 
 				try {
 					const error = await response.json();
-					minifiedSizeSpan.innerHTML = error['message'];
+					minifiedSizeSpan.innerHTML = `${exctri} ${error['message']}`;
 				} catch {}
 			}
 
 		} catch {
 			copyButton.disabled = true;
 			generateButton.disabled = true;
-			minifiedSizeSpan.innerHTML = 'Enter orginal code!!';
+			minifiedSizeSpan.textContent = 'Enter orginal code!!';
 		}
 
 		minifyButton.disabled = false;
@@ -338,8 +346,7 @@ function initializeMinifier() {
 
 	function updateSourceSize() {
 		const sourceSizeSpan = document.getElementById('text-size');
-		sourceSizeSpan.innerHTML = `${(sourceTextArea.value.length / 1024).toFixed(3)}  kB`;
-
+		sourceSizeSpan.textContent = `${(sourceTextArea.value.length / 1024).toFixed(3)}  kB`;
 	}
 
 	minifyButton.addEventListener('click', minifyClick);
