@@ -150,10 +150,12 @@ function setupFileInput() {
 
 		if (droppedFile) {
 			if (droppedFile.name.toLowerCase().endsWith('.py')) {
+				errorMessage.classList.remove('select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
 				fileNameDisplay.textContent = droppedFile.name;
 				fileNameDisplay.classList.add('select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded');
 				handleFile(droppedFile);
 			} else {
+				fileNameDisplay.classList.remove('select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
 				errorMessage.classList.add('select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
 				errorMessage.textContent = "Invalid file format. Please select a .py file.";
 
@@ -171,18 +173,14 @@ function setupFileInput() {
 			reader.onload = function(e) {
 				sourceEditor.getDoc().setValue(e.target.result);
 				errorMessage.textContent = '';
-				setTimeout(function() {
-					errorMessage.style.transition = 'opacity 1s';
-					errorMessage.style.opacity = '0';
-				}, 5000);
 			};
 
 			reader.readAsText(file);
 		} else {
+			fileNameDisplay.classList.remove('select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded');
 			errorMessage.classList.add('select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded');
 			errorMessage.textContent = "File size exceeds 2MB. Please select a smaller file.";
 			fileNameDisplay.textContent = '';
-			fileNameDisplay.classList.remove('select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded');
 			fileInput.value = '';
 		}
 	}
