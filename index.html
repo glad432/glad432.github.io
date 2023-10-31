@@ -15,8 +15,8 @@
     <link rel="canonical" href="https://glad432.github.io" />
     <meta property="og:image" content="https://glad432.github.io/img/favicon.png" />
     <meta property="og:image:secure_url" content="https://glad432.github.io/img/favicon.png" />
+    <script src="https://glad432.github.io/js/tailwind.min.js" rel="stylesheet"></script>
     <link href="https://glad432.github.io/css/style.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com/3.3.3" rel="stylesheet"></script>
     <script defer src="https://glad432.github.io/js/alpine.min.js"></script>
     <script src="https://glad432.github.io/js/codemirror.min.js"></script>
     <script src="https://glad432.github.io/js/codemirror.python.min.js"></script>
@@ -33,7 +33,7 @@
       gtag('js', new Date());
       gtag('config', 'G-HDTEFZ9987');
     </script>
-    <script>
+    <script is:inline>
       document.addEventListener("DOMContentLoaded", function () {
           let e = document.getElementById("darkModeToggle"),
               t = localStorage.getItem("darkMode") !== "true";
@@ -49,6 +49,7 @@
           document.documentElement.classList.toggle("light", t);
           e.checked = !t;
       });
+      
     </script>
   </head>
   <body class="bg-gray-100 font-sans">
@@ -72,16 +73,12 @@
           </ul>
           <div class="inline-flex md:hidden" x-data="{ open: false }">
             <button class="flex-none px-2 text-2xl text-white" @click="open = true">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
-              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" /></svg>
               <span class="sr-only"></span>
             </button>
             <div class="absolute top-0 left-0 right-0 z-50 flex flex-col p-2 pb-4 m-2 space-y-3 bg-black rounded shadow" x-show.transition="open" @click.away="open = false" x-cloak>
               <button class="self-end flex-none px-2 ml-2 text-2xl text-white" @click="open = false">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 <span class="sr-only"></span>
               </button>
               <ul class="space-y-2">
@@ -108,6 +105,7 @@
             <span id="cursor" class="mb-3 text-gray-700 ">|</span>
           </div>
           <div id="orderedList" class="mt-4 ml-4"></div>
+        </header>
       </div>
       <p style="display: none !important;">A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks. Its primary purpose is to enhance the loading speed of Python scripts, particularly beneficial for web applications. By reducing the overall size of the code, the minifier contributes to faster script loading times, optimizing web performance. The process of minification streamlines code readability without affecting its functionality or logic. Minified code is more efficiently transmitted and executed across various platforms, aiding developers in delivering smoother user experiences. Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment.</p>
       <h2 class="select-none text-2xl font-bold blue_black_head py-6">Original Code</h2>
@@ -115,10 +113,10 @@
         <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Line Count: 42</span>
         <span id="text-size" class="font-bold px-4 py-2 bg-blue-500 rounded text-white"></span>
       </div>
-      </header>
       <input style="display: none;" type="file" id="fileInput" accept=".py" />
       <div id="dropArea" class="select-none cursor-pointer rounded-xl border-dashed border-4 border-gray-300 bg-white p-8 m-5">
-          <p id="">Drag and drop a <span class="font-bold">.py file</span> here or click to <span class="text-blue-600 font-bold hover:underline">browse</span></p>
+        <p id="">Drag and drop a <span class="font-bold">.py file</span> here or click to <span class="text-blue-600 font-bold hover:underline">browse</span>
+        </p>
       </div>
       <p id="errmsg"></p>
       <div id="fileNameDisplay" class="select-none" style="max-width: fit-content"></div>
@@ -171,59 +169,59 @@ if __name__ == "__main__":
         </div>
         <div class="select-none content-ll pt-4">
           <div class="mb-4">
-            <input type="checkbox" id="combine_imports"  class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="combine_imports" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="combine_imports" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Combine Import statements</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="remove_pass"  class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="remove_pass" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_pass" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove Pass statements</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="remove_literal_statements"  class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="remove_literal_statements" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_literal_statements" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove literal statements (docstrings)</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="remove_annotations"  class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="remove_annotations" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_annotations" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove Annotations</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="hoist_literals" name="Hoist Literals"  class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="hoist_literals" name="Hoist Literals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="hoist_literals" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Hoist Literals</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="rename_locals" name="Rename Locals"  class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="rename_locals" name="Rename Locals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="rename_locals" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Rename Locals</label>
           </div>
           <div class="mb-4">
             <label for="preserve_locals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Locals:</label>
-            <input type="text" id="preserve_locals" placeholder="Preserved Locals" name="Preserved Locals"  class="cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+            <input type="text" id="preserve_locals" placeholder="Preserved Locals" name="Preserved Locals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="rename_globals" name="Rename Globals"  class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="rename_globals" name="Rename Globals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="rename_globals" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Rename Globals</label>
           </div>
           <div class="mb-4">
             <label for="preserve_globals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Globals:</label>
-            <input type="text" id="preserve_globals" name="Preserved Globals"  value="handler" class="cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+            <input type="text" id="preserve_globals" name="Preserved Globals" value="handler" class="cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="convert_posargs_to_args" name="Convert Positional-Only Arguments to Normal Arguments"  class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="convert_posargs_to_args" name="Convert Positional-Only Arguments to Normal Arguments" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="convert_posargs_to_args" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Convert Positional-Only Arguments to Normal Arguments</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="preserve_shebang" name="Preserve any shebang line"  class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="preserve_shebang" name="Preserve any shebang line" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="preserve_shebang" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Preserve any shebang line</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="remove_asserts" name="Remove assert statements"  class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="remove_asserts" name="Remove assert statements" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_asserts" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove assert statements</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="remove_debug" name="Remove if statements conditional on __debug__ being True"  class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="remove_debug" name="Remove if statements conditional on __debug__ being True" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_debug" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove if statements conditional on __debug__ being True</label>
           </div>
           <div class="mb-4">
-            <input type="checkbox" id="remove_explicit_return_none" name="Remove return statements that are not required"  class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" id="remove_explicit_return_none" name="Remove return statements that are not required" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_explicit_return_none" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove return statements that are not required</label>
           </div>
           <div class="select-none space-x-2 text-center">
@@ -252,19 +250,13 @@ if __name__ == "__main__":
       <div class="pt-9">
         <div class="mb-9 flex justify-center">
           <a href="https://gladw-in.github.io/" target="_blank" class="mr-9 text-neutral-800 dark:text-neutral-200 hover:text-blue-700">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4 w-4" viewBox="0 0 16 16">
-              <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855-.143.268-.276.56-.395.872.705.157 1.472.257 2.282.287V1.077zM4.249 3.539c.142-.384.304-.744.481-1.078a6.7 6.7 0 0 1 .597-.933A7.01 7.01 0 0 0 3.051 3.05c.362.184.763.349 1.198.49zM3.509 7.5c.036-1.07.188-2.087.436-3.008a9.124 9.124 0 0 1-1.565-.667A6.964 6.964 0 0 0 1.018 7.5h2.49zm1.4-2.741a12.344 12.344 0 0 0-.4 2.741H7.5V5.091c-.91-.03-1.783-.145-2.591-.332zM8.5 5.09V7.5h2.99a12.342 12.342 0 0 0-.399-2.741c-.808.187-1.681.301-2.591.332zM4.51 8.5c.035.987.176 1.914.399 2.741A13.612 13.612 0 0 1 7.5 10.91V8.5H4.51zm3.99 0v2.409c.91.03 1.783.145 2.591.332.223-.827.364-1.754.4-2.741H8.5zm-3.282 3.696c.12.312.252.604.395.872.552 1.035 1.218 1.65 1.887 1.855V11.91c-.81.03-1.577.13-2.282.287zm.11 2.276a6.696 6.696 0 0 1-.598-.933 8.853 8.853 0 0 1-.481-1.079 8.38 8.38 0 0 0-1.198.49 7.01 7.01 0 0 0 2.276 1.522zm-1.383-2.964A13.36 13.36 0 0 1 3.508 8.5h-2.49a6.963 6.963 0 0 0 1.362 3.675c.47-.258.995-.482 1.565-.667zm6.728 2.964a7.009 7.009 0 0 0 2.275-1.521 8.376 8.376 0 0 0-1.197-.49 8.853 8.853 0 0 1-.481 1.078 6.688 6.688 0 0 1-.597.933zM8.5 11.909v3.014c.67-.204 1.335-.82 1.887-1.855.143-.268.276-.56.395-.872A12.63 12.63 0 0 0 8.5 11.91zm3.555-.401c.57.185 1.095.409 1.565.667A6.963 6.963 0 0 0 14.982 8.5h-2.49a13.36 13.36 0 0 1-.437 3.008zM14.982 7.5a6.963 6.963 0 0 0-1.362-3.675c-.47.258-.995.482-1.565.667.248.92.4 1.938.437 3.008h2.49zM11.27 2.461c.177.334.339.694.482 1.078a8.368 8.368 0 0 0 1.196-.49 7.01 7.01 0 0 0-2.275-1.52c.218.283.418.597.597.932zm-.488 1.343a7.765 7.765 0 0 0-.395-.872C9.835 1.897 9.17 1.282 8.5 1.077V4.09c.81-.03 1.577-.13 2.282-.287z" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4 w-4" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855-.143.268-.276.56-.395.872.705.157 1.472.257 2.282.287V1.077zM4.249 3.539c.142-.384.304-.744.481-1.078a6.7 6.7 0 0 1 .597-.933A7.01 7.01 0 0 0 3.051 3.05c.362.184.763.349 1.198.49zM3.509 7.5c.036-1.07.188-2.087.436-3.008a9.124 9.124 0 0 1-1.565-.667A6.964 6.964 0 0 0 1.018 7.5h2.49zm1.4-2.741a12.344 12.344 0 0 0-.4 2.741H7.5V5.091c-.91-.03-1.783-.145-2.591-.332zM8.5 5.09V7.5h2.99a12.342 12.342 0 0 0-.399-2.741c-.808.187-1.681.301-2.591.332zM4.51 8.5c.035.987.176 1.914.399 2.741A13.612 13.612 0 0 1 7.5 10.91V8.5H4.51zm3.99 0v2.409c.91.03 1.783.145 2.591.332.223-.827.364-1.754.4-2.741H8.5zm-3.282 3.696c.12.312.252.604.395.872.552 1.035 1.218 1.65 1.887 1.855V11.91c-.81.03-1.577.13-2.282.287zm.11 2.276a6.696 6.696 0 0 1-.598-.933 8.853 8.853 0 0 1-.481-1.079 8.38 8.38 0 0 0-1.198.49 7.01 7.01 0 0 0 2.276 1.522zm-1.383-2.964A13.36 13.36 0 0 1 3.508 8.5h-2.49a6.963 6.963 0 0 0 1.362 3.675c.47-.258.995-.482 1.565-.667zm6.728 2.964a7.009 7.009 0 0 0 2.275-1.521 8.376 8.376 0 0 0-1.197-.49 8.853 8.853 0 0 1-.481 1.078 6.688 6.688 0 0 1-.597.933zM8.5 11.909v3.014c.67-.204 1.335-.82 1.887-1.855.143-.268.276-.56.395-.872A12.63 12.63 0 0 0 8.5 11.91zm3.555-.401c.57.185 1.095.409 1.565.667A6.963 6.963 0 0 0 14.982 8.5h-2.49a13.36 13.36 0 0 1-.437 3.008zM14.982 7.5a6.963 6.963 0 0 0-1.362-3.675c-.47.258-.995.482-1.565.667.248.92.4 1.938.437 3.008h2.49zM11.27 2.461c.177.334.339.694.482 1.078a8.368 8.368 0 0 0 1.196-.49 7.01 7.01 0 0 0-2.275-1.52c.218.283.418.597.597.932zm-.488 1.343a7.765 7.765 0 0 0-.395-.872C9.835 1.897 9.17 1.282 8.5 1.077V4.09c.81-.03 1.577-.13 2.282-.287z" /></svg>
           </a>
           <a href="https://www.linkedin.com/in/glad432/" target="_blank" class="mr-9 text-neutral-800 dark:text-neutral-200 hover:text-blue-700">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4 w-4" viewBox="0 0 16 16">
-              <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4 w-4" viewBox="0 0 16 16"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" /></svg>
           </a>
           <a href="https://github.com/gladw-in" target="_blank" class="text-neutral-800 dark:text-neutral-200 hover:text-blue-700">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4 w-4" viewBox="0 0 16 16">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4 w-4" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg>
           </a>
         </div>
       </div>
