@@ -104,7 +104,50 @@ var sourceEditor = CodeMirror.fromTextArea(document.getElementById("source"), {
 	lineNumbers: true,
 	height: 'auto',
 	viewportMargin: 20,
-	placeholder: "Enter original code..."
+	placeholder: "Enter original code...",
+	matchBrackets: true,
+	autoCloseBrackets: true,
+	hint: CodeMirror.hint.anyword,
+	scrollbarStyle: "overlay",
+	extraKeys: {
+		"Ctrl-Space": "autocomplete"
+	}
+});
+
+var words = [
+	'and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif',
+	'else', 'except', 'False', 'finally', 'for', 'from', 'global', 'if', 'import',
+	'in', 'is', 'lambda', 'None', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return',
+	'True', 'try', 'while', 'with', 'yield', 'abs', 'all', 'any', 'ascii', 'bin',
+	'bool', 'bytearray', 'bytes', 'callable', 'chr', 'classmethod', 'compile', 'complex',
+	'delattr', 'dict', 'dir', 'divmod', 'enumerate', 'eval', 'exec', 'filter', 'float',
+	'format', 'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help', 'hex', 'id',
+	'input', 'int', 'isinstance', 'issubclass', 'iter', 'len', 'list', 'locals', 'map',
+	'max', 'memoryview', 'min', 'next', 'object', 'oct', 'open', 'ord', 'pow', 'print',
+	'property', 'range', 'repr', 'reversed', 'round', 'set', 'setattr', 'slice', 'sorted',
+	'staticmethod', 'str', 'sum', 'super', 'tuple', 'type', 'vars', 'zip', 'exec', 'Ellipsis',
+	'NotImplemented',
+]
+CodeMirror.registerHelper("hint", "anyword", function(editor, options) {
+	var wordList = options.words || words;
+	var cur = editor.getCursor();
+	var curLine = editor.getLine(cur.line);
+	var start = cur.ch;
+	var end = start;
+
+	while (end < curLine.length && /[\w$]+/.test(curLine.charAt(end))) ++end;
+	while (start && /[\w$]+/.test(curLine.charAt(start - 1))) --start;
+
+	var prefix = curLine.slice(start, end).toLowerCase();
+	var list = wordList.filter(function(word) {
+		return word.toLowerCase().startsWith(prefix);
+	});
+
+	return {
+		list: list,
+		from: CodeMirror.Pos(cur.line, start),
+		to: CodeMirror.Pos(cur.line, end)
+	};
 });
 
 function setupFileInput() {
@@ -232,6 +275,8 @@ var minifiedEditor = CodeMirror.fromTextArea(document.getElementById("minified")
 	lineNumbers: true,
 	readOnly: true,
 	viewportMargin: 20,
+	scrollbarStyle: "overlay",
+	matchBrackets: true,
 	placeholder: "Minified code..."
 
 });
