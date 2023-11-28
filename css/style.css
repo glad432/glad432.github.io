@@ -1,11 +1,13 @@
 @import url(https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap);
-@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css);
+@import url(https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css);
 :root {
   --glad-neutral-background: #131516;
   --glad-neutral-text: #d8d4cf;
   --glad-selection-background: rgb(209, 228, 248);
   --glad-dark-selection-background: rgb(55, 62, 70);
   --glad-selection-text: #e8e6e3;
+  --glad-gutter-fold-text-shadow: rgb(207, 207, 207);
+  --glad-dark-gutter-fold-text-shadow: rgb(43, 43, 43);
 }
 .content-l,
 .typing-container {
@@ -113,11 +115,51 @@ header {
   display: block;
   border-radius: 5px;
 }
+.cm-tab,
+.switch {
+  display: inline-block;
+}
 .red_black_head {
   border-left: 5px solid #ef4444;
 }
 .blue_black_head {
   border-left: 5px solid #3b82f6;
+}
+.switch {
+  margin-left: auto;
+  position: relative;
+  width: 28px;
+  height: 32px;
+}
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.slider:before {
+  position: absolute;
+  content: "\f185";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 18px;
+  top: 4px;
+  left: 4px;
+  color: #fff;
+  -webkit-transition: 0.4s;
+  -o-transition: 0.4s;
+  transition: 0.4s;
+}
+input:checked + .slider:before {
+  content: "\f186";
+  color: #fff;
+}
+.switch .slider.round {
+  border-radius: 20px;
+}
+.switch:hover .slider.round {
+  background-color: #1d4ed8;
 }
 .CodeMirror {
   font-family: monospace;
@@ -192,7 +234,6 @@ header {
   }
 }
 .cm-tab {
-  display: inline-block;
   text-decoration: inherit;
 }
 .CodeMirror-rulers {
@@ -474,6 +515,12 @@ div.CodeMirror-dragcursors {
 .CodeMirror-crosshair {
   cursor: crosshair;
 }
+.CodeMirror-foldgutter-folded,
+.CodeMirror-foldgutter-open,
+.CodeMirror-hint,
+.slider {
+  cursor: pointer;
+}
 .CodeMirror-line::selection,
 .CodeMirror-line > span::selection,
 .CodeMirror-line > span > span::selection {
@@ -597,6 +644,110 @@ div.cm-s-mdn-like span.CodeMirror-matchingbracket {
   margin-top: 15px;
   text-align: left;
   background-color: transparent;
+}
+.CodeMirror-hints {
+  position: absolute;
+  z-index: 10;
+  overflow: hidden;
+  list-style: none;
+  margin: 0;
+  padding: 2px;
+  -webkit-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  border: 1px solid silver;
+  background: #fff;
+  font-size: 90%;
+  font-family: monospace;
+  max-height: 20em;
+  overflow-y: auto;
+}
+.CodeMirror-hint {
+  margin: 0;
+  padding: 0 4px;
+  border-radius: 2px;
+  white-space: pre;
+  color: #000;
+}
+li.CodeMirror-hint-active {
+  background: #08f;
+  color: #fff;
+}
+.CodeMirror-simplescroll-horizontal div,
+.CodeMirror-simplescroll-vertical div {
+  position: absolute;
+  background: #ccc;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 1px solid #bbb;
+  border-radius: 2px;
+}
+.CodeMirror-simplescroll-horizontal,
+.CodeMirror-simplescroll-vertical {
+  position: absolute;
+  z-index: 6;
+  background: #eee;
+}
+.CodeMirror-simplescroll-horizontal {
+  bottom: 0;
+  left: 0;
+  height: 8px;
+}
+.CodeMirror-overlayscroll-horizontal div,
+.CodeMirror-simplescroll-horizontal div {
+  bottom: 0;
+  height: 100%;
+}
+.CodeMirror-simplescroll-vertical {
+  right: 0;
+  top: 0;
+  width: 8px;
+}
+.CodeMirror-overlayscroll-vertical div,
+.CodeMirror-simplescroll-vertical div {
+  right: 0;
+  width: 100%;
+}
+.CodeMirror-overlayscroll-horizontal div,
+.CodeMirror-overlayscroll-vertical div {
+  position: absolute;
+  background: rgba(40, 127, 209, 0.65);
+  border-radius: 3px;
+}
+.CodeMirror-overlayscroll-horizontal,
+.CodeMirror-overlayscroll-vertical {
+  position: absolute;
+  z-index: 6;
+}
+.CodeMirror-overlayscroll-horizontal {
+  bottom: 0;
+  left: 0;
+  height: 6px;
+}
+.CodeMirror-overlayscroll-vertical {
+  right: 0;
+  top: 0;
+  width: 6px;
+}
+.CodeMirror-foldmarker {
+  color: #636363;
+  text-shadow: var(--glad-gutter-fold-text-shadow) 1px 1px 2px,
+    var(--glad-gutter-fold-text-shadow) -1px -1px 2px,
+    var(--glad-gutter-fold-text-shadow) 1px -1px 2px,
+    var(--glad-gutter-fold-text-shadow) -1px 1px 2px;
+  font-family: arial;
+  line-height: 0.3;
+  font-size: large;
+  cursor: pointer;
+}
+.CodeMirror-foldgutter {
+  width: 0.7em;
+}
+.CodeMirror-foldgutter-open:after {
+  content: "\25BE";
+}
+.CodeMirror-foldgutter-folded:after {
+  content: "\25B8";
 }
 .dark html {
   background-color: #181a1b !important;
@@ -792,8 +943,8 @@ div.cm-s-mdn-like span.CodeMirror-matchingbracket {
   color: #cca86d;
 }
 .dark button,
-input,
-textarea {
+.dark input,
+.dark textarea {
   color: inherit;
 }
 .dark button {
@@ -895,73 +1046,6 @@ textarea {
 .dark .cm-s-mdn-like .CodeMirror-line > span > span::-moz-selection {
   background: var(--glad-dark-selection-background);
 }
-.switch {
-  margin-left: auto;
-  position: relative;
-  display: inline-block;
-  width: 28px;
-  height: 32px;
-}
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-.slider:before {
-  position: absolute;
-  content: "\f185";
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  font-size: 18px;
-  top: 4px;
-  left: 4px;
-  color: #fff;
-  -webkit-transition: 0.4s;
-  -o-transition: 0.4s;
-  transition: 0.4s;
-}
-input:checked + .slider:before {
-  content: "\f186";
-  color: #fff;
-}
-.switch .slider.round {
-  border-radius: 20px;
-}
-.switch:hover .slider.round {
-  background-color: #1d4ed8;
-}
-.CodeMirror-hints {
-  position: absolute;
-  z-index: 10;
-  overflow: hidden;
-  list-style: none;
-  margin: 0;
-  padding: 2px;
-  -webkit-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
-  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
-  border: 1px solid silver;
-  background: #fff;
-  font-size: 90%;
-  font-family: monospace;
-  max-height: 20em;
-  overflow-y: auto;
-}
-.CodeMirror-hint {
-  margin: 0;
-  padding: 0 4px;
-  border-radius: 2px;
-  white-space: pre;
-  color: #000;
-  cursor: pointer;
-}
-li.CodeMirror-hint-active {
-  background: #08f;
-  color: #fff;
-}
 .dark .CodeMirror-hints {
   border-color: #292c2f;
   background-color: #1e2022;
@@ -970,59 +1054,10 @@ li.CodeMirror-hint-active {
 .dark .CodeMirror-hint {
   color: #e5e7eb;
 }
-.CodeMirror-simplescroll-horizontal div,
-.CodeMirror-simplescroll-vertical div {
-  position: absolute;
-  background: #ccc;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  border: 1px solid #bbb;
-  border-radius: 2px;
-}
-.CodeMirror-simplescroll-horizontal,
-.CodeMirror-simplescroll-vertical {
-  position: absolute;
-  z-index: 6;
-  background: #eee;
-}
-.CodeMirror-simplescroll-horizontal {
-  bottom: 0;
-  left: 0;
-  height: 8px;
-}
-.CodeMirror-overlayscroll-horizontal div,
-.CodeMirror-simplescroll-horizontal div {
-  bottom: 0;
-  height: 100%;
-}
-.CodeMirror-simplescroll-vertical {
-  right: 0;
-  top: 0;
-  width: 8px;
-}
-.CodeMirror-overlayscroll-vertical div,
-.CodeMirror-simplescroll-vertical div {
-  right: 0;
-  width: 100%;
-}
-.CodeMirror-overlayscroll-horizontal div,
-.CodeMirror-overlayscroll-vertical div {
-  position: absolute;
-  background: rgba(40, 127, 209, 0.65);
-  border-radius: 3px;
-}
-.CodeMirror-overlayscroll-horizontal,
-.CodeMirror-overlayscroll-vertical {
-  position: absolute;
-  z-index: 6;
-}
-.CodeMirror-overlayscroll-horizontal {
-  bottom: 0;
-  left: 0;
-  height: 6px;
-}
-.CodeMirror-overlayscroll-vertical {
-  right: 0;
-  top: 0;
-  width: 6px;
+.dark .CodeMirror-foldmarker {
+  color: #929292;
+  text-shadow: var(--glad-dark-gutter-fold-text-shadow) 1px 1px 2px,
+    var(--glad-dark-gutter-fold-text-shadow) -1px -1px 2px,
+    var(--glad-dark-gutter-fold-text-shadow) 1px -1px 2px,
+    var(--glad-dark-gutter-fold-text-shadow) -1px 1px 2px;
 }
