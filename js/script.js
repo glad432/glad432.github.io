@@ -202,6 +202,7 @@ function setupFileInput() {
 				handleFile(selectedFile);
 			} else {
 				generateButton.disabled = true;
+				fileNameDisplay.classList.remove(...classlst0);
 				errorMessage.classList.add('font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit');
 				errorMessage.innerHTML = `${exctri} Invalid file format. Please select a .py file.`;
 				fileInput.value = '';
