@@ -301,6 +301,10 @@ async function Sharelink() {
 			setTimeout(() => {
 				copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
 				close_Popup.classList.remove('hidden');
+				qrCode.style.textAlign = '-moz-center';
+				qrCode.style.textAlign = '-webkit-center';
+				qrCode.style.background = 'rgb(255, 255, 255)';
+				qrCode.classList.add('ml-10', 'p-2' ,'mr-10' ,'mt-2');
 				file_Link.classList.remove('hidden');
 				fileLink_load.innerHTML = '';
 				displayQRCode(fileLink);
@@ -342,6 +346,9 @@ function displayQRCode(fileLink) {
 }
 
 function closePopup() {
+	qrCode.classList.remove('ml-10', 'p-2' ,'mr-10' ,'mt-2');
+	qrCode.style.textAlign = '';
+    qrCode.style.background = '';
 	close_Popup.classList.add('hidden');
 	overlay.classList.add("hidden");
 	popup.classList.add("hidden");
