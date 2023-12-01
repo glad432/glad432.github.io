@@ -687,7 +687,7 @@ var QRCode;
 		p = "svg" === document.documentElement.tagName.toLowerCase(),
 		q = p ? o : m() ? function() {
 			function a() {
-				this._elImage.src = this._elCanvas.toDataURL("image/png"),this._elImage.style.display = "block", this._elImage.style.background = "white",this._elImage.setAttribute('oncontextmenu','return false;'),this._elImage.classList.add('cursor-none', 'm-auto','p-1' ,'block' ,'mt-2' ,'mb-2'), this._elCanvas.style.display = "none"
+				this._elImage.src = this._elCanvas.toDataURL("image/png"),this._elImage.style.display = "block", this._elCanvas.style.display = "none"
 			}
 
 			function d(a, b) {
