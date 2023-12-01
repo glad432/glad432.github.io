@@ -3,12 +3,19 @@ const copyButton = document.getElementById('copy');
 const textElement = document.getElementById("text");
 const cursorElement = document.getElementById("cursor");
 const errorMessage = document.getElementById('errmsg');
-const minifiedSizeElement = document.getElementById("minified-size");
 const generateButton = document.getElementById('dw');
+const shareButton = document.getElementById("share");
 const dropArea = document.getElementById('dropArea');
 const fileInput = document.getElementById('fileInput');
 const fileNameDisplay = document.getElementById('fileNameDisplay');
 const minifiedSizeSpan = document.getElementById('minified-size');
+const fileLink_load = document.getElementById("fileLink-load");
+const qrCode = document.getElementById("qrCode");
+const copy_msg = document.getElementById('copy-msg');
+const file_Link = document.getElementById("fileLink");
+const close_Popup = document.getElementById('closePopup');
+const popup = document.getElementById("popup");
+const overlay = document.getElementById("overlay");
 var preservedGlobalsInput = document.getElementById('preserve_globals');
 var contentDiv = document.querySelector('.content-ll');
 var content = document.querySelector('.content-ll');
@@ -260,12 +267,102 @@ function dw_py() {
 	var dataUri = URL.createObjectURL(blob);
 	var downloadLink = document.createElement("a");
 	downloadLink.href = dataUri;
-	downloadLink.download = (document.getElementById('fileNameDisplay').textContent || "default.py").replace(/\.[^/.]+$/, "") + "_min.py";
+	downloadLink.download = (fileNameDisplay.textContent || "default.py").replace(/\.[^/.]+$/, "") + "_min.py";
 	downloadLink.click();
 	URL.revokeObjectURL(dataUri);
 }
 
 document.getElementById('dw').addEventListener('click', dw_py);
+
+async function Sharelink() {
+	const editorContent = minifiedEditor.getValue();
+	const fileName = (fileNameDisplay.textContent || "default.py").replace(/\.[^/.]+$/, "") + "_min.py";
+
+
+	try {
+		const response = await fetch('https://file.io/?expires=2w', {
+			method: 'POST',
+			body: createFormData(editorContent, fileName)
+		});
+
+		const result = await response.json();
+
+		if (result.success) {
+			const fileLink = result.link;
+
+			document.getElementById('downloadLink').style.display = 'block';
+			overlay.classList.remove("hidden");
+			popup.classList.remove("hidden");
+			document.body.classList.add("overflow-y-hidden");
+			document.body.classList.remove("overflow-y-scroll");
+			file_Link.classList.add('hidden');
+			copy_msg.textContent = '';
+			fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin-pulse"></i></span>`;
+			setTimeout(() => {
+				copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
+				close_Popup.classList.remove('hidden');
+				file_Link.classList.remove('hidden');
+				fileLink_load.innerHTML = '';
+				displayQRCode(fileLink);
+				qrCode.classList.remove('inline');
+				const link = file_Link;
+				link.href = fileLink;
+				link.value = fileLink;
+			}, 1500);
+		} else {
+			console.log('Error generating file link:', result.message || 'Unknown error');
+		}
+	} catch (error) {
+		console.error('Error during fetch request:', error);
+
+	}
+}
+
+shareButton.addEventListener('click', Sharelink);
+
+function createFormData(content, fileName) {
+	const formData = new FormData();
+
+	const blob = new Blob([content], {
+		type: 'application/x-python'
+	});
+
+	formData.append('file', blob, fileName);
+	return formData;
+}
+
+function displayQRCode(fileLink) {
+	const qr = new QRCode(qrCode, {
+		text: fileLink,
+		width: 128,
+		height: 128,
+		correctLevel: QRCode.CorrectLevel.H,
+	});
+
+}
+
+function closePopup() {
+	close_Popup.classList.add('hidden');
+	overlay.classList.add("hidden");
+	popup.classList.add("hidden");
+	document.body.classList.remove("overflow-y-hidden");
+	document.body.classList.add("overflow-y-scroll");
+	qrCode.innerHTML = '';
+	fileLink_load.innerHTML = '';
+	file_Link.value = '';
+	copy_msg.innerHTML = '';
+
+}
+close_Popup.addEventListener('click', closePopup);
+
+async function copyText() {
+	await navigator.clipboard.writeText(file_Link.value);
+	copy_msg.innerHTML = 'Copied <i class="fa-solid fa-copy fa-fade"></i>';
+	setTimeout(() => {
+		copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
+	}, 3000);
+}
+file_Link.addEventListener('click', copyText);
 
 sourceEditor.on("change", function(editor) {
 	document.getElementById("source").value = editor.getValue();
@@ -349,7 +446,8 @@ function initializeMinifier() {
 	}
 
 	async function minifyClick() {
-		minifyButton.disabled = true;
+		shareButton.disabled = false;
+		minifyButton.disabled = false;
 		generateButton.disabled = false;
 
 		minifiedEditor.setValue('');
@@ -370,7 +468,10 @@ function initializeMinifier() {
 				minifiedEditor.setValue(minified);
 				minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)}  kB`;
 				copyButton.disabled = false;
+				shareButton.disabled = false;
+
 			} else {
+				shareButton.disabled = true;
 				copyButton.disabled = true;
 				generateButton.disabled = true;
 				minifiedSizeSpan.innerHTML = `${exctri} Error`;
@@ -382,12 +483,15 @@ function initializeMinifier() {
 			}
 
 		} catch {
+			shareButton.disabled = true;
 			copyButton.disabled = true;
 			generateButton.disabled = true;
 			minifiedSizeSpan.textContent = 'Enter orginal code!!';
 		}
 
 		minifyButton.disabled = false;
+		shareButton.disabled = false;
+
 	}
 
 	minifyButton.addEventListener('click', minifyClick);
@@ -410,13 +514,14 @@ function initializeMinifier() {
 	});
 
 	minifyButton.disabled = false;
+
 }
 
 initializeMinifier();
 
 function clearSource() {
 	const classNamesToRemove = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit'];
-
+	shareButton.disabled = true;
 	generateButton.disabled = true;
 
 	fileNameDisplay.classList.remove(...classNamesToRemove);
@@ -433,7 +538,7 @@ function clearSource() {
 
 	sourceEditor.setValue('');
 
-	minifiedSizeElement.textContent = "0.000 kB";
+	minifiedSizeSpan.textContent = "0.000 kB";
 }
 
 document.getElementById('rm').addEventListener('click', clearSource);
@@ -447,6 +552,7 @@ function toggleContent1() {
 		contentDiv.style.maxHeight = contentDiv.scrollHeight + 'px';
 	}
 }
+document.getElementById('toggleContent1').addEventListener('click', toggleContent1);
 
 function toggleContentFiles() {
 	content.style.display = content.style.display === 'none' ? 'block' : 'none';
@@ -459,6 +565,7 @@ function tickAllAndSetGlobals() {
 
 	preservedGlobalsInput.value = 'handler';
 }
+document.getElementById('selectall').addEventListener('click', tickAllAndSetGlobals);
 
 function resetOptions() {
 	checkboxes.forEach(function(checkbox) {
@@ -471,3 +578,4 @@ function resetOptions() {
 		textField.value = '';
 	});
 }
+document.getElementById('Unselectall').addEventListener('click', resetOptions);
