@@ -120,18 +120,18 @@
           <div id="orderedList" class="mt-4 ml-4"></div>
         </header>
       </div>
-      <p style="display: none !important;">A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks. Its primary purpose is to enhance the loading speed of Python scripts, particularly beneficial for web applications. By reducing the overall size of the code, the minifier contributes to faster script loading times, optimizing web performance. The process of minification streamlines code readability without affecting its functionality or logic. Minified code is more efficiently transmitted and executed across various platforms, aiding developers in delivering smoother user experiences. Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment.</p>
+      <p class="hidden">A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks. Its primary purpose is to enhance the loading speed of Python scripts, particularly beneficial for web applications. By reducing the overall size of the code, the minifier contributes to faster script loading times, optimizing web performance. The process of minification streamlines code readability without affecting its functionality or logic. Minified code is more efficiently transmitted and executed across various platforms, aiding developers in delivering smoother user experiences. Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment.</p>
       <h2 class="select-none text-2xl font-bold blue_black_head py-6">Original Code</h2>
       <div class="select-none text-left">
         <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Line Count: 42</span>
         <span id="text-size" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">0.992 kB</span>
       </div>
-      <input style="display: none;" type="file" id="fileInput" accept=".py" />
+      <input class="hidden" type="file" id="fileInput" accept=".py" />
       <div id="dropArea" class="select-none cursor-pointer rounded-xl border-dashed border-4 border-gray-300 bg-white p-8 m-5">
         <p>Drag and drop a <span class="font-bold">.py file</span> here or click to <span class="text-blue-600 font-bold hover:underline">browse</span></p>
       </div>
       <p id="errmsg"></p>
-      <div id="fileNameDisplay" class="select-none" style="max-width: fit-content"></div>
+      <div id="fileNameDisplay"></div>
       <textarea id="source" autocomplete="off">class Person:
     def __init__(self, name, age):
         self.name = name
@@ -250,13 +250,12 @@ if __name__ == "__main__":
       <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 hidden transition-opacity duration-2000"></div>
       <div id="popup" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded shadow-md z-50 hidden transition-transform duration-2000">
         <div id="downloadLink">
-          <p id="share-link">
-            <span id="fileLink-load"></span>
-          </p>
+          <span id="fileLink-load"></span>
           <div class="relative">
-            <label id="copy-msg" for="fileLink" class="select-none cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Locals:</label>
-            <input type="text" id="fileLink" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-56 p-2.5 " value="" readonly>
+            <label id="copy-msg" for="fileLink" class="select-none cursor-pointer block mb-2 text-lg text-neutral-500 font-medium"></label>
+            <input type="text" id="fileLink" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-56 p-2.5" value="" readonly>
           </div>
+          <span id="scantocopy"></span>
           <div id="qrCode"></div>
         </div>
         <button id="closePopup" class="hidden select-none px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Close</button>
