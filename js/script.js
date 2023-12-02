@@ -16,6 +16,7 @@ const file_Link = document.getElementById("fileLink");
 const close_Popup = document.getElementById('closePopup');
 const popup = document.getElementById("popup");
 const overlay = document.getElementById("overlay");
+const orscan = document.getElementById('scantocopy');
 var preservedGlobalsInput = document.getElementById('preserve_globals');
 var contentDiv = document.querySelector('.content-ll');
 var content = document.querySelector('.content-ll');
@@ -278,7 +279,6 @@ async function Sharelink() {
 	const editorContent = minifiedEditor.getValue();
 	const fileName = (fileNameDisplay.textContent || "default.py").replace(/\.[^/.]+$/, "") + "_min.py";
 
-
 	try {
 		const response = await fetch('https://file.io/?expires=2w', {
 			method: 'POST',
@@ -300,6 +300,8 @@ async function Sharelink() {
 			fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin-pulse"></i></span>`;
 			setTimeout(() => {
 				copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
+				orscan.innerHTML = 'or Scan <i class="fa-solid fa-expand"></i>';
+				orscan.classList.add('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
 				qrCode.style.textAlign = '-moz-center';
 				qrCode.style.textAlign = '-webkit-center';
@@ -318,7 +320,6 @@ async function Sharelink() {
 		}
 	} catch (error) {
 		console.error('Error during fetch request:', error);
-
 	}
 }
 
@@ -347,8 +348,9 @@ function displayQRCode(fileLink) {
 
 function closePopup() {
 	qrCode.classList.remove('ml-10', 'p-2' ,'mr-10' ,'mt-2');
+	orscan.classList.remove('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 	qrCode.style.textAlign = '';
-    qrCode.style.background = '';
+	qrCode.style.background = '';
 	close_Popup.classList.add('hidden');
 	overlay.classList.add("hidden");
 	popup.classList.add("hidden");
@@ -358,6 +360,7 @@ function closePopup() {
 	fileLink_load.innerHTML = '';
 	file_Link.value = '';
 	copy_msg.innerHTML = '';
+	orscan.innerHTML = '';
 
 }
 close_Popup.addEventListener('click', closePopup);
