@@ -17,6 +17,7 @@ const close_Popup = document.getElementById('closePopup');
 const popup = document.getElementById("popup");
 const overlay = document.getElementById("overlay");
 const orscan = document.getElementById('scantocopy');
+const help_msg = document.getElementById('help-msg');
 var preservedGlobalsInput = document.getElementById('preserve_globals');
 var contentDiv = document.querySelector('.content-ll');
 var content = document.querySelector('.content-ll');
@@ -297,16 +298,18 @@ async function Sharelink() {
 			document.body.classList.remove("overflow-y-scroll");
 			file_Link.classList.add('hidden');
 			copy_msg.textContent = '';
+			help_msg.innerHTML = '';
 			fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin-pulse"></i></span>`;
 			setTimeout(() => {
 				copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
 				orscan.innerHTML = 'or Scan <i class="fa-solid fa-expand"></i>';
+				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-gray-700">This link will expire as soon as you download the py file.</p></div>`;
 				orscan.classList.add('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
 				qrCode.style.textAlign = '-moz-center';
 				qrCode.style.textAlign = '-webkit-center';
 				qrCode.style.background = 'rgb(255, 255, 255)';
-				qrCode.classList.add('ml-10', 'p-2' ,'mr-10' ,'mt-2');
+				qrCode.classList.add('ml-10', 'p-2', 'mr-10', 'mt-2');
 				file_Link.classList.remove('hidden');
 				fileLink_load.innerHTML = '';
 				displayQRCode(fileLink);
@@ -347,7 +350,7 @@ function displayQRCode(fileLink) {
 }
 
 function closePopup() {
-	qrCode.classList.remove('ml-10', 'p-2' ,'mr-10' ,'mt-2');
+	qrCode.classList.remove('ml-10', 'p-2', 'mr-10', 'mt-2');
 	orscan.classList.remove('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 	qrCode.style.textAlign = '';
 	qrCode.style.background = '';
@@ -361,6 +364,7 @@ function closePopup() {
 	file_Link.value = '';
 	copy_msg.innerHTML = '';
 	orscan.innerHTML = '';
+	help_msg.innerHTML = '';
 
 }
 close_Popup.addEventListener('click', closePopup);
