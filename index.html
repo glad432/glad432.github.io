@@ -128,7 +128,8 @@
       </div>
       <input class="hidden" type="file" id="fileInput" accept=".py" />
       <div id="dropArea" class="select-none cursor-pointer rounded-xl border-dashed border-4 border-gray-300 bg-white p-8 m-5">
-        <p>Drag and drop a <span class="font-bold">.py file</span> here or click to <span class="text-blue-600 font-bold hover:underline">browse</span></p>
+        <p>Drag and drop a <span class="font-bold">.py file</span> here or click to <span class="text-blue-600 font-bold hover:underline">browse</span>
+        </p>
       </div>
       <p id="errmsg"></p>
       <div id="fileNameDisplay"></div>
@@ -237,8 +238,8 @@ if __name__ == "__main__":
             <label for="remove_explicit_return_none" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove return statements that are not required</label>
           </div>
           <div class="select-none space-x-2 text-center">
-            <button id="selectall" class="text-2xl base font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Select all</button>
-            <button id="Unselectall" class="text-2xl base font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Unselect all</button>
+            <button id="selectall" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Select all</button>
+            <button id="Unselectall" class="text-2xl font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Unselect all</button>
           </div>
         </div>
       </div>
@@ -255,6 +256,7 @@ if __name__ == "__main__":
             <label id="copy-msg" for="fileLink" class="select-none cursor-pointer block mb-2 text-lg text-neutral-500 font-medium"></label>
             <input type="text" id="fileLink" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-56 p-2.5" value="" readonly>
           </div>
+          <div id="help-msg" class="help-container" oncontextmenu="return false"></div>
           <span id="scantocopy"></span>
           <div id="qrCode"></div>
         </div>
