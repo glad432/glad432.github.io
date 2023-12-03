@@ -66,9 +66,7 @@ header {
   .typing-container {
     font-size: 12px;
   }
-  .content-l,
-  pre[class*="language-"],
-  textarea[id="source"] {
+  .content-l {
     font-size: 12px !important;
   }
   .simp_border {
@@ -77,14 +75,15 @@ header {
   .blue_big_box {
     width: auto !important;
   }
+  #Unselectall,
   #copy,
+  #dw,
   #minify,
   #rm,
-  #rm0 {
+  #rm0,
+  #selectall,
+  #share {
     font-size: 14px;
-  }
-  .base {
-    font-size: 16px !important;
   }
 }
 .blue_big_box {
@@ -115,6 +114,11 @@ header {
   display: block;
   border-radius: 5px;
 }
+.CodeMirror-gutter-filler,
+.CodeMirror-scrollbar-filler,
+.help-content {
+  background-color: #fff;
+}
 .cm-tab,
 .switch {
   display: inline-block;
@@ -131,17 +135,22 @@ header {
   width: 28px;
   height: 32px;
 }
-.slider {
+.CodeMirror-ruler,
+.help-container,
+.help-content,
+.slider,
+.slider:before {
   position: absolute;
+}
+.slider {
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
 }
 .slider:before {
-  position: absolute;
   content: "\f185";
-  font-family: "Font Awesome 5 Free";
+  font-family: "Font Awesome 6 Free";
   font-weight: 900;
   font-size: 18px;
   top: 4px;
@@ -161,6 +170,25 @@ input:checked + .slider:before {
 .switch:hover .slider.round {
   background-color: #1d4ed8;
 }
+.help-container {
+  left: 10px;
+  top: 8px;
+}
+.help-content {
+  display: none;
+  top: 100%;
+  left: 0;
+  width: 200px;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  transition: opacity 0.5s ease-in-out;
+}
+.help-container:hover .help-content {
+  display: block;
+  opacity: 1;
+}
 .CodeMirror {
   font-family: monospace;
   border: 1px solid #ccc;
@@ -170,10 +198,6 @@ input:checked + .slider:before {
 }
 .CodeMirror-lines {
   padding: 4px 0;
-}
-.CodeMirror-gutter-filler,
-.CodeMirror-scrollbar-filler {
-  background-color: #fff;
 }
 .CodeMirror-gutters {
   border-right: 1px solid #ddd;
@@ -248,7 +272,6 @@ input:checked + .slider:before {
   border-left: 1px solid #ccc;
   top: 0;
   bottom: 0;
-  position: absolute;
 }
 .cm-s-default .cm-def,
 .cm-s-default .cm-header {
@@ -798,6 +821,11 @@ li.CodeMirror-hint-active {
 }
 .dark .typing-container {
   color: #c8c3bc;
+}
+.dark .help-content {
+  background: #181a1b;
+  color: var(--glad-neutral-text);
+  border-color: #736b5e;
 }
 .dark .blue_big_box {
   -webkit-box-shadow: #52585c 0 1px 3px;
