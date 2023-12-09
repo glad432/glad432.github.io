@@ -686,9 +686,7 @@ var QRCode;
 		}(),
 		p = "svg" === document.documentElement.tagName.toLowerCase(),
 		q = p ? o : m() ? function() {
-			function a() {
-				this._elImage.src = this._elCanvas.toDataURL("image/png"),this._elImage.style.display = "block", this._elCanvas.style.display = "none"
-			}
+			function a() {}
 
 			function d(a, b) {
 				var c = this;
@@ -715,7 +713,7 @@ var QRCode;
 				}
 			}
 			var e = function(a, b) {
-				this._bIsPainted = !1, this._android = n(), this._htOption = b, this._elCanvas = document.createElement("canvas"), this._elCanvas.width = b.width, this._elCanvas.height = b.height, a.appendChild(this._elCanvas), this._el = a, this._oContext = this._elCanvas.getContext("2d"), this._bIsPainted = !1, this._elImage = document.createElement("img"), this._elImage.style.display = "none", this._el.appendChild(this._elImage), this._bSupportDataURI = null
+				this._bIsPainted = !1, this._android = n(), this._htOption = b, this._elCanvas = document.createElement("canvas"), this._elCanvas.width = b.width, this._elCanvas.height = b.height, a.appendChild(this._elCanvas), this._el = a, this._oContext = this._elCanvas.getContext("2d"), this._bIsPainted = !1, this._elImage = document.createElement("img"), this._el.appendChild(this._elImage), this._el.removeChild(this._elImage), this._bSupportDataURI = null
 			};
 			return e.prototype.draw = function(a) {
 				var b = this._elImage,
