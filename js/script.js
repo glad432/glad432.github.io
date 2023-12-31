@@ -28,7 +28,9 @@ let charIndex = 0;
 let isTyping = true;
 var contentVisible = false;
 var contentVisible1 = false;
-const exctri = '<i class="fa-solid fa-triangle-exclamation"></i>';
+const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
+const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
+const code_file = `<i class="fa-solid fa-file-code"></i>`;
 var words = [
 	'and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif',
 	'else', 'except', 'False', 'finally', 'for', 'from', 'global', 'if', 'import',
@@ -187,7 +189,7 @@ function setupFileInput() {
 			classNamesToAdd = [];
 			if (droppedFile.name.toLowerCase().endsWith('.py')) {
 				errorMessage.classList.remove(...classlst);
-				fileNameDisplay.textContent = droppedFile.name;
+				fileNameDisplay.innerHTML = `${code_file} ${droppedFile.name}`;
 				fileNameDisplay.classList.add(...classlst0);
 				handleFile(droppedFile);
 			} else {
@@ -207,7 +209,7 @@ function setupFileInput() {
 
 		if (selectedFile) {
 			if (selectedFile.name.toLowerCase().endsWith('.py')) {
-				fileNameDisplay.textContent = selectedFile.name;
+				fileNameDisplay.innerHTML = `${code_file} ${selectedFile.name}`;
 				fileNameDisplay.classList.add(...classlst0);
 				handleFile(selectedFile);
 			} else {
@@ -264,13 +266,14 @@ function setupFileInput() {
 window.addEventListener('load', setupFileInput);
 
 function dw_py() {
+	animateIcon("fade-1", "fa-fade", 3000);
 	var blob = new Blob([minifiedEditor.getValue()], {
 		type: "text/x-python"
 	});
 	var dataUri = URL.createObjectURL(blob);
 	var downloadLink = document.createElement("a");
 	downloadLink.href = dataUri;
-	downloadLink.download = (fileNameDisplay.textContent || "default.py").replace(/\.[^/.]+$/, "") + "_min.py";
+	downloadLink.download = (fileNameDisplay.textContent || "default.py").replace(/^ /, "").replace(/\.[^/.]+$/, "") + "_min.py";
 	downloadLink.click();
 	URL.revokeObjectURL(dataUri);
 }
@@ -278,8 +281,9 @@ function dw_py() {
 document.getElementById('dw').addEventListener('click', dw_py);
 
 async function Sharelink() {
+	animateIcon("fade-2", "fa-fade", 3000);
 	const editorContent = minifiedEditor.getValue();
-	const fileName = (fileNameDisplay.textContent || "default.py").replace(/\.[^/.]+$/, "") + "_min.py";
+	const fileName = (fileNameDisplay.textContent || "default.py").replace(/^_/, "").replace(/\.[^/.]+$/, "") + "_min.py";
 
 	try {
 		const response = await fetch('https://file.io/?expires=2w', {
@@ -462,6 +466,10 @@ function initializeMinifier() {
 	}
 
 	async function copyClick() {
+		copyButton.innerHTML = `Copied <i class="fa-solid fa-clipboard fa-fade"></i>`;
+		setTimeout(() => {
+			copyButton.innerHTML = `Copy <i class="fa-solid fa-clipboard"></i>`;
+		}, 2500);
 		try {
 			await navigator.clipboard.writeText(minifiedEditor.getValue());
 		} catch (error) {
@@ -475,6 +483,7 @@ function initializeMinifier() {
 		generateButton.disabled = false;
 
 		minifiedEditor.setValue('');
+		animateIcon("fade-0", "fa-fade", 1500);
 		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
 
 		try {
@@ -498,11 +507,11 @@ function initializeMinifier() {
 				shareButton.disabled = true;
 				copyButton.disabled = true;
 				generateButton.disabled = true;
-				minifiedSizeSpan.innerHTML = `${exctri} Error`;
+				minifiedSizeSpan.innerHTML = `${excir} Error`;
 
 				try {
 					const error = await response.json();
-					minifiedSizeSpan.innerHTML = `${exctri} ${error['message']}`;
+					minifiedSizeSpan.innerHTML = `${excir} ${error.message}`;
 				} catch {}
 			}
 
@@ -547,6 +556,7 @@ function clearSource() {
 	const classNamesToRemove = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit'];
 	shareButton.disabled = true;
 	generateButton.disabled = true;
+	copyButton.disabled = true;
 
 	fileNameDisplay.classList.remove(...classNamesToRemove);
 	fileNameDisplay.textContent = '';
@@ -567,7 +577,15 @@ function clearSource() {
 
 document.getElementById('rm').addEventListener('click', clearSource);
 
-document.getElementById('rm0').addEventListener('click', clearSource);
+function animateIcon(fade, fade_class, fade_dur) {
+	var ani_icon = document.getElementById(fade);
+
+	ani_icon.classList.add(fade_class);
+
+	setTimeout(function() {
+		ani_icon.classList.remove(fade_class);
+	}, fade_dur);
+}
 
 function toggleContent1() {
 	if (contentDiv.style.maxHeight) {
