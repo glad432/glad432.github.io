@@ -243,8 +243,10 @@ if __name__ == "__main__":
           </div>
         </div>
       </div>
-      <div class="mb-2 md:mb-4 select-none">
-        <button id="minify" class="text-2xl font-bold bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Minify</button>
+      <div class="select-none mb-2 md:mb-4">
+        <button id="minify" class="text-2xl font-bold bg-blue-500 text-white py-1 px-2 rounded mb-2 md:mb-0 hover:bg-blue-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Minify</button>
+      </div>
+      <div class="mb-2 md:mb-4">
         <button id="copy" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Copy</button>
         <button id="rm0" class="text-2xl font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Clear</button>
       </div>
@@ -252,9 +254,10 @@ if __name__ == "__main__":
       <div id="popup" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded shadow-md z-50 hidden transition-transform duration-2000">
         <div id="downloadLink">
           <span id="fileLink-load"></span>
-          <div class="relative">
-            <label id="copy-msg" for="fileLink" class="select-none cursor-pointer block mb-2 text-lg text-neutral-500 font-medium"></label>
-            <input type="text" id="fileLink" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-56 p-2.5" value="" readonly>
+          <label id="copy-msg" for="fileLink" class="select-none cursor-pointer block mb-2 text-lg text-neutral-500 font-medium"></label>
+          <div class="relative flex items-center">
+            <input type="text" id="fileLink" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-51 p-2.5 mr-1" value="" readonly>
+            <a id="new_tab"></a>
           </div>
           <div id="help-msg" class="help-container" oncontextmenu="return false"></div>
           <span id="scantocopy"></span>
@@ -270,8 +273,8 @@ if __name__ == "__main__":
         </div>
         <textarea id="minified"></textarea>
         <div class="mb-2 md:mb-4 select-none">
-          <button id="dw" disabled class="select-none px-4 py-2 mt-2 font-bold bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Download</button>
-          <button id="share" disabled class="select-none px-4 py-2 mt-2 font-bold bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Share</button>
+          <button id="dw" disabled class="select-none px-4 py-2 mt-2 font-bold bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Download <i class="fa-solid fa-download"></i></button>
+          <button id="share" disabled class="select-none px-4 py-2 mt-2 font-bold bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Share <i class="fa-solid fa-share-from-square"></i></button>
         </div>
       </header>
     </section>
