@@ -18,6 +18,7 @@ const popup = document.getElementById("popup");
 const overlay = document.getElementById("overlay");
 const orscan = document.getElementById('scantocopy');
 const help_msg = document.getElementById('help-msg');
+const link_newtab = document.getElementById("new_tab");
 var preservedGlobalsInput = document.getElementById('preserve_globals');
 var contentDiv = document.querySelector('.content-ll');
 var content = document.querySelector('.content-ll');
@@ -302,14 +303,19 @@ async function Sharelink() {
 			fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin-pulse"></i></span>`;
 			setTimeout(() => {
 				copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
-				orscan.innerHTML = 'or Scan <i class="fa-solid fa-expand"></i>';
+				link_newtab.href = fileLink;
+				link_newtab.classList.add('text-white', 'bg-blue-700', 'hover:bg-blue-800', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5', 'dark:bg-blue-600', 'dark:hover:bg-blue-700');
+				link_newtab.innerHTML = ` <i class="fa-solid fa-up-right-from-square"></i>`;
+				link_newtab.target = "_blank";
+				link_newtab.title = 'Open in new tab';
+				orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
 				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-gray-700">This link will expire as soon as you download the py file.</p></div>`;
 				orscan.classList.add('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
 				qrCode.style.textAlign = '-moz-center';
 				qrCode.style.textAlign = '-webkit-center';
 				qrCode.style.background = 'rgb(255, 255, 255)';
-				qrCode.classList.add('ml-10', 'p-2', 'mr-10', 'mt-2');
+				qrCode.classList.add('ml-12', 'p-2', 'mr-12', 'mt-2');
 				file_Link.classList.remove('hidden');
 				fileLink_load.innerHTML = '';
 				displayQRCode(fileLink);
@@ -350,8 +356,9 @@ function displayQRCode(fileLink) {
 }
 
 function closePopup() {
-	qrCode.classList.remove('ml-10', 'p-2', 'mr-10', 'mt-2');
+	qrCode.classList.remove('ml-12', 'p-2', 'mr-12', 'mt-2');
 	orscan.classList.remove('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
+	link_newtab.classList.remove('text-white', 'bg-blue-700', 'hover:bg-blue-800', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5', 'dark:bg-blue-600', 'dark:hover:bg-blue-700');
 	qrCode.style.textAlign = '';
 	qrCode.style.background = '';
 	close_Popup.classList.add('hidden');
@@ -365,6 +372,9 @@ function closePopup() {
 	copy_msg.innerHTML = '';
 	orscan.innerHTML = '';
 	help_msg.innerHTML = '';
+	link_newtab.innerHTML = '';
+	link_newtab.href = '';
+	link_newtab.target = '';
 
 }
 close_Popup.addEventListener('click', closePopup);
