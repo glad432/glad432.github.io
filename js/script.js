@@ -478,7 +478,6 @@ function initializeMinifier() {
 	}
 
 	async function minifyClick() {
-		shareButton.disabled = false;
 		minifyButton.disabled = false;
 		generateButton.disabled = false;
 
@@ -511,6 +510,8 @@ function initializeMinifier() {
 
 				try {
 					const error = await response.json();
+					shareButton.disabled = true;
+					copyButton.disabled = true;
 					minifiedSizeSpan.innerHTML = `${excir} ${error.message}`;
 				} catch {}
 			}
@@ -523,7 +524,6 @@ function initializeMinifier() {
 		}
 
 		minifyButton.disabled = false;
-		shareButton.disabled = false;
 
 	}
 
