@@ -283,7 +283,7 @@ document.getElementById('dw').addEventListener('click', dw_py);
 async function Sharelink() {
 	animateIcon("fade-2", "fa-fade", 3000);
 	const editorContent = minifiedEditor.getValue();
-	const fileName = (fileNameDisplay.textContent || "default.py").replace(/^_/, "").replace(/\.[^/.]+$/, "") + "_min.py";
+	const fileName = (fileNameDisplay.textContent || "default.py").replace(/^ /, "").replace(/\.[^/.]+$/, "") + "_min.py";
 
 	try {
 		const response = await fetch('https://file.io/?expires=2w', {
