@@ -19,6 +19,7 @@ const overlay = document.getElementById("overlay");
 const orscan = document.getElementById('scantocopy');
 const help_msg = document.getElementById('help-msg');
 const link_newtab = document.getElementById("new_tab");
+const fileLinkInput = document.getElementById("fileLinkInput");
 var preservedGlobalsInput = document.getElementById('preserve_globals');
 var contentDiv = document.querySelector('.content-ll');
 var content = document.querySelector('.content-ll');
@@ -31,6 +32,8 @@ var contentVisible1 = false;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
 const code_file = `<i class="fa-solid fa-file-code"></i>`;
+const classlst = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit'];
+const classlst0 = ['select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit'];
 var words = [
 	'and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif',
 	'else', 'except', 'False', 'finally', 'for', 'from', 'global', 'if', 'import',
@@ -179,9 +182,6 @@ CodeMirror.registerHelper("hint", "anyword", function(editor, options) {
 });
 
 function setupFileInput() {
-	const classlst = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit'];
-	const classlst0 = ['select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit'];
-
 	function dragpy() {
 		const droppedFile = event.dataTransfer.files[0];
 
@@ -396,9 +396,7 @@ sourceEditor.on("change", function(editor) {
 	document.getElementById("source").value = editor.getValue();
 });
 
-sourceEditor.on("change", function() {
-	updateLineCount();
-});
+sourceEditor.on("change", updateLineCount);
 
 function toggleContent() {
 	var content = document.querySelector('.content-l');
@@ -553,6 +551,7 @@ function initializeMinifier() {
 initializeMinifier();
 
 function clearSource() {
+	animateIcon("fade-5", "fa-fade", 1500);
 	const classNamesToRemove = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit'];
 	shareButton.disabled = true;
 	generateButton.disabled = true;
@@ -573,6 +572,7 @@ function clearSource() {
 	sourceEditor.setValue('');
 
 	minifiedSizeSpan.textContent = "0.000 kB";
+	fileLinkInput.value = "";
 }
 
 document.getElementById('rm').addEventListener('click', clearSource);
@@ -621,3 +621,44 @@ function resetOptions() {
 	});
 }
 document.getElementById('Unselectall').addEventListener('click', resetOptions);
+
+function input_from_url() {
+	animateIcon("fade-4", "fa-fade", 1000);
+	var inputContainer = document.getElementById("inputContainer");
+	inputContainer.classList.toggle("hidden");
+	inputContainer.classList.toggle("flex");
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+	function loadFileContent(fileUrl) {
+		fetch(fileUrl)
+			.then((response) => response.text())
+			.then((data) => {
+				sourceEditor.setValue(data);
+			})
+			.catch(() => {
+				fileNameDisplay.innerHTML = "";
+				fileNameDisplay.classList.remove(...classlst0);
+				errorMessage.classList.add(...classlst);
+				errorMessage.innerHTML = `${exctri} Error loading file`;
+			});
+	}
+
+	function load_file() {
+		var fileLink = fileLinkInput.value.trim();
+		if (fileLinkInput.value === "") {}
+		else if (/\.(txt|py)$/.test(fileLink.toLowerCase())) {
+			animateIcon("fade-3", "fa-fade", 1500);
+			loadFileContent(fileLink);
+			fileNameDisplay.innerHTML = `${code_file} ${fileLink.split('/').pop()}`;
+			fileNameDisplay.classList.add(...classlst0);
+		} else {
+			fileNameDisplay.innerHTML = "";
+			fileNameDisplay.classList.remove(...classlst0);
+			errorMessage.classList.add(...classlst);
+			errorMessage.innerHTML = `${exctri} Please enter a valid .txt or .py file link`;
+		}
+	};
+	document.getElementById("load_File").addEventListener("click", load_file);
+});
+document.getElementById("from_url").addEventListener("click", input_from_url);
