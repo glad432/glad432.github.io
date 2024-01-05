@@ -646,8 +646,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	function load_file() {
 		var fileLink = fileLinkInput.value.trim();
-		if (fileLinkInput.value === "") {}
-		else if (/\.(txt|py)$/.test(fileLink.toLowerCase())) {
+		if (fileLinkInput.value === "") {
+			errorMessage.classList.remove(...classlst);
+			errorMessage.innerHTML = "";
+		} else if (/\.(txt|py)$/.test(fileLink.toLowerCase())) {
 			animateIcon("fade-3", "fa-fade", 1500);
 			loadFileContent(fileLink);
 			fileNameDisplay.innerHTML = `${code_file} ${fileLink.split('/').pop()}`;
