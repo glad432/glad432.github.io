@@ -21,7 +21,6 @@ const help_msg = document.getElementById('help-msg');
 const link_newtab = document.getElementById("new_tab");
 const fileLinkInput = document.getElementById("fileLinkInput");
 var preservedGlobalsInput = document.getElementById('preserve_globals');
-var contentDiv = document.querySelector('.content-ll');
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 let sentenceIndex = 0;
@@ -588,10 +587,10 @@ function animateIcon(fade, fade_class, fade_dur) {
 }
 
 function toggleContent1() {
-	if (contentDiv.style.maxHeight) {
-		contentDiv.style.maxHeight = null;
+	if (content.style.maxHeight) {
+		content.style.maxHeight = null;
 	} else {
-		contentDiv.style.maxHeight = contentDiv.scrollHeight + 'px';
+		content.style.maxHeight = content.scrollHeight + 'px';
 	}
 }
 document.getElementById('toggleContent1').addEventListener('click', toggleContent1);
@@ -632,15 +631,33 @@ function input_from_url() {
 document.addEventListener("DOMContentLoaded", function() {
 	function loadFileContent(fileUrl) {
 		fetch(fileUrl)
-			.then((response) => response.text())
+			.then((response) => {
+				if (!response.ok) {
+					sourceEditor.setValue("");
+				}
+
+				const contentDisposition = response.headers.get("content-disposition");
+				const fileNameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"/);
+				const fileName = fileNameMatch ? fileNameMatch[1] : fileUrl.split('/').pop();
+
+				fileNameDisplay.innerHTML = `${code_file} ${fileName}`;
+				fileNameDisplay.classList.add(...classlst0);
+
+				const contentLength = response.headers.get("content-length");
+				if (contentLength && parseInt(contentLength, 10) > 2 * 1024 * 1024) {
+					throw new Error(`File size exceeds 2 MB limit`);
+				}
+
+				return response.text();
+			})
 			.then((data) => {
 				sourceEditor.setValue(data);
 			})
-			.catch(() => {
+			.catch((error) => {
 				fileNameDisplay.innerHTML = "";
 				fileNameDisplay.classList.remove(...classlst0);
 				errorMessage.classList.add(...classlst);
-				errorMessage.innerHTML = `${exctri} Error loading file`;
+				errorMessage.innerHTML = `${exctri} ${error.message}`;
 			});
 	}
 
@@ -652,15 +669,14 @@ document.addEventListener("DOMContentLoaded", function() {
 		} else if (/\.(txt|py)$/.test(fileLink.toLowerCase())) {
 			animateIcon("fade-3", "fa-fade", 1500);
 			loadFileContent(fileLink);
-			fileNameDisplay.innerHTML = `${code_file} ${fileLink.split('/').pop()}`;
-			fileNameDisplay.classList.add(...classlst0);
 		} else {
 			fileNameDisplay.innerHTML = "";
 			fileNameDisplay.classList.remove(...classlst0);
 			errorMessage.classList.add(...classlst);
 			errorMessage.innerHTML = `${exctri} Please enter a valid .txt or .py file link`;
 		}
-	};
+	}
+
 	document.getElementById("load_File").addEventListener("click", load_file);
 });
 document.getElementById("from_url").addEventListener("click", input_from_url);
