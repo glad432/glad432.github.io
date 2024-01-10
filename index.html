@@ -286,8 +286,10 @@ if __name__ == "__main__":
         </div>
       </div>
       <div class="select-none mb-2 md:mb-4">
-        <button id="minify" class="text-3xl font-bold bg-blue-500 text-white py-1 px-2 rounded mb-2 md:mb-0 hover:bg-blue-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i>
-        </button>
+        <span class="relative rounded pt-5 p-4 overflow-hidden group bg-blue-500 relative hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-blue-400 transition-all ease-out duration-300">
+          <span class="absolute right-0 w-8 h-40 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
+          <span id="minify" class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i></span>
+        </span>
       </div>
       <div class="select-none mb-2 md:mb-4"></div>
       <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 hidden transition-opacity duration-2000"></div>
