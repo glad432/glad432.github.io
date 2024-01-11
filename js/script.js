@@ -20,14 +20,14 @@ const orscan = document.getElementById('scantocopy');
 const help_msg = document.getElementById('help-msg');
 const link_newtab = document.getElementById("new_tab");
 const fileLinkInput = document.getElementById("fileLinkInput");
-var preservedGlobalsInput = document.getElementById('preserve_globals');
+const preservedGlobalsInput = document.getElementById('preserve_globals');
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+let errorTimeout, aniTimeout, cpyTimeout0, cpyTimeout1;
 let sentenceIndex = 0;
 let charIndex = 0;
 let isTyping = true;
 var contentVisible = false;
-var contentVisible1 = false;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
 const code_file = `<i class="fa-solid fa-file-code"></i>`;
@@ -56,6 +56,15 @@ const sentences = [
 	"Minified code is more efficiently transmitted and executed across various platforms, aiding developers in delivering smoother user experiences.",
 	"Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment."
 ];
+
+const options = {
+	year: 'numeric',
+	month: '2-digit',
+	day: '2-digit',
+	hour: '2-digit',
+	minute: '2-digit',
+	timeZoneName: 'short'
+};
 
 function shuffleArray(array) {
 	for (let i = array.length - 1; i > 0; i--) {
@@ -181,7 +190,7 @@ CodeMirror.registerHelper("hint", "anyword", function(editor, options) {
 });
 
 function setupFileInput() {
-	function dragpy() {
+	function dragpy(event) {
 		const droppedFile = event.dataTransfer.files[0];
 
 		if (droppedFile) {
@@ -195,7 +204,7 @@ function setupFileInput() {
 				fileNameDisplay.classList.remove(...classlst);
 				errorMessage.classList.add(...classlst);
 				errorMessage.innerHTML = `${exctri} Invalid file format. Please select a .py file.`;
-
+				clear_err_msg();
 				fileNameDisplay.textContent = '';
 			}
 		} else {
@@ -218,6 +227,7 @@ function setupFileInput() {
 				errorMessage.innerHTML = `${exctri} Invalid file format. Please select a .py file.`;
 				fileInput.value = '';
 				fileNameDisplay.textContent = '';
+				clear_err_msg();
 			}
 		} else {
 			fileNameDisplay.textContent = '';
@@ -234,12 +244,12 @@ function setupFileInput() {
 
 	document.addEventListener('drop', function(event) {
 		event.preventDefault();
-		dragpy()
+		dragpy(event)
 	});
 
 	dropArea.addEventListener('drop', function(event) {
 		event.preventDefault();
-		dragpy()
+		dragpy(event)
 	});
 
 	function handleFile(file) {
@@ -258,6 +268,7 @@ function setupFileInput() {
 			errorMessage.innerHTML = `${exctri} File size exceeds 2MB. Please select a smaller file.`;
 			fileNameDisplay.textContent = '';
 			fileInput.value = '';
+			clear_err_msg();
 		}
 	}
 }
@@ -312,7 +323,7 @@ async function Sharelink() {
 				link_newtab.target = "_blank";
 				link_newtab.title = 'Open in new tab';
 				orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
-				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-gray-700">This link will expire as soon as you download the py file.</p></div>`;
+				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-gray-700">Python file will be deleted after download.<br> Expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', options)}</span></p></div>`;
 				orscan.classList.add('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
 				qrCode.style.textAlign = '-moz-center';
@@ -382,14 +393,18 @@ function closePopup() {
 }
 close_Popup.addEventListener('click', closePopup);
 
-async function copyText() {
+async function copyfilelink() {
 	await navigator.clipboard.writeText(file_Link.value);
+	if (cpyTimeout1) {
+		clearTimeout(cpyTimeout1);
+	}
 	copy_msg.innerHTML = 'Copied <i class="fa-solid fa-copy fa-fade"></i>';
-	setTimeout(() => {
+	cpyTimeout1 = setTimeout(() => {
 		copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
+		cpyTimeout1 = null;
 	}, 3000);
 }
-file_Link.addEventListener('click', copyText);
+file_Link.addEventListener('click', copyfilelink);
 
 sourceEditor.on("change", function(editor) {
 	document.getElementById("source").value = editor.getValue();
@@ -416,7 +431,7 @@ function toggleContent() {
 function updateLineCount() {
 	document.getElementById("line-count").textContent = `Line Count: ${sourceEditor.lineCount()}`;
 	document.getElementById("text-size").textContent = (new TextEncoder().encode(sourceEditor.getValue()).length / 1024).toFixed(3) + " kB";
-	errorMessage.classList.remove('select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit');
+	errorMessage.classList.remove(...classlst);
 	errorMessage.textContent = "";
 }
 
@@ -429,8 +444,6 @@ minifiedEditor.on("change", updateLineCount_out);
 updateLineCount_out();
 
 function initializeMinifier() {
-	const api_url = 'https://api.python-minifier.com/minify';
-
 	function build_query() {
 		const options = [
 			'combine_imports',
@@ -463,12 +476,16 @@ function initializeMinifier() {
 	}
 
 	async function copyClick() {
-		copyButton.innerHTML = `Copied <i class="fa-solid fa-clipboard fa-fade"></i>`;
-		setTimeout(() => {
-			copyButton.innerHTML = `Copy <i class="fa-solid fa-clipboard"></i>`;
-		}, 2500);
 		try {
 			await navigator.clipboard.writeText(minifiedEditor.getValue());
+			if (cpyTimeout0) {
+				clearTimeout(cpyTimeout0);
+			}
+			copyButton.innerHTML = `Copied <i class="fa-solid fa-clipboard fa-fade"></i>`;
+			cpyTimeout0 = setTimeout(() => {
+				copyButton.innerHTML = `Copy <i class="fa-solid fa-clipboard"></i>`;
+				cpyTimeout0 = null;
+			}, 2500);
 		} catch (error) {
 			console.error(`Copy failed:, ${error}`);
 		}
@@ -483,7 +500,7 @@ function initializeMinifier() {
 		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
 
 		try {
-			const response = await fetch(api_url + '?' + build_query(), {
+			const response = await fetch("https://api.python-minifier.com/minify?" + build_query(), {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'text/plain'
@@ -577,13 +594,29 @@ function clearSource() {
 document.getElementById('rm').addEventListener('click', clearSource);
 
 function animateIcon(fade, fade_class, fade_dur) {
+	if (aniTimeout) {
+		clearTimeout(aniTimeout);
+	}
 	var ani_icon = document.getElementById(fade);
 
 	ani_icon.classList.add(fade_class);
 
-	setTimeout(function() {
+	aniTimeout = setTimeout(function() {
 		ani_icon.classList.remove(fade_class);
+		aniTimeout = null;
 	}, fade_dur);
+}
+
+function clear_err_msg() {
+	if (errorTimeout) {
+		clearTimeout(errorTimeout);
+	}
+
+	errorTimeout = setTimeout(() => {
+		errorMessage.classList.remove(...classlst);
+		errorMessage.innerHTML = "";
+		errorTimeout = null;
+	}, 3500);
 }
 
 function toggleContent1() {
@@ -658,22 +691,31 @@ document.addEventListener("DOMContentLoaded", function() {
 				fileNameDisplay.classList.remove(...classlst0);
 				errorMessage.classList.add(...classlst);
 				errorMessage.innerHTML = `${exctri} ${error.message}`;
+				clear_err_msg();
 			});
 	}
 
 	function load_file() {
 		var fileLink = fileLinkInput.value.trim();
-		if (fileLinkInput.value === "") {
-			errorMessage.classList.remove(...classlst);
-			errorMessage.innerHTML = "";
-		} else if (/\.(txt|py)$/.test(fileLink.toLowerCase())) {
+		if (fileLinkInput.value === "" || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
+			fileNameDisplay.innerHTML = "";
+			fileNameDisplay.classList.remove(...classlst0);
+			clear_err_msg();
+		} else if (!(/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(fileLink))) {
+			errorMessage.classList.add(...classlst);
+			errorMessage.innerHTML = `${exctri} Please enter a valid URL starting with "https://"`;
+			clear_err_msg();
+			fileNameDisplay.innerHTML = "";
+			fileNameDisplay.classList.remove(...classlst0);
+		} else if (/\.(py)$/.test(fileLink.toLowerCase())) {
 			animateIcon("fade-3", "fa-fade", 1500);
 			loadFileContent(fileLink);
 		} else {
 			fileNameDisplay.innerHTML = "";
 			fileNameDisplay.classList.remove(...classlst0);
 			errorMessage.classList.add(...classlst);
-			errorMessage.innerHTML = `${exctri} Please enter a valid .txt or .py file link`;
+			errorMessage.innerHTML = `${exctri} Please enter a valid .py file link`;
+			clear_err_msg();
 		}
 	}
 
