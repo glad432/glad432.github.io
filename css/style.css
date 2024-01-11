@@ -445,9 +445,6 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
   cursor: default;
   z-index: 4;
 }
-.CodeMirror-gutter-wrapper ::-moz-selection {
-  background-color: transparent;
-}
 .CodeMirror-gutter-wrapper ::selection {
   background-color: transparent;
 }
@@ -548,16 +545,6 @@ div.CodeMirror-dragcursors {
 .slider {
   cursor: pointer;
 }
-.CodeMirror-line::-moz-selection,
-.CodeMirror-line > span::-moz-selection,
-.CodeMirror-line > span > span::-moz-selection {
-  background: var(--glad-selection-background);
-}
-.CodeMirror-line::-moz-selection,
-.CodeMirror-line > span::-moz-selection,
-.CodeMirror-line > span > span::-moz-selection {
-  background: var(--glad-selection-background);
-}
 .CodeMirror-line::selection,
 .CodeMirror-line > span::selection,
 .CodeMirror-line > span > span::selection {
@@ -584,16 +571,6 @@ div.CodeMirror-dragcursors {
 }
 span.CodeMirror-selectedtext {
   background: 0 0;
-}
-.cm-s-mdn-like .CodeMirror-line::-moz-selection,
-.cm-s-mdn-like .CodeMirror-line > span::-moz-selection,
-.cm-s-mdn-like .CodeMirror-line > span > span::-moz-selection {
-  background: var(--glad-selection-background);
-}
-.cm-s-mdn-like .CodeMirror-line::-moz-selection,
-.cm-s-mdn-like .CodeMirror-line > span::-moz-selection,
-.cm-s-mdn-like .CodeMirror-line > span > span::-moz-selection {
-  background: var(--glad-selection-background);
 }
 .cm-s-mdn-like .CodeMirror-line::selection,
 .cm-s-mdn-like .CodeMirror-line > span::selection,
@@ -802,6 +779,7 @@ li.CodeMirror-hint-active {
 }
 .dark body,
 .dark html {
+  color-scheme: dark;
   background-color: #181a1b;
   border-color: #736b5e;
   color: #e8e6e3;
@@ -931,33 +909,9 @@ li.CodeMirror-hint-active {
   background-image: initial;
   background-color: var(--glad-selection-background);
 }
-.CodeMirror-line > span::-moz-selection,
-.CodeMirror-line > span > span::-moz-selection,
-.dark .CodeMirror-line::-moz-selection {
-  background-image: initial;
-  background-color: var(--glad-selection-background);
-}
-.CodeMirror-line > span::-moz-selection,
-.CodeMirror-line > span > span::-moz-selection,
-.dark .CodeMirror-line::-moz-selection {
-  background-image: initial;
-  background-color: var(--glad-selection-background);
-}
 .CodeMirror-line > span::selection,
 .CodeMirror-line > span > span::selection,
 .dark .CodeMirror-line::selection {
-  background-image: initial;
-  background-color: var(--glad-selection-background);
-}
-.cm-s-mdn-like .CodeMirror-line > span::-moz-selection,
-.cm-s-mdn-like .CodeMirror-line > span > span::-moz-selection,
-.dark .cm-s-mdn-like .CodeMirror-line::-moz-selection {
-  background-image: initial;
-  background-color: var(--glad-selection-background);
-}
-.cm-s-mdn-like .CodeMirror-line > span::-moz-selection,
-.cm-s-mdn-like .CodeMirror-line > span > span::-moz-selection,
-.dark .cm-s-mdn-like .CodeMirror-line::-moz-selection {
   background-image: initial;
   background-color: var(--glad-selection-background);
 }
@@ -1042,48 +996,9 @@ li.CodeMirror-hint-active {
 .dark textarea::-ms-input-placeholder {
   color: #afa99e;
 }
-.dark input::-webkit-input-placeholder,
-.dark textarea::-webkit-input-placeholder {
-  color: #afa99e;
-}
-.dark input::-moz-placeholder,
-.dark textarea::-moz-placeholder {
-  color: #afa99e;
-}
-.dark input:-ms-input-placeholder,
-.dark textarea:-ms-input-placeholder {
-  color: #afa99e;
-}
-.dark input::-ms-input-placeholder,
-.dark textarea::-ms-input-placeholder {
-  color: #afa99e;
-}
-.dark input::-webkit-input-placeholder,
-.dark textarea::-webkit-input-placeholder {
-  color: #afa99e;
-}
-.dark input::-moz-placeholder,
-.dark textarea::-moz-placeholder {
-  color: #afa99e;
-}
-.dark input:-ms-input-placeholder,
-.dark textarea:-ms-input-placeholder {
-  color: #afa99e;
-}
-.dark input::-ms-input-placeholder,
-.dark textarea::-ms-input-placeholder {
-  color: #afa99e;
-}
 .dark input::placeholder,
 .dark textarea::placeholder {
   color: #afa99e;
-}
-.dark *,
-.dark ::after,
-.dark ::before {
-  --glad-bg--tw-ring-offset-shadow: 0 0 #0000;
-  --glad-bg--tw-ring-shadow: 0 0 #0000;
-  --glad-bg--tw-shadow: 0 0 #0000;
 }
 .dark .border-gray-300 {
   background-color: #333;
@@ -1116,16 +1031,6 @@ li.CodeMirror-hint-active {
 .dark .text-white {
   color: #e8e6e3;
 }
-.dark .shadow {
-  --glad-bg--tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1),
-    0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color),
-    0 1px 2px -1px var(--tw-shadow-color);
-  -webkit-box-shadow: var(--glad-bg--tw-ring-offset-shadow, 0 0 #0000),
-    var(--glad-bg--tw-ring-shadow, 0 0 #0000), var(--glad-bg--tw-shadow);
-  box-shadow: var(--glad-bg--tw-ring-offset-shadow, 0 0 #0000),
-    var(--glad-bg--tw-ring-shadow, 0 0 #0000), var(--glad-bg--tw-shadow);
-}
 .dark .hover\:ring-2:hover {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
     var(--tw-ring-offset-width) var(--glad-neutral-background) !important;
@@ -1152,16 +1057,6 @@ li.CodeMirror-hint-active {
 .dark .CodeMirror-focused .CodeMirror-selected,
 .dark .CodeMirror-selected,
 .dark .cm-s-mdn-like div.CodeMirror-selected {
-  background: var(--glad-dark-selection-background);
-}
-.dark .cm-s-mdn-like .CodeMirror-line::-moz-selection,
-.dark .cm-s-mdn-like .CodeMirror-line > span::-moz-selection,
-.dark .cm-s-mdn-like .CodeMirror-line > span > span::-moz-selection {
-  background: var(--glad-dark-selection-background);
-}
-.dark .cm-s-mdn-like .CodeMirror-line::-moz-selection,
-.dark .cm-s-mdn-like .CodeMirror-line > span::-moz-selection,
-.dark .cm-s-mdn-like .CodeMirror-line > span > span::-moz-selection {
   background: var(--glad-dark-selection-background);
 }
 .dark .cm-s-mdn-like .CodeMirror-line::selection,
