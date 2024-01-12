@@ -24,6 +24,7 @@ const preservedGlobalsInput = document.getElementById('preserve_globals');
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 let errorTimeout, aniTimeout, cpyTimeout0, cpyTimeout1;
+const maxFileSizeInBytes = 1 * 1024 * 1024;
 let sentenceIndex = 0;
 let charIndex = 0;
 let isTyping = true;
@@ -189,12 +190,41 @@ CodeMirror.registerHelper("hint", "anyword", function(editor, options) {
 	};
 });
 
+function updateEditorState() {
+	var cursor = sourceEditor.getCursor();
+	var value = sourceEditor.getValue();
+	var fileSizeInBytes = new Blob([value]).size;
+
+	if (fileSizeInBytes > maxFileSizeInBytes) {
+		errorMessage.classList.add(...classlst);
+		errorMessage.innerHTML = `${exctri} Maximum Size limit 1MB reached!`;
+		sourceEditor.setValue(value.substring(0, value.length - (fileSizeInBytes - maxFileSizeInBytes)));
+		sourceEditor.setOption("readOnly", true);
+		clear_err_msg();
+	} else {
+		sourceEditor.setOption("readOnly", false);
+	}
+
+	sourceEditor.setCursor(cursor);
+}
+
+sourceEditor.on("beforeChange", function(_, change) {
+	var currentSize = new Blob([sourceEditor.getValue()]).size;
+	var newSize = currentSize + new Blob([change.text.join("")]).size - change.to - change.from;
+
+	if (newSize > maxFileSizeInBytes) {
+		change.cancel();
+	}
+});
+
+sourceEditor.on("change", updateEditorState);
+updateEditorState();
+
 function setupFileInput() {
 	function dragpy(event) {
 		const droppedFile = event.dataTransfer.files[0];
 
 		if (droppedFile) {
-			classNamesToAdd = [];
 			if (droppedFile.name.toLowerCase().endsWith('.py')) {
 				errorMessage.classList.remove(...classlst);
 				fileNameDisplay.innerHTML = `${code_file} ${droppedFile.name}`;
@@ -253,7 +283,7 @@ function setupFileInput() {
 	});
 
 	function handleFile(file) {
-		if (file.size <= 2 * 1024 * 1024) {
+		if (file.size <= maxFileSizeInBytes) {
 			const reader = new FileReader();
 
 			reader.onload = function(e) {
@@ -265,7 +295,7 @@ function setupFileInput() {
 		} else {
 			fileNameDisplay.classList.remove(...classlst0);
 			errorMessage.classList.add(...classlst);
-			errorMessage.innerHTML = `${exctri} File size exceeds 2MB. Please select a smaller file.`;
+			errorMessage.innerHTML = `${exctri} File size exceeds 1MB. Please select a smaller file.`;
 			fileNameDisplay.textContent = '';
 			fileInput.value = '';
 			clear_err_msg();
@@ -431,8 +461,6 @@ function toggleContent() {
 function updateLineCount() {
 	document.getElementById("line-count").textContent = `Line Count: ${sourceEditor.lineCount()}`;
 	document.getElementById("text-size").textContent = (new TextEncoder().encode(sourceEditor.getValue()).length / 1024).toFixed(3) + " kB";
-	errorMessage.classList.remove(...classlst);
-	errorMessage.textContent = "";
 }
 
 function updateLineCount_out() {
@@ -568,15 +596,14 @@ initializeMinifier();
 
 function clearSource() {
 	animateIcon("fade-5", "fa-fade", 1500);
-	const classNamesToRemove = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit'];
 	shareButton.disabled = true;
 	generateButton.disabled = true;
 	copyButton.disabled = true;
 
-	fileNameDisplay.classList.remove(...classNamesToRemove);
+	fileNameDisplay.classList.remove(...classlst);
 	fileNameDisplay.textContent = '';
 
-	errorMessage.classList.remove(...classNamesToRemove);
+	errorMessage.classList.remove(...classlst);
 	errorMessage.textContent = '';
 
 	fileInput.value = '';
@@ -677,8 +704,8 @@ document.addEventListener("DOMContentLoaded", function() {
 				fileNameDisplay.classList.add(...classlst0);
 
 				const contentLength = response.headers.get("content-length");
-				if (contentLength && parseInt(contentLength, 10) > 2 * 1024 * 1024) {
-					throw new Error(`File size exceeds 2 MB limit`);
+				if (contentLength && parseInt(contentLength, 10) > maxFileSizeInBytes) {
+					throw new Error(`File size exceeds 1MB limit`);
 				}
 
 				return response.text();
