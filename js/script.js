@@ -20,6 +20,8 @@ const orscan = document.getElementById('scantocopy');
 const help_msg = document.getElementById('help-msg');
 const link_newtab = document.getElementById("new_tab");
 const fileLinkInput = document.getElementById("fileLinkInput");
+const selectallopt = document.getElementById('selectall');
+const unselectallopt = document.getElementById('Unselectall');
 const preservedGlobalsInput = document.getElementById('preserve_globals');
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -363,9 +365,8 @@ async function Sharelink() {
 				fileLink_load.innerHTML = '';
 				displayQRCode(fileLink);
 				qrCode.classList.remove('inline');
-				const link = file_Link;
-				link.href = fileLink;
-				link.value = fileLink;
+				file_Link.href = fileLink;
+				file_Link.value = fileLink;
 			}, 1500);
 		} else {
 			console.log('Error generating file link:', result.message || 'Unknown error');
@@ -378,6 +379,7 @@ async function Sharelink() {
 shareButton.addEventListener('click', Sharelink);
 
 function createFormData(content, fileName) {
+	shuffleArray(sentences);
 	const formData = new FormData();
 
 	const blob = new Blob([content], {
@@ -385,6 +387,8 @@ function createFormData(content, fileName) {
 	});
 
 	formData.append('file', blob, fileName);
+	formData.append('description', `Python Minifier - Glad432 (glad432.github.io)\n${sentences[0]}`);
+
 	return formData;
 }
 
@@ -521,47 +525,58 @@ function initializeMinifier() {
 	async function minifyClick() {
 		minifyButton.disabled = false;
 		generateButton.disabled = false;
+		selectallopt.disabled = true;
+		unselectallopt.disabled = true;
+		selectallopt.classList.add("cursor-not-allowed");
+		unselectallopt.classList.add("cursor-not-allowed");
 
 		minifiedEditor.setValue('');
 		animateIcon("fade-0", "fa-fade", 1500);
 		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
 
-		try {
-			const response = await fetch("https://api.python-minifier.com/minify?" + build_query(), {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'text/plain'
-				},
-				body: document.getElementById('source').value
-			});
+		if (sourceEditor.getValue() !== "") {
+			try {
+				const response = await fetch("https://api.python-minifier.com/minify?" + build_query(), {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'text/plain'
+					},
+					body: document.getElementById('source').value
+				});
 
+				if (response.ok) {
+					const minified = await response.text();
+					minifiedEditor.setValue(minified);
+					minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)}  kB`;
+					copyButton.disabled = false;
+					shareButton.disabled = false;
+					selectallopt.disabled = false;
+					unselectallopt.disabled = false;
+					selectallopt.classList.remove("cursor-not-allowed");
+					unselectallopt.classList.remove("cursor-not-allowed");
 
-			if (response.ok) {
-				const minified = await response.text();
-				minifiedEditor.setValue(minified);
-				minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)}  kB`;
-				copyButton.disabled = false;
-				shareButton.disabled = false;
+				} else {
+					shareButton.disabled = true;
+					copyButton.disabled = true;
+					generateButton.disabled = true;
+					minifiedSizeSpan.innerHTML = `${excir} Error`;
 
-			} else {
+					try {
+						const error = await response.json();
+						shareButton.disabled = true;
+						copyButton.disabled = true;
+						minifiedSizeSpan.innerHTML = `${excir} ${error.message}`;
+					} catch {}
+				}
+
+			} catch (e) {
 				shareButton.disabled = true;
 				copyButton.disabled = true;
 				generateButton.disabled = true;
-				minifiedSizeSpan.innerHTML = `${excir} Error`;
-
-				try {
-					const error = await response.json();
-					shareButton.disabled = true;
-					copyButton.disabled = true;
-					minifiedSizeSpan.innerHTML = `${excir} ${error.message}`;
-				} catch {}
+				minifiedSizeSpan.innerHTML = `${excir} Something went wrong!!`;
 			}
-
-		} catch {
-			shareButton.disabled = true;
-			copyButton.disabled = true;
-			generateButton.disabled = true;
-			minifiedSizeSpan.textContent = 'Enter orginal code!!';
+		} else {
+			minifiedSizeSpan.textContent = "Enter Code";
 		}
 
 		minifyButton.disabled = false;
@@ -665,7 +680,7 @@ function tickAllAndSetGlobals() {
 
 	preservedGlobalsInput.value = 'handler';
 }
-document.getElementById('selectall').addEventListener('click', tickAllAndSetGlobals);
+selectallopt.addEventListener('click', tickAllAndSetGlobals);
 
 function resetOptions() {
 	checkboxes.forEach(function(checkbox) {
@@ -678,7 +693,7 @@ function resetOptions() {
 		textField.value = '';
 	});
 }
-document.getElementById('Unselectall').addEventListener('click', resetOptions);
+unselectallopt.addEventListener('click', resetOptions);
 
 function input_from_url() {
 	animateIcon("fade-4", "fa-fade", 1000);
