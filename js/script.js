@@ -218,7 +218,6 @@ sourceEditor.on("beforeChange", function(_, change) {
 });
 
 sourceEditor.on("change", updateEditorState);
-updateEditorState();
 
 function setupFileInput() {
 	function dragpy(event) {
