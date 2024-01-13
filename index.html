@@ -1,180 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Python Minifier - GLAD432</title>
-    <meta name="robots" content="index, follow">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
-    <meta http-equiv="x-ua-compatible" content="IE=edge">
-    <meta name="description" content="Python minifier online is a tool that reduces the size of Python code by removing unnecessary characters, such as white spaces, comments, and line breaks. This can help to reduce the size of Python scripts and make them load faster, especially in web applications." />
-    <meta name="keywords" content="Python, minifier, Python code optimization, online tool, script compression, code minification, web development, optimize Python code, improve script performance, reduce code size, web application optimization, code efficiency, code speed, streamline Python scripts">
-    <meta name="author" content="Glad432">
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:title" content="Python Minifier - GLAD432" />
-    <meta property="og:type" content="Website" />
-    <meta property="og:description" content="Python minifier online is a tool that reduces the size of Python code by removing unnecessary characters, such as white spaces, comments, and line breaks. This can help to reduce the size of Python scripts and make them load faster, especially in web applications." />
-    <meta property="og:site_name" content="Python Minifier - GLAD432" />
-    <link rel="canonical" href="https://glad432.github.io" />
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@gladw-in">
-    <meta name="twitter:creator" content="@gladw-in">
-    <meta name="twitter:title" content="Python Minifier - GLAD432">
-    <meta name="twitter:domain" content="glad432.github.io">
-    <meta name="twitter:description" content="Reduce the size of Python code with this online minifier tool. Optimize your scripts for faster loading in web applications.">
-    <meta name="twitter:image" content="https://glad432.github.io/img/favicon.png">
-    <meta name="twitter:image:src" content="https://glad432.github.io/img/favicon.png">
-    <meta name="twitter:image:alt" content="Python Minifier - GLAD432">
-    <meta property="og:image" content="https://glad432.github.io/img/favicon.png" />
-    <meta property="og:image:secure_url" content="https://glad432.github.io/img/favicon.png" />
-    <meta property="og:image:width" content="225" />
-    <meta property="og:image:height" content="225" />
-    <script src="https://glad432.github.io/js/tailwind.min.js" rel="stylesheet"></script>
-    <link href="https://glad432.github.io/css/style.min.css" rel="stylesheet">
-    <script defer src="https://glad432.github.io/js/alpine.min.js"></script>
-    <script src="https://glad432.github.io/js/codemirror.min.js"></script>
-    <script src="https://glad432.github.io/js/addons/python.min.js"></script>
-    <script src="https://glad432.github.io/js/addons/placeholder.min.js"></script>
-    <script src="https://glad432.github.io/js/addons/closebrackets.min.js"></script>
-    <script src="https://glad432.github.io/js/addons/matchbrackets.min.js"></script>
-    <script src="https://glad432.github.io/js/addons/anyword-hint.min.js"></script>
-    <script src="https://glad432.github.io/js/addons/show-hint.min.js"></script>
-    <script src="https://glad432.github.io/js/addons/simplescrollbars.min.js"></script>
-    <script src="https://glad432.github.io/js/addons/foldcode.min.js"></script>
-    <script src="https://glad432.github.io/js/addons/foldgutter.min.js"></script>
-    <script src="https://glad432.github.io/js/addons/indent-fold.min.js"></script>
-    <script src="https://glad432.github.io/js/qrcode.min.js"></script>
-    <link rel="icon" type="image/png" href="https://glad432.github.io/img/favicon.png" />
-    <link rel="shortcut icon" href="https://glad432.github.io/img/favicon.png" type="image/x-icon">
-    <link rel="apple-touch-icon-precomposed" href="https://glad432.github.io/img/favicon.png" />
-    <meta name="msapplication-TileImage" content="https://glad432.github.io/img/favicon.png" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HDTEFZ9987"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-      gtag('config', 'G-HDTEFZ9987');
-    </script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function() {
-        let e = document.getElementById("darkModeToggle"),
-          t = localStorage.getItem("darkMode") !== "true";
-        e.addEventListener("change", function() {
-          let t = !document.documentElement.classList.contains("dark");
-          document.documentElement.classList.toggle("dark", t);
-          document.documentElement.classList.toggle("light", !t);
-          localStorage.setItem("darkMode", t.toString());
-        });
-        document.documentElement.classList.toggle("dark", !t);
-        document.documentElement.classList.toggle("light", t);
-        e.checked = !t;
-      });
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "http://schema.org",
-        "@type": "Website",
-        "url": "https://glad432.github.io",
-        "name": "Python Minifier - GLAD432",
-        "description": "Python minifier online is a tool that reduces the size of Python code by removing unnecessary characters, such as white spaces, comments, and line breaks. This can help to reduce the size of Python scripts and make them load faster, especially in web applications.",
-        "keywords": "Python, minifier, Python code optimization, online tool, script compression, code minification, web development, optimize Python code, improve script performance, reduce code size, web application optimization, code efficiency, code speed, streamline Python scripts",
-        "publisher": {
-          "@type": "Organization",
-          "name": "GLAD432",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://glad432.github.io/img/favicon.png"
-          }
-        }
-      }
-    </script>
-  </head>
-  <body class="bg-gray-100 font-sans">
-    <header class="select-none top-0 z-30 w-full px-2 py-4 bg-black shadow-xl shadow-black-600/20 sm:px-4">
-      <div class="flex items-center justify-between mx-auto max-w-7xl">
-        <span class="pl-4 text-2xl font-extrabold text-white">
-          <a href="#">
-            <img src="https://glad432.github.io/img/logo.webp" height="44" width="196" alt="Glad432" oncontextmenu="return false;">
-          </a>
-        </span>
-        <label class="switch">
-          <input type="checkbox" id="darkModeToggle">
-          <span class="slider round "></span>
-        </label>
-        <div class="flex items-center space-x-1">
-          <ul class="hidden space-x-2 md:inline-flex">
-            <li>
-              <a href="https://github.com/glad432/glad432.github.io" target="_blank" class="px-4 py-2 font-semibold text-white rounded hover:text-blue-700">Source</a>
-            </li>
-            <li>
-              <a href="https://github.com/gladw-in" target="_blank" class="px-4 py-2 font-semibold text-white rounded hover:text-blue-700">Github</a>
-            </li>
-          </ul>
-          <div class="inline-flex md:hidden" x-data="{ open: false }">
-            <button class="flex-none px-2 text-2xl text-white" @click="open = true">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
-              </svg>
-              <span class="sr-only"></span>
-            </button>
-            <div class="absolute top-0 left-0 right-0 z-50 flex flex-col p-2 pb-4 m-2 space-y-3 bg-black rounded shadow" x-show.transition="open" @click.away="open = false" x-cloak>
-              <button class="self-end flex-none px-2 ml-2 text-2xl text-white" @click="open = false">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                <span class="sr-only"></span>
-              </button>
-              <ul class="space-y-2">
-                <li>
-                  <a href="https://github.com/glad432/glad432.github.io" target="_blank" class="px-4 py-2 font-semibold text-white rounded hover:text-blue-700">Source</a>
-                </li>
-                <li>
-                  <a href="https://github.com/gladw-in" target="_blank" class="px-4 py-2 font-semibold text-white rounded hover:text-blue-700">Github</a>
-                </li>
-              </ul>
+   <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Python Minifier - GLAD432</title>
+      <meta name="robots" content="index, follow">
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+      <meta http-equiv="x-ua-compatible" content="IE=edge">
+      <meta name="description" content="Python minifier online is a tool that reduces the size of Python code by removing unnecessary characters, such as white spaces, comments, and line breaks. This can help to reduce the size of Python scripts and make them load faster, especially in web applications." />
+      <meta name="keywords" content="Python, minifier, Python code optimization, online tool, script compression, code minification, web development, optimize Python code, improve script performance, reduce code size, web application optimization, code efficiency, code speed, streamline Python scripts">
+      <meta name="author" content="Glad432">
+      <link rel="canonical" href="https://glad432.github.io" />
+      <meta property="og:locale" content="en_US" />
+      <meta property="og:title" content="Python Minifier - GLAD432" />
+      <meta property="og:type" content="Website" />
+      <meta property="og:description" content="Python minifier online is a tool that reduces the size of Python code by removing unnecessary characters, such as white spaces, comments, and line breaks. This can help to reduce the size of Python scripts and make them load faster, especially in web applications." />
+      <meta property="og:site_name" content="Python Minifier - GLAD432" />
+      <meta property="og:image" content="https://glad432.github.io/img/favicon.png" />
+      <meta property="og:image:secure_url" content="https://glad432.github.io/img/favicon.png" />
+      <meta property="og:image:width" content="225" />
+      <meta property="og:image:height" content="225" />
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="twitter:site" content="@gladw_in">
+      <meta name="twitter:creator" content="@gladw_in">
+      <meta name="twitter:title" content="Python Minifier - GLAD432">
+      <meta name="twitter:domain" content="glad432.github.io">
+      <meta name="twitter:description" content="Reduce the size of Python code with this online minifier tool. Optimize your scripts for faster loading in web applications.">
+      <meta name="twitter:image" content="https://glad432.github.io/img/favicon.png">
+      <meta name="twitter:image:src" content="https://glad432.github.io/img/favicon.png">
+      <meta name="twitter:image:alt" content="Python Minifier - GLAD432">
+      <script src="https://glad432.github.io/js/tailwind.min.js" rel="stylesheet"></script>
+      <link href="https://glad432.github.io/css/style.min.css" rel="stylesheet">
+      <script defer src="https://glad432.github.io/js/alpine.min.js"></script>
+      <script src="https://glad432.github.io/js/codemirror.min.js"></script>
+      <script src="https://glad432.github.io/js/addons/python.min.js"></script>
+      <script src="https://glad432.github.io/js/addons/placeholder.min.js"></script>
+      <script src="https://glad432.github.io/js/addons/closebrackets.min.js"></script>
+      <script src="https://glad432.github.io/js/addons/matchbrackets.min.js"></script>
+      <script src="https://glad432.github.io/js/addons/anyword-hint.min.js"></script>
+      <script src="https://glad432.github.io/js/addons/show-hint.min.js"></script>
+      <script src="https://glad432.github.io/js/addons/simplescrollbars.min.js"></script>
+      <script src="https://glad432.github.io/js/addons/foldcode.min.js"></script>
+      <script src="https://glad432.github.io/js/addons/foldgutter.min.js"></script>
+      <script src="https://glad432.github.io/js/addons/indent-fold.min.js"></script>
+      <script src="https://glad432.github.io/js/qrcode.min.js"></script>
+      <link rel="icon" type="image/png" href="https://glad432.github.io/img/favicon.png" />
+      <link rel="shortcut icon" href="https://glad432.github.io/img/favicon.png" type="image/x-icon">
+      <link rel="apple-touch-icon-precomposed" href="https://glad432.github.io/img/favicon.png" />
+      <meta name="msapplication-TileImage" content="https://glad432.github.io/img/favicon.png" />
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HDTEFZ9987"></script>
+      <script>
+         window.dataLayer = window.dataLayer || [];
+         
+         function gtag() {
+           dataLayer.push(arguments);
+         }
+         gtag('js', new Date());
+         gtag('config', 'G-HDTEFZ9987');
+      </script>
+      <script>
+         document.addEventListener("DOMContentLoaded", function() {
+           let e = document.getElementById("darkModeToggle"),
+             t = localStorage.getItem("darkMode") !== "true";
+           e.addEventListener("change", function() {
+             let t = !document.documentElement.classList.contains("dark");
+             document.documentElement.classList.toggle("dark", t);
+             document.documentElement.classList.toggle("light", !t);
+             localStorage.setItem("darkMode", t.toString());
+           });
+           document.documentElement.classList.toggle("dark", !t);
+           document.documentElement.classList.toggle("light", t);
+           e.checked = !t;
+         });
+      </script>
+      <script type="application/ld+json">
+         {
+           "@context": "http://schema.org",
+           "@type": "Website",
+           "url": "https://glad432.github.io",
+           "name": "Python Minifier - GLAD432",
+           "description": "Python minifier online is a tool that reduces the size of Python code by removing unnecessary characters, such as white spaces, comments, and line breaks. This can help to reduce the size of Python scripts and make them load faster, especially in web applications.",
+           "keywords": "Python, minifier, Python code optimization, online tool, script compression, code minification, web development, optimize Python code, improve script performance, reduce code size, web application optimization, code efficiency, code speed, streamline Python scripts",
+           "publisher": {
+             "@type": "Organization",
+             "name": "GLAD432",
+             "logo": {
+               "@type": "ImageObject",
+               "url": "https://glad432.github.io/img/favicon.png"
+             }
+           }
+         }
+      </script>
+   </head>
+   <body class="bg-gray-100 font-sans">
+      <header class="select-none top-0 z-30 w-full px-2 py-4 bg-black shadow-xl shadow-black-600/20 sm:px-4">
+         <div class="flex items-center justify-between mx-auto max-w-7xl">
+            <span class="pl-4 text-2xl font-extrabold text-white">
+              <a href="https://glad432.github.io" title="Python Minifier - GLAD432">
+                <img src="https://glad432.github.io/img/logo.webp" height="44" width="196" alt="Glad432" oncontextmenu="return false;">
+              </a>
+            </span>
+            <label class="switch">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider round "></span>
+            </label>
+            <div class="flex items-center space-x-1">
+               <ul class="hidden space-x-2 md:inline-flex">
+                  <li>
+                     <a href="https://github.com/gladw-in" target="_blank" class="px-4 py-2 font-semibold text-white rounded hover:text-blue-700">Github</a>
+                  </li>
+               </ul>
+               <div class="inline-flex md:hidden" x-data="{ open: false }">
+                  <button class="flex-none px-2 text-2xl text-white" @click="open = true">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                     </svg>
+                     <span class="sr-only"></span>
+                  </button>
+                  <div class="absolute top-0 left-0 right-0 z-50 flex flex-col p-2 pb-4 m-2 space-y-3 bg-black rounded shadow" x-show.transition="open" @click.away="open = false" x-cloak>
+                     <button class="self-end flex-none px-2 ml-2 text-2xl text-white" @click="open = false">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span class="sr-only"></span>
+                     </button>
+                     <ul class="space-y-2">
+                        <li>
+                           <a href="https://github.com/gladw-in" target="_blank" class="px-4 py-2 font-semibold text-white rounded hover:text-blue-700">Github</a>
+                        </li>
+                     </ul>
+                  </div>
+               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </header>
-    <section class="mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow">
-      <div class="simp_border">
-        <h1 class="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
-          <span class="select-none cursor-default text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-blue-400 to-blue-400 ">Python Minifier</span>
-        </h1>
-        <header class="mb-2 md:mb-4">
-          <div class="typing-container">
-            <span id="text" class="mb-3 text-gray-700 "></span>
-            <span id="cursor" class="mb-3 text-gray-700 ">|</span>
-          </div>
-          <div id="orderedList" class="mt-4 ml-4"></div>
-        </header>
-      </div>
-      <p class="hidden">A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks. Its primary purpose is to enhance the loading speed of Python scripts, particularly beneficial for web applications. By reducing the overall size of the code, the minifier contributes to faster script loading times, optimizing web performance. The process of minification streamlines code readability without affecting its functionality or logic. Minified code is more efficiently transmitted and executed across various platforms, aiding developers in delivering smoother user experiences. Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment.</p>
-      <h2 class="select-none text-2xl font-bold blue_black_head py-6">Original Code</h2>
-      <div class="select-none text-left">
-        <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Line Count: 42</span>
-        <span id="text-size" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">0.992 kB</span>
-      </div>
-      <button id="from_url" class="select-none text-base mt-4 font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform">Load from URL <i id="fade-4" class="fa-solid fa-link"></i>
-      </button>
-      <div id="inputContainer" class="hidden mt-4 transition-all duration-500 ease-in-out">
-        <input type="text" id="fileLinkInput" placeholder="Enter .py link (1 MB max)" class="select-none cursor-text border border-gray-300 text-sm  rounded-lg focus:ring-blue-500 focus:border-blue-500 block py-2 px-4">
-        <button id="load_File" class="select-none text-base ml-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform">Load <i id="fade-3" class="fa-solid fa-cloud-arrow-down"></i>
-        </button>
-      </div>
-      <input class="hidden" type="file" id="fileInput" accept=".py" />
-      <div id="dropArea" class="select-none cursor-pointer rounded-xl border-dashed border-4 border-gray-300 bg-white p-8 m-5"> Drag and drop a <span class="font-bold">.py file</span> here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
-        </span>
-      </div>
-      <p id="errmsg"></p>
-      <div id="fileNameDisplay"></div>
-      <textarea id="source" autocomplete="off">class Person:
+         </div>
+      </header>
+      <section class="mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow">
+         <div class="simp_border">
+            <h1 class="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
+               <span class="select-none cursor-default text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-blue-400 to-blue-400 ">Python Minifier</span>
+            </h1>
+            <header class="mb-2 md:mb-4">
+               <div class="typing-container">
+                  <span id="text" class="mb-3 text-gray-700 "></span>
+                  <span id="cursor" class="mb-3 text-gray-700 ">|</span>
+               </div>
+               <div id="orderedList" class="mt-4 ml-4"></div>
+            </header>
+         </div>
+         <p class="hidden">A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks. Its primary purpose is to enhance the loading speed of Python scripts, particularly beneficial for web applications. By reducing the overall size of the code, the minifier contributes to faster script loading times, optimizing web performance. The process of minification streamlines code readability without affecting its functionality or logic. Minified code is more efficiently transmitted and executed across various platforms, aiding developers in delivering smoother user experiences. Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment.</p>
+         <h2 class="select-none text-2xl font-bold blue_black_head py-6">Original Code</h2>
+         <div class="select-none text-left">
+            <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Line Count: 42</span>
+            <span id="text-size" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">0.992 kB</span>
+         </div>
+         <button id="from_url" class="select-none text-base mt-4 font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform">Load from URL <i id="fade-4" class="fa-solid fa-link"></i>
+         </button>
+         <div id="inputContainer" class="hidden mt-4 transition-all duration-500 ease-in-out">
+            <div class="flex flex-col items-center">
+               <div class="flex items-center">
+                  <input type="text" id="fileLinkInput" placeholder="Enter .py link (1 MB max)" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 py-2 px-4">
+                  <button id="load_File" class="select-none text-base ml-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform">Load <i id="fade-3" class="fa-solid fa-cloud-arrow-down"></i></button>
+               </div>
+               <div class="flex mr-auto text-sm cursor-pointer select-none mt-1 ml-1 space-x-2 font-semibold">
+                  <div class="help-container relative top-[1.5px] right-0 mr-2" oncontextmenu="return false">
+                     <i class="fas fa-question-circle fa-sm text-sm text-blue-500"></i>
+                     <div class="help-content">
+                        <p class="select-none text-sm text-gray-700">Only Raw Github URLs (1MB) are recommended.</p>
+                     </div>
+                  </div>
+                  <span id="sample_link" class="text-blue-600 hover:underline">Try sample URL <i id="fade-6" class="fa-solid fa-circle-arrow-up fa-sm"></i></span>
+                  <span id="clear_link" class="text-red-500 hover:underline">Clear <i id="fade-7" class="fa-solid fa-trash-can fa-sm"></i></span>
+               </div>
+            </div>
+         </div>
+         <input class="hidden" type="file" id="fileInput" accept=".py" />
+         <div id="dropArea" class="select-none cursor-pointer rounded-xl border-dashed border-4 border-gray-300 bg-white p-8 m-5"> Drag and drop a <span class="font-bold">.py file</span> here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
+            </span>
+         </div>
+         <p id="errmsg"></p>
+         <div id="fileNameDisplay"></div>
+         <textarea id="source" autocomplete="off">class Person:
     def __init__(self, name, age):
         self.name = name
         self.age = age
@@ -216,132 +223,132 @@ if __name__ == "__main__":
     # Using the square lambda function
     number = 5
     print(f"The square of {number} is {square(number)}")</textarea>
-      <button id="rm" class="select-none text-2xl mt-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
-      </button>
-      <div class="text-left blue_big_box md:mx-auto md:p-8 ">
-        <div id="toggleContent1" class="collapsible">
-          <p class="cursor-pointer select-none underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
-        </div>
-        <div class="select-none content-ll pt-4">
-          <div class="mb-4">
-            <input type="checkbox" id="combine_imports" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="combine_imports" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Combine Import statements</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="remove_pass" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="remove_pass" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove Pass statements</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="remove_literal_statements" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="remove_literal_statements" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove literal statements (docstrings)</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="remove_annotations" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="remove_annotations" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove Annotations</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="hoist_literals" name="Hoist Literals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="hoist_literals" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Hoist Literals</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="rename_locals" name="Rename Locals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="rename_locals" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Rename Locals</label>
-          </div>
-          <div class="mb-4">
-            <label for="preserve_locals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Locals:</label>
-            <input type="text" id="preserve_locals" placeholder="Preserved Locals" name="Preserved Locals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="rename_globals" name="Rename Globals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="rename_globals" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Rename Globals</label>
-          </div>
-          <div class="mb-4">
-            <label for="preserve_globals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Globals:</label>
-            <input type="text" id="preserve_globals" placeholder="Preserved Globals" name="Preserved Globals" value="handler" class="cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="convert_posargs_to_args" name="Convert Positional-Only Arguments to Normal Arguments" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="convert_posargs_to_args" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Convert Positional-Only Arguments to Normal Arguments</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="preserve_shebang" name="Preserve any shebang line" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="preserve_shebang" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Preserve any shebang line</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="remove_asserts" name="Remove assert statements" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="remove_asserts" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove assert statements</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="remove_debug" name="Remove if statements conditional on __debug__ being True" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="remove_debug" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove if statements conditional on __debug__ being True</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="remove_explicit_return_none" name="Remove return statements that are not required" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="remove_explicit_return_none" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove return statements that are not required</label>
-          </div>
-          <div class="select-none space-x-2 text-center">
-            <button id="selectall" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Select all</button>
-            <button id="Unselectall" class="text-2xl font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Unselect all</button>
-          </div>
-        </div>
-      </div>
-      <div class="select-none mb-2 md:mb-4">
-        <span class="relative rounded pt-5 p-4 overflow-hidden group bg-blue-500 relative hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-blue-400 transition-all ease-out duration-300">
-          <span class="absolute right-0 w-8 h-40 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
-          <span id="minify" class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i></span>
-        </span>
-      </div>
-      <div class="select-none mb-2 md:mb-4"></div>
-      <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 hidden transition-opacity duration-2000"></div>
-      <div id="popup" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded shadow-md z-50 hidden transition-transform duration-2000">
-        <div id="downloadLink">
-          <span id="fileLink-load"></span>
-          <label id="copy-msg" for="fileLink" class="select-none cursor-pointer block mb-2 text-lg text-neutral-500 font-medium"></label>
-          <div class="relative flex items-center">
-            <input type="text" id="fileLink" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-51 p-2.5 mr-1" value="" readonly>
-            <a id="new_tab"></a>
-          </div>
-          <div id="help-msg" class="help-container" oncontextmenu="return false"></div>
-          <span id="scantocopy"></span>
-          <div id="qrCode"></div>
-        </div>
-        <button id="closePopup" class="hidden select-none px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Close</button>
-      </div>
-      <header class="mb-2 md:mb-4">
-        <h2 class="select-none text-2xl font-bold red_black_head py-6">Minified Code</h2>
-        <div class="select-none text-left">
-          <span id="line-count-out" class="font-bold px-4 py-2 bg-red-500 rounded text-white"></span>
-          <span id="minified-size" class="font-bold px-4 py-2 bg-red-500 rounded text-white">0.000 kB</span>
-        </div>
-        <textarea id="minified"></textarea>
-        <div class="mb-2 md:mb-4 select-none">
-          <button id="dw" disabled class="px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Download <i id="fade-1" class="fa-solid fa-download"></i>
-          </button>
-          <button id="copy" disabled class="px-4 py-2 mt-2 font-bold bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Copy <i class="fa-solid fa-clipboard"></i>
-          </button>
-          <button id="share" disabled class="px-4 py-2 mt-2 font-bold bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Share <i id="fade-2" class="fa-solid fa-share-from-square"></i>
-          </button>
-        </div>
-      </header>
-    </section>
-    <footer class="select-none bg-neutral-200 text-center text-white dark:bg-neutral-600">
-      <div class="pt-9">
-        <div class="mb-9 flex justify-center">
-          <a href="https://gladw-in.github.io/" target="_blank" class="mr-9 text-neutral-800 dark:text-neutral-200 hover:text-blue-700">
-            <i class="fa-solid fa-globe fa-xl"></i>
-          </a>
-          <a href="https://www.linkedin.com/in/glad432/" target="_blank" class="mr-9 text-neutral-800 dark:text-neutral-200 hover:text-blue-700">
-            <i class="fa-brands fa-linkedin fa-xl"></i>
-          </a>
-          <a href="https://github.com/gladw-in" target="_blank" class="text-neutral-800 dark:text-neutral-200 hover:text-blue-700">
-            <i class="fa-brands fa-github fa-xl"></i>
-          </a>
-        </div>
-      </div>
-      <div class="bg-neutral-300 p-4 text-center text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">© GLAD432 <span id="year" class="text-neutral-800 dark:text-neutral-400"></span>
-        <span class="text-neutral-800 dark:text-neutral-400"> All Rights Reserved</span>
-      </div>
-    </footer>
-    <script src="https://glad432.github.io/js/script.min.js"></script>
-  </body>
+         <button id="rm" class="select-none text-2xl mt-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
+         </button>
+         <div class="text-left blue_big_box md:mx-auto md:p-8 ">
+            <div id="toggleContent1" class="collapsible">
+               <p class="cursor-pointer select-none underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
+            </div>
+            <div class="select-none content-ll pt-4">
+               <div class="mb-4">
+                  <input type="checkbox" id="combine_imports" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                  <label for="combine_imports" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Combine Import statements</label>
+               </div>
+               <div class="mb-4">
+                  <input type="checkbox" id="remove_pass" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                  <label for="remove_pass" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove Pass statements</label>
+               </div>
+               <div class="mb-4">
+                  <input type="checkbox" id="remove_literal_statements" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                  <label for="remove_literal_statements" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove literal statements (docstrings)</label>
+               </div>
+               <div class="mb-4">
+                  <input type="checkbox" id="remove_annotations" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                  <label for="remove_annotations" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove Annotations</label>
+               </div>
+               <div class="mb-4">
+                  <input type="checkbox" id="hoist_literals" name="Hoist Literals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                  <label for="hoist_literals" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Hoist Literals</label>
+               </div>
+               <div class="mb-4">
+                  <input type="checkbox" id="rename_locals" name="Rename Locals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                  <label for="rename_locals" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Rename Locals</label>
+               </div>
+               <div class="mb-4">
+                  <label for="preserve_locals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Locals:</label>
+                  <input type="text" id="preserve_locals" placeholder="Preserved Locals" name="Preserved Locals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+               </div>
+               <div class="mb-4">
+                  <input type="checkbox" id="rename_globals" name="Rename Globals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                  <label for="rename_globals" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Rename Globals</label>
+               </div>
+               <div class="mb-4">
+                  <label for="preserve_globals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Globals:</label>
+                  <input type="text" id="preserve_globals" placeholder="Preserved Globals" name="Preserved Globals" value="handler" class="cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+               </div>
+               <div class="mb-4">
+                  <input type="checkbox" id="convert_posargs_to_args" name="Convert Positional-Only Arguments to Normal Arguments" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                  <label for="convert_posargs_to_args" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Convert Positional-Only Arguments to Normal Arguments</label>
+               </div>
+               <div class="mb-4">
+                  <input type="checkbox" id="preserve_shebang" name="Preserve any shebang line" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                  <label for="preserve_shebang" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Preserve any shebang line</label>
+               </div>
+               <div class="mb-4">
+                  <input type="checkbox" id="remove_asserts" name="Remove assert statements" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                  <label for="remove_asserts" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove assert statements</label>
+               </div>
+               <div class="mb-4">
+                  <input type="checkbox" id="remove_debug" name="Remove if statements conditional on __debug__ being True" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                  <label for="remove_debug" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove if statements conditional on __debug__ being True</label>
+               </div>
+               <div class="mb-4">
+                  <input type="checkbox" id="remove_explicit_return_none" name="Remove return statements that are not required" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                  <label for="remove_explicit_return_none" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove return statements that are not required</label>
+               </div>
+               <div class="select-none space-x-2 text-center">
+                  <button id="selectall" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Select all</button>
+                  <button id="Unselectall" class="text-2xl font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Unselect all</button>
+               </div>
+            </div>
+         </div>
+         <div class="select-none mb-2 md:mb-4">
+            <span class="relative rounded pt-5 p-4 overflow-hidden group bg-blue-500 relative hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-blue-400 transition-all ease-out duration-300">
+            <span class="absolute right-0 w-8 h-40 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
+            <span id="minify" class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i></span>
+            </span>
+         </div>
+         <div class="select-none mb-2 md:mb-4"></div>
+         <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 hidden transition-opacity duration-2000"></div>
+         <div id="popup" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded shadow-md z-50 hidden transition-transform duration-2000">
+            <div id="downloadLink">
+               <span id="fileLink-load"></span>
+               <label id="copy-msg" for="fileLink" class="select-none cursor-pointer block mb-2 text-lg text-neutral-500 font-medium"></label>
+               <div class="relative flex items-center">
+                  <input type="text" id="fileLink" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-51 p-2.5 mr-1" value="" readonly>
+                  <a id="new_tab"></a>
+               </div>
+               <div id="help-msg" class="help-container" oncontextmenu="return false"></div>
+               <span id="scantocopy"></span>
+               <div id="qrCode"></div>
+            </div>
+            <button id="closePopup" class="hidden select-none px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Close</button>
+         </div>
+         <header class="mb-2 md:mb-4">
+            <h2 class="select-none text-2xl font-bold red_black_head py-6">Minified Code</h2>
+            <div class="select-none text-left">
+               <span id="line-count-out" class="font-bold px-4 py-2 bg-red-500 rounded text-white"></span>
+               <span id="minified-size" class="font-bold px-4 py-2 bg-red-500 rounded text-white">0.000 kB</span>
+            </div>
+            <textarea id="minified"></textarea>
+            <div class="mb-2 md:mb-4 select-none">
+               <button id="dw" disabled class="px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Download <i id="fade-1" class="fa-solid fa-download"></i>
+               </button>
+               <button id="copy" disabled class="px-4 py-2 mt-2 font-bold bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Copy <i class="fa-solid fa-clipboard"></i>
+               </button>
+               <button id="share" disabled class="px-4 py-2 mt-2 font-bold bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Share <i id="fade-2" class="fa-solid fa-share-from-square"></i>
+               </button>
+            </div>
+         </header>
+      </section>
+      <footer class="select-none bg-neutral-200 text-center text-white dark:bg-neutral-600">
+         <div class="pt-9">
+            <div class="mb-9 flex justify-center">
+               <a href="https://gladw-in.github.io/" target="_blank" class="mr-9 text-neutral-800 dark:text-neutral-200 hover:text-blue-700">
+               <i class="fa-solid fa-globe fa-xl"></i>
+               </a>
+               <a href="https://www.linkedin.com/in/glad432/" target="_blank" class="mr-9 text-neutral-800 dark:text-neutral-200 hover:text-blue-700">
+               <i class="fa-brands fa-linkedin fa-xl"></i>
+               </a>
+               <a href="https://github.com/gladw-in" target="_blank" class="text-neutral-800 dark:text-neutral-200 hover:text-blue-700">
+               <i class="fa-brands fa-github fa-xl"></i>
+               </a>
+            </div>
+         </div>
+         <div class="bg-neutral-300 p-4 text-center text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">© GLAD432 <span id="year" class="text-neutral-800 dark:text-neutral-400"></span>
+            <span class="text-neutral-800 dark:text-neutral-400"> All Rights Reserved</span>
+         </div>
+      </footer>
+      <script src="https://glad432.github.io/js/script.min.js"></script>
+   </body>
 </html>
