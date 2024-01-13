@@ -254,7 +254,7 @@ function setupFileInput() {
 			} else {
 				generateButton.disabled = true;
 				fileNameDisplay.classList.remove(...classlst0);
-				errorMessage.classList.add('font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit');
+				errorMessage.classList.add(...classlst);
 				errorMessage.innerHTML = `${exctri} Invalid file format. Please select a .py file.`;
 				fileInput.value = '';
 				fileNameDisplay.textContent = '';
@@ -550,26 +550,15 @@ function initializeMinifier() {
 					minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)}  kB`;
 					copyButton.disabled = false;
 					shareButton.disabled = false;
-					selectallopt.disabled = false;
-					unselectallopt.disabled = false;
-					selectallopt.classList.remove("cursor-not-allowed");
-					unselectallopt.classList.remove("cursor-not-allowed");
 
 				} else {
 					shareButton.disabled = true;
 					copyButton.disabled = true;
 					generateButton.disabled = true;
 					minifiedSizeSpan.innerHTML = `${excir} Error`;
-
-					try {
-						const error = await response.json();
-						shareButton.disabled = true;
-						copyButton.disabled = true;
-						minifiedSizeSpan.innerHTML = `${excir} ${error.message}`;
-					} catch {}
 				}
 
-			} catch (e) {
+			} catch {
 				shareButton.disabled = true;
 				copyButton.disabled = true;
 				generateButton.disabled = true;
@@ -579,6 +568,10 @@ function initializeMinifier() {
 			minifiedSizeSpan.textContent = "Enter Code";
 		}
 
+		selectallopt.disabled = false;
+		unselectallopt.disabled = false;
+		selectallopt.classList.remove("cursor-not-allowed");
+		unselectallopt.classList.remove("cursor-not-allowed");
 		minifyButton.disabled = false;
 
 	}
@@ -642,7 +635,7 @@ function animateIcon(fade, fade_class, fade_dur) {
 
 	ani_icon.classList.add(fade_class);
 
-	aniTimeout = setTimeout(function() {
+	aniTimeout = setTimeout(() => {
 		ani_icon.classList.remove(fade_class);
 		aniTimeout = null;
 	}, fade_dur);
