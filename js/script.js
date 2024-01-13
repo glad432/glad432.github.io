@@ -3,7 +3,7 @@ const copyButton = document.getElementById('copy');
 const textElement = document.getElementById("text");
 const cursorElement = document.getElementById("cursor");
 const errorMessage = document.getElementById('errmsg');
-const generateButton = document.getElementById('dw');
+const dwButton = document.getElementById('dw');
 const shareButton = document.getElementById("share");
 const dropArea = document.getElementById('dropArea');
 const fileInput = document.getElementById('fileInput');
@@ -60,7 +60,7 @@ const sentences = [
 	"Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment."
 ];
 
-const options = {
+const dateformat = {
 	year: 'numeric',
 	month: '2-digit',
 	day: '2-digit',
@@ -252,7 +252,7 @@ function setupFileInput() {
 				fileNameDisplay.classList.add(...classlst0);
 				handleFile(selectedFile);
 			} else {
-				generateButton.disabled = true;
+				dwButton.disabled = true;
 				fileNameDisplay.classList.remove(...classlst0);
 				errorMessage.classList.add(...classlst);
 				errorMessage.innerHTML = `${exctri} Invalid file format. Please select a .py file.`;
@@ -354,7 +354,7 @@ async function Sharelink() {
 				link_newtab.target = "_blank";
 				link_newtab.title = 'Open in new tab';
 				orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
-				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-gray-700">Python file will be deleted after download.<br> Expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', options)}</span></p></div>`;
+				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-gray-700">Python file will be deleted after download.<br> Expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
 				orscan.classList.add('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
 				qrCode.style.textAlign = '-moz-center';
@@ -524,7 +524,9 @@ function initializeMinifier() {
 
 	async function minifyClick() {
 		minifyButton.disabled = false;
-		generateButton.disabled = false;
+		shareButton.disabled = true;
+		copyButton.disabled = true;
+		dwButton.disabled = true;
 		selectallopt.disabled = true;
 		unselectallopt.disabled = true;
 		selectallopt.classList.add("cursor-not-allowed");
@@ -550,18 +552,19 @@ function initializeMinifier() {
 					minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)}  kB`;
 					copyButton.disabled = false;
 					shareButton.disabled = false;
+					dwButton.disabled = false;
 
 				} else {
-					shareButton.disabled = true;
 					copyButton.disabled = true;
-					generateButton.disabled = true;
+					shareButton.disabled = true;
+					dwButton.disabled = true;
 					minifiedSizeSpan.innerHTML = `${excir} Error`;
 				}
 
 			} catch {
 				shareButton.disabled = true;
 				copyButton.disabled = true;
-				generateButton.disabled = true;
+				dwButton.disabled = true;
 				minifiedSizeSpan.innerHTML = `${excir} Something went wrong!!`;
 			}
 		} else {
@@ -604,7 +607,7 @@ initializeMinifier();
 function clearSource() {
 	animateIcon("fade-5", "fa-fade", 1500);
 	shareButton.disabled = true;
-	generateButton.disabled = true;
+	dwButton.disabled = true;
 	copyButton.disabled = true;
 
 	fileNameDisplay.classList.remove(...classlst);
@@ -661,10 +664,6 @@ function toggleContent1() {
 	}
 }
 document.getElementById('toggleContent1').addEventListener('click', toggleContent1);
-
-function toggleContentFiles() {
-	content.style.display = content.style.display === 'none' ? 'block' : 'none';
-}
 
 function tickAllAndSetGlobals() {
 	checkboxes.forEach(function(checkbox) {
