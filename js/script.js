@@ -25,7 +25,7 @@ const unselectallopt = document.getElementById('Unselectall');
 const preservedGlobalsInput = document.getElementById('preserve_globals');
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-let errorTimeout, aniTimeout, cpyTimeout0, cpyTimeout1;
+let errorTimeout, cpyTimeout0, cpyTimeout1;
 const maxFileSizeInBytes = 1 * 1024 * 1024;
 let sentenceIndex = 0;
 let charIndex = 0;
@@ -631,6 +631,7 @@ function clearSource() {
 document.getElementById('rm').addEventListener('click', clearSource);
 
 function animateIcon(fade, fade_class, fade_dur) {
+	let aniTimeout;
 	if (aniTimeout) {
 		clearTimeout(aniTimeout);
 	}
@@ -753,5 +754,19 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 
 	document.getElementById("load_File").addEventListener("click", load_file);
+	document.getElementById("sample_link").addEventListener("click", () => {
+		const githubrawlink = "https:\/\/gist.githubusercontent.com\/glad432\/4d1935413e012cd54130a1fc6f31b4bf\/raw\/bad921bf1344261c2187cc9ef37e7ca307c00d6d\/sample.py";
+		if (fileLinkInput.value !== githubrawlink) {
+			fileLinkInput.value = githubrawlink;
+			load_file();
+			animateIcon("fade-6", "fa-bounce", 1000);
+		}
+	});
+	document.getElementById("clear_link").addEventListener("click", () => {
+		if (fileLinkInput.value !== '') {
+			fileLinkInput.value = '';
+			animateIcon("fade-7", "fa-fade", 1000);
+		}
+	});
 });
 document.getElementById("from_url").addEventListener("click", input_from_url);
