@@ -1,6 +1,6 @@
 # Python Minifier - Glad432
 
-Welcome to my Python Minifier - Glad432 This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework and CodeMirror for code highlighting. Additionally, it utilizes the python-minifier.com API to minify Python files.
+Welcome to my Python Minifier - Glad432 This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes and CodeMirror for code highlighting. Additionally, it utilizes the python-minifier.com API to minify Python files and file.io for file sharing.
 
 ![python minifier - glad432](https://glad432.github.io/img/favicon.png)
 
@@ -12,6 +12,9 @@ Below you'll find more information about the technologies used and the benefits 
 - CSS (including Tailwind CSS)
 - JavaScript (including CodeMirror)
 - [python-minifier.com API](https://www.python-minifier.com/)
+- [file.io](https://www.file.io/) for file sharing
+- [Font Awesome](https://fontawesome.com/) for scalable vector icons
+- [QRCode.js](https://davidshimjs.github.io/qrcodejs/) for generating QR codes
 
 ## Tailwind CSS
 
@@ -33,12 +36,27 @@ Minifying Python files involves removing unnecessary whitespace, comments, and r
 
 The [python-minifier.com API](https://www.python-minifier.com/) allows you to programmatically minify your Python files. This can be especially useful when preparing production-ready code, optimizing for web services, or sharing code snippets.
 
+## File Sharing with file.io
+
+[file.io](https://www.file.io/) is used for easy and secure file sharing. It provides a simple and temporary solution for sharing python files with others.
+
+## Font Awesome
+
+[Font Awesome](https://fontawesome.com/) is utilized for scalable vector icons, adding a visually appealing and customizable element.
+
+## QRCode.js
+
+[QRCode.js](https://davidshimjs.github.io/qrcodejs/) is employed for generating QR codes dynamically in the project. It enhances user experience and facilitates easy sharing of information.
+
 ## Credits
 
 - [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework for rapid UI development.
 - [Codemirror](https://codemirror.net/) - A lightweight, extensible syntax highlighter.
 - [python-minifier.com](https://www.python-minifier.com/) - API for minifying Python files.
+- [file.io](https://www.file.io/) - Simple and secure file sharing.
+- [Font Awesome](https://fontawesome.com/) - Scalable vector icons.
+- [QRCode.js](https://davidshimjs.github.io/qrcodejs/) - Library for generating QR codes.
 
 ---
 
-Thank you for visiting my Python Minifier - Glad432 Feel free to explore the code and reach out to me with any questions or feedback.
+Thank you for visiting my Python Minifier - Glad432. Feel free to explore the code and reach out to me with any questions or feedback.
