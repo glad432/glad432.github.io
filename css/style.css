@@ -972,6 +972,10 @@ li.CodeMirror-hint-active {
 .dark .cm-s-mdn-like .cm-builtin {
   color: #cca86d;
 }
+.dark .cm-s-mdn-like .cm-meta,
+.dark .text-white {
+  color: #e8e6e3;
+}
 .dark button,
 .dark input,
 .dark textarea {
@@ -1027,9 +1031,6 @@ li.CodeMirror-hint-active {
 }
 .dark .text-neutral-500 {
   color: #9f978b;
-}
-.dark .text-white {
-  color: #e8e6e3;
 }
 .dark .hover\:ring-2:hover {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
