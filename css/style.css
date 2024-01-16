@@ -130,7 +130,7 @@ header {
 .switch {
   margin-left: auto;
   position: relative;
-  width: 28px;
+  width: 32px;
   height: 32px;
 }
 .CodeMirror-ruler,
@@ -151,16 +151,15 @@ header {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
   font-size: 18px;
-  top: 4px;
-  left: 4px;
+  top: 3.5px;
+  left: 7px;
   color: #fff;
-  -webkit-transition: 0.4s;
-  -o-transition: 0.4s;
-  transition: 0.4s;
 }
 input:checked + .slider:before {
   content: "\f186";
   color: #fff;
+  top: 3.5px;
+  left: 8px;
 }
 .switch .slider.round {
   border-radius: 20px;
