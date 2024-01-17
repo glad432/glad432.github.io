@@ -770,3 +770,23 @@ document.addEventListener("DOMContentLoaded", function() {
 	});
 });
 document.getElementById("from_url").addEventListener("click", input_from_url);
+
+function show_article() {
+	animateIcon("rot-1", "fa-fade", 1000);
+	const display_content = document.getElementById("display-content");
+	const rotate_1 = document.getElementById("rot-1");
+	display_content.classList.toggle("content");
+	rotate_1.classList.toggle("fa-caret-down");
+	display_content.classList.toggle("hidden");
+	rotate_1.classList.toggle("fa-caret-up");
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	document.getElementById("show-btn").addEventListener("click", show_article);
+});
+
+document.addEventListener('DOMContentLoaded', async () => {
+	const response = await fetch("https://glad432.github.io/article/blog.json");
+	const articleData = await response.json();
+	document.getElementById('article').innerHTML = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h1 class="sm:text-xl lg:text-3xl before:content-['📃'] text-gray-600 text-left font-bold mb-4">${articleData?.article?.title}</h1><p class="text-[13px] lg:text-[15px] text-gray-500 font-bold leading-relaxed">${articleData?.article.date}</p>${articleData?.article?.sections.map(section => `<div class="mb-4"><h2 class="text-[15px] text-gray-500 before:content-['📌'] lg:text-xl font-bold py-4">${section?.section_title}</h2><p class="text-[13px] lg:text-[15px] leading-relaxed">${section?.section_content}</p></div>`).join('')}</div>`;
+});
