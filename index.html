@@ -223,7 +223,7 @@ if __name__ == "__main__":
     # Using the square lambda function
     number = 5
     print(f"The square of {number} is {square(number)}")</textarea>
-      <button id="rm" class="select-none text-2xl mt-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
+      <button id="rm" class="select-none text-2xl mt-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
       </button>
       <div class="text-left blue_big_box md:mx-auto md:p-8 ">
         <div id="toggleContent1" class="collapsible">
@@ -287,8 +287,8 @@ if __name__ == "__main__":
             <label for="remove_explicit_return_none" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove return statements that are not required</label>
           </div>
           <div class="select-none space-x-2 text-center">
-            <button id="selectall" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Select all</button>
-            <button id="Unselectall" class="text-2xl font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Unselect all</button>
+            <button id="selectall" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Select all</button>
+            <button id="Unselectall" class="text-2xl font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Unselect all</button>
           </div>
         </div>
       </div>
@@ -305,28 +305,28 @@ if __name__ == "__main__":
           <span id="fileLink-load"></span>
           <label id="copy-msg" for="fileLink" class="select-none cursor-pointer block mb-2 text-lg text-neutral-500 font-medium"></label>
           <div class="relative flex items-center">
-            <input type="text" id="fileLink" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-51 p-2.5 mr-1" value="" readonly>
+            <input type="text" id="fileLink" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-51 p-2.5 mr-1" readonly>
             <a id="new_tab"></a>
           </div>
           <div id="help-msg" class="help-container" oncontextmenu="return false"></div>
           <span id="scantocopy"></span>
           <div id="qrCode"></div>
         </div>
-        <button id="closePopup" class="hidden select-none px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Close</button>
+        <button id="closePopup" class="hidden select-none px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Close</button>
       </div>
       <header class="mb-2 md:mb-4">
         <h2 class="select-none text-2xl font-bold red_black_head py-6">Minified Code</h2>
         <div class="select-none text-left">
-          <span id="line-count-out" class="font-bold px-4 py-2 bg-red-500 rounded text-white"></span>
+          <span id="line-count-out" class="font-bold px-4 py-2 bg-red-500 rounded text-white">Line Count: 1</span>
           <span id="minified-size" class="font-bold px-4 py-2 bg-red-500 rounded text-white">0.000 kB</span>
         </div>
         <textarea id="minified"></textarea>
-        <div class="mb-2 md:mb-4 select-none">
-          <button id="dw" disabled class="px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Download <i id="fade-1" class="fa-solid fa-download"></i>
+       <div class="mb-2 md:mb-4 select-none">
+          <button id="dw" disabled class="px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download <i id="fade-1" class="fa-solid fa-download"></i>
           </button>
-          <button id="copy" disabled class="px-4 py-2 mt-2 font-bold bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Copy <i class="fa-solid fa-clipboard"></i>
+          <button id="copy" disabled class="px-4 py-2 mt-2 font-bold bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Copy <i class="fa-solid fa-clipboard"></i>
           </button>
-          <button id="share" disabled class="px-4 py-2 mt-2 font-bold bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform hover:scale-x-110 hover:scale-y-105">Share <i id="fade-2" class="fa-solid fa-share-from-square"></i>
+          <button id="share" disabled class="px-4 py-2 mt-2 font-bold bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Share <i id="fade-2" class="fa-solid fa-share-from-square"></i>
           </button>
         </div>
       </header>
