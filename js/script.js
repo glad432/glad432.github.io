@@ -108,11 +108,11 @@ function startClearingText() {
 
 function showOrderedList() {
 	const bbbtn = '<span class="cursor-pointer select-none relative inline-flex items-center justify-center inline-block p-4 px-5 py-3 overflow-hidden font-medium text-blue-500 rounded-lg shadow-2xl group"><span class="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-500 bg-blue-700 rounded-full blur-md ease"></span><span class="absolute inset-0 w-full h-full transition duration-700 group-hover:rotate-180 ease"><span class="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-blue-500 rounded-full blur-md"></span><span class="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-blue-700 rounded-full blur-md"></span></span><span id="up-tx" class="font-semibold relative text-white">Read Again</span>'
-	document.getElementById("orderedList").innerHTML = `<div class="collapsible" onclick="toggleContent()">${bbbtn}</div><div class="content-l" style="display: none;"><ol class="mt-4 space-y-1 list-decimal list-inside">${sentences.map(sentence => `<li class="mb-2 text-left">${sentence}</li>`).join("")}</ol></div>`;
+	document.getElementById("orderedList").innerHTML = `<div class="collapsible" onclick="toggleContent()">${bbbtn}</div><div class="content-l" style="display: none;"><ol class="mt-4 space-y-1 list-decimal list-inside">${sentences.map(sentence => `<li class="mb-2 text-left">${sentence}</li>`).join('')}</ol></div>`;
 }
 
 function startTypingNextSentence() {
-	textElement.textContent = "";
+	textElement.textContent = '';
 	charIndex = 0;
 	cursorElement.style.display = "inline";
 
@@ -198,11 +198,10 @@ function updateEditorState() {
 	var fileSizeInBytes = new Blob([value]).size;
 
 	if (fileSizeInBytes > maxFileSizeInBytes) {
-		errorMessage.classList.add(...classlst);
-		errorMessage.innerHTML = `${exctri} Maximum Size limit 1MB reached!`;
+		handleFilename();
+		handleErrorMessage(`${exctri} Maximum Size limit 1MB reached!`);
 		sourceEditor.setValue(value.substring(0, value.length - (fileSizeInBytes - maxFileSizeInBytes)));
 		sourceEditor.setOption("readOnly", true);
-		clear_err_msg();
 	} else {
 		sourceEditor.setOption("readOnly", false);
 	}
@@ -212,7 +211,7 @@ function updateEditorState() {
 
 sourceEditor.on("beforeChange", function(_, change) {
 	var currentSize = new Blob([sourceEditor.getValue()]).size;
-	var newSize = currentSize + new Blob([change.text.join("")]).size - change.to - change.from;
+	var newSize = currentSize + new Blob([change.text.join('')]).size - change.to - change.from;
 
 	if (newSize > maxFileSizeInBytes) {
 		change.cancel();
@@ -227,19 +226,13 @@ function setupFileInput() {
 
 		if (droppedFile) {
 			if (droppedFile.name.toLowerCase().endsWith('.py')) {
-				errorMessage.classList.remove(...classlst);
-				fileNameDisplay.innerHTML = `${code_file} ${droppedFile.name}`;
-				fileNameDisplay.classList.add(...classlst0);
+				handleErrorMessage()
+				handleFilename(`${code_file} ${droppedFile.name}`);
 				handleFile(droppedFile);
 			} else {
-				fileNameDisplay.classList.remove(...classlst);
-				errorMessage.classList.add(...classlst);
-				errorMessage.innerHTML = `${exctri} Invalid file format. Please select a .py file.`;
-				clear_err_msg();
-				fileNameDisplay.textContent = '';
+				handleFilename()
+				handleErrorMessage(`${exctri} Invalid file format. Please select a .py file.`);
 			}
-		} else {
-			fileNameDisplay.textContent = '';
 		}
 	}
 
@@ -248,20 +241,15 @@ function setupFileInput() {
 
 		if (selectedFile) {
 			if (selectedFile.name.toLowerCase().endsWith('.py')) {
-				fileNameDisplay.innerHTML = `${code_file} ${selectedFile.name}`;
-				fileNameDisplay.classList.add(...classlst0);
+				handleErrorMessage()
+				handleFilename(`${code_file} ${selectedFile.name}`);
 				handleFile(selectedFile);
 			} else {
 				dwButton.disabled = true;
-				fileNameDisplay.classList.remove(...classlst0);
-				errorMessage.classList.add(...classlst);
-				errorMessage.innerHTML = `${exctri} Invalid file format. Please select a .py file.`;
+				handleFilename()
+				handleErrorMessage(`${exctri} Invalid file format. Please select a .py file.`);
 				fileInput.value = '';
-				fileNameDisplay.textContent = '';
-				clear_err_msg();
 			}
-		} else {
-			fileNameDisplay.textContent = '';
 		}
 	});
 
@@ -289,17 +277,14 @@ function setupFileInput() {
 
 			reader.onload = function(e) {
 				sourceEditor.getDoc().setValue(e.target.result);
-				errorMessage.textContent = '';
+				handleErrorMessage()
 			};
 
 			reader.readAsText(file);
 		} else {
-			fileNameDisplay.classList.remove(...classlst0);
-			errorMessage.classList.add(...classlst);
-			errorMessage.innerHTML = `${exctri} File size exceeds 1MB. Please select a smaller file.`;
-			fileNameDisplay.textContent = '';
+			handleFilename()
+			handleErrorMessage(`${exctri} File size exceeds 1MB. Please select a smaller file.`);
 			fileInput.value = '';
-			clear_err_msg();
 		}
 	}
 }
@@ -314,7 +299,7 @@ function dw_py() {
 	var dataUri = URL.createObjectURL(blob);
 	var downloadLink = document.createElement("a");
 	downloadLink.href = dataUri;
-	downloadLink.download = (fileNameDisplay.textContent || "default.py").replace(/^ /, "").replace(/\.[^/.]+$/, "") + "_min.py";
+	downloadLink.download = (fileNameDisplay.textContent || "default.py").replace(/^ /, '').replace(/\.[^/.]+$/, '') + "_min.py";
 	downloadLink.click();
 	URL.revokeObjectURL(dataUri);
 }
@@ -324,7 +309,7 @@ document.getElementById('dw').addEventListener('click', dw_py);
 async function Sharelink() {
 	animateIcon("fade-2", "fa-fade", 3000);
 	const editorContent = minifiedEditor.getValue();
-	const fileName = (fileNameDisplay.textContent || "default.py").replace(/^ /, "").replace(/\.[^/.]+$/, "") + "_min.py";
+	const fileName = (fileNameDisplay.textContent || "default.py").replace(/^ /, '').replace(/\.[^/.]+$/, '') + "_min.py";
 
 	try {
 		const response = await fetch('https://file.io/?expires=2w', {
@@ -472,8 +457,6 @@ function updateLineCount_out() {
 
 minifiedEditor.on("change", updateLineCount_out);
 
-updateLineCount_out();
-
 function initializeMinifier() {
 	function build_query() {
 		const options = [
@@ -536,7 +519,7 @@ function initializeMinifier() {
 		animateIcon("fade-0", "fa-fade", 1500);
 		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
 
-		if (sourceEditor.getValue() !== "") {
+		if (sourceEditor.getValue() !== '') {
 			try {
 				const response = await fetch("https://api.python-minifier.com/minify?" + build_query(), {
 					method: 'POST',
@@ -610,22 +593,20 @@ function clearSource() {
 	dwButton.disabled = true;
 	copyButton.disabled = true;
 
-	fileNameDisplay.classList.remove(...classlst);
-	fileNameDisplay.textContent = '';
+	handleFilename();
 
-	errorMessage.classList.remove(...classlst);
-	errorMessage.textContent = '';
+	handleErrorMessage()
 
 	fileInput.value = '';
 
-	document.getElementById("source").textContent = "";
+	document.getElementById("source").textContent = '';
 
-	minifiedEditor.setValue("");
+	minifiedEditor.setValue('');
 
 	sourceEditor.setValue('');
 
 	minifiedSizeSpan.textContent = "0.000 kB";
-	fileLinkInput.value = "";
+	fileLinkInput.value = '';
 }
 
 document.getElementById('rm').addEventListener('click', clearSource);
@@ -645,16 +626,34 @@ function animateIcon(fade, fade_class, fade_dur) {
 	}, fade_dur);
 }
 
-function clear_err_msg() {
-	if (errorTimeout) {
-		clearTimeout(errorTimeout);
+function handleFilename(text) {
+	if (text === undefined) {
+		fileNameDisplay.textContent = '';
+		fileNameDisplay.classList.remove(...classlst0);
+	} else {
+		fileNameDisplay.innerHTML = text;
+		fileNameDisplay.classList.add(...classlst0);
 	}
+}
 
-	errorTimeout = setTimeout(() => {
+function handleErrorMessage(text) {
+	if (text === undefined) {
+		errorMessage.textContent = '';
 		errorMessage.classList.remove(...classlst);
-		errorMessage.innerHTML = "";
-		errorTimeout = null;
-	}, 3500);
+	} else {
+		if (errorTimeout) {
+			clearTimeout(errorTimeout);
+		}
+
+		errorMessage.innerHTML = text;
+		errorMessage.classList.add(...classlst);
+
+		errorTimeout = setTimeout(() => {
+			errorMessage.classList.remove(...classlst);
+			errorMessage.innerHTML = '';
+			errorTimeout = null;
+		}, 3500);
+	}
 }
 
 function toggleContent1() {
@@ -700,15 +699,14 @@ document.addEventListener("DOMContentLoaded", function() {
 		fetch(fileUrl)
 			.then((response) => {
 				if (!response.ok) {
-					sourceEditor.setValue("");
+					sourceEditor.setValue('');
 				}
 
 				const contentDisposition = response.headers.get("content-disposition");
 				const fileNameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"/);
 				const fileName = fileNameMatch ? fileNameMatch[1] : fileUrl.split('/').pop();
 
-				fileNameDisplay.innerHTML = `${code_file} ${fileName}`;
-				fileNameDisplay.classList.add(...classlst0);
+				handleFilename(`${code_file} ${fileName}`);
 
 				const contentLength = response.headers.get("content-length");
 				if (contentLength && parseInt(contentLength, 10) > maxFileSizeInBytes) {
@@ -721,35 +719,25 @@ document.addEventListener("DOMContentLoaded", function() {
 				sourceEditor.setValue(data);
 			})
 			.catch((error) => {
-				fileNameDisplay.innerHTML = "";
-				fileNameDisplay.classList.remove(...classlst0);
-				errorMessage.classList.add(...classlst);
-				errorMessage.innerHTML = `${exctri} ${error.message}`;
-				clear_err_msg();
+				handleFilename()
+				handleErrorMessage(`${exctri} ${error.message}`);
 			});
 	}
 
 	function load_file() {
 		var fileLink = fileLinkInput.value.trim();
-		if (fileLinkInput.value === "" || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
-			fileNameDisplay.innerHTML = "";
-			fileNameDisplay.classList.remove(...classlst0);
-			clear_err_msg();
+		if (fileLinkInput.value === '' || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
+			handleFilename()
 		} else if (!(/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(fileLink))) {
-			errorMessage.classList.add(...classlst);
-			errorMessage.innerHTML = `${exctri} Please enter a valid URL starting with "https://"`;
-			clear_err_msg();
-			fileNameDisplay.innerHTML = "";
-			fileNameDisplay.classList.remove(...classlst0);
+			handleFilename()
+			handleErrorMessage(`${exctri} Please enter a valid URL starting with "https://"`);
 		} else if (/\.(py)$/.test(fileLink.toLowerCase())) {
+			handleErrorMessage()
 			animateIcon("fade-3", "fa-fade", 1500);
 			loadFileContent(fileLink);
 		} else {
-			fileNameDisplay.innerHTML = "";
-			fileNameDisplay.classList.remove(...classlst0);
-			errorMessage.classList.add(...classlst);
-			errorMessage.innerHTML = `${exctri} Please enter a valid .py file link`;
-			clear_err_msg();
+			handleFilename()
+			handleErrorMessage(`${exctri} Please enter a valid .py file link`);
 		}
 	}
 
