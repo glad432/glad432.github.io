@@ -1,6 +1,6 @@
 # Python Minifier - Glad432
 
-Welcome to my Python Minifier - Glad432 This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes and CodeMirror for code highlighting. Additionally, it utilizes the python-minifier.com API to minify Python files and file.io for file sharing.
+Welcome to my Python Minifier - Glad432 This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes and CodeMirror for code highlighting. Additionally, it utilizes the python-minifier.com API to minify Python files, file.io for file sharing and hCaptcha for human verification.
 
 ![python minifier - glad432](https://glad432.github.io/img/favicon.png)
 
@@ -15,6 +15,7 @@ Below you'll find more information about the technologies used and the benefits 
 - [file.io](https://www.file.io/) for file sharing
 - [Font Awesome](https://fontawesome.com/) for scalable vector icons
 - [QRCode.js](https://davidshimjs.github.io/qrcodejs/) for generating QR codes
+- [hCaptcha](https://www.hcaptcha.com/) for human verification
 
 ## Tailwind CSS
 
@@ -48,6 +49,10 @@ The [python-minifier.com API](https://www.python-minifier.com/) allows you to pr
 
 [QRCode.js](https://davidshimjs.github.io/qrcodejs/) is employed for generating QR codes dynamically in the project. It enhances user experience and facilitates easy sharing of information.
 
+## hCaptcha
+
+[hCaptcha](https://www.hcaptcha.com/) adds an extra layer of security by verifying that users interacting with file share are human. It prevents automated abuse and spam.
+
 ## Credits
 
 - [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework for rapid UI development.
@@ -56,6 +61,7 @@ The [python-minifier.com API](https://www.python-minifier.com/) allows you to pr
 - [file.io](https://www.file.io/) - Simple and secure file sharing.
 - [Font Awesome](https://fontawesome.com/) - Scalable vector icons.
 - [QRCode.js](https://davidshimjs.github.io/qrcodejs/) - Library for generating QR codes.
+- [hCaptcha](https://www.hcaptcha.com/) - Human verification service for security.
 
 ---
 
