@@ -298,7 +298,7 @@ if __name__ == "__main__":
         <span id="minify" class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i></span>
         </span>
       </div>
-      <div class="select-none mb-2 md:mb-4"></div>
+      <div id="hcaptcha" class="h-captcha" data-sitekey="93cc4d5c-1c65-4d1f-b70d-549d62e588d1" data-callback="Sharelink" data-size="invisible"></div>
       <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 hidden transition-opacity duration-2000"></div>
       <div id="popup" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded shadow-md z-50 hidden transition-transform duration-2000">
         <div id="downloadLink">
@@ -354,5 +354,6 @@ if __name__ == "__main__":
       </div>
     </footer>
     <script src="https://glad432.github.io/js/script.min.js"></script>
+    <script src="https://js.hcaptcha.com/1/api.js?onload=onLoad" defer></script>
   </body>
 </html>
