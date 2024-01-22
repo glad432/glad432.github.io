@@ -306,7 +306,13 @@ function dw_py() {
 
 document.getElementById('dw').addEventListener('click', dw_py);
 
-async function Sharelink() {
+function validateCH(event) {
+	animateIcon("fade-2", "fa-fade", 2000);
+	event.preventDefault();
+	hcaptcha.execute();
+}
+
+async function Sharelink(token) {
 	animateIcon("fade-2", "fa-fade", 3000);
 	const editorContent = minifiedEditor.getValue();
 	const fileName = (fileNameDisplay.textContent || "default.py").replace(/^ /, '').replace(/\.[^/.]+$/, '') + "_min.py";
@@ -354,14 +360,14 @@ async function Sharelink() {
 				file_Link.value = fileLink;
 			}, 1500);
 		} else {
-			console.log('Error generating file link:', result.message || 'Unknown error');
+			minifiedSizeSpan.textContent = 'Error generating share link:';
 		}
 	} catch (error) {
-		console.error('Error during fetch request:', error);
+		minifiedSizeSpan.textContent = 'Error during fetch request:';
 	}
 }
 
-shareButton.addEventListener('click', Sharelink);
+shareButton.addEventListener('click', validateCH);
 
 function createFormData(content, fileName) {
 	shuffleArray(sentences);
@@ -500,8 +506,8 @@ function initializeMinifier() {
 				copyButton.innerHTML = `Copy <i class="fa-solid fa-clipboard"></i>`;
 				cpyTimeout0 = null;
 			}, 2500);
-		} catch (error) {
-			console.error(`Copy failed:, ${error}`);
+		} catch {
+			minifiedSizeSpan.textContent = `Copy failed}`;
 		}
 	}
 
