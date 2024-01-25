@@ -2,7 +2,7 @@
 
 Welcome to my Python Minifier - Glad432 This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes and CodeMirror for code highlighting. Additionally, it utilizes the python-minifier.com API to minify Python files, file.io for file sharing and hCaptcha for human verification.
 
-![python minifier - glad432](https://glad432.github.io/img/favicon.png)
+![python minifier - glad432](https://gladw-in.github.io/projects/images/python%20minifier.webp)
 
 Below you'll find more information about the technologies used and the benefits of minifying Python files.
 
