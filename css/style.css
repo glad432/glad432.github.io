@@ -9,16 +9,6 @@
   --glad-gutter-fold-text-shadow: rgb(207, 207, 207);
   --glad-dark-gutter-fold-text-shadow: rgb(43, 43, 43);
 }
-.content-l,
-.typing-container {
-  font-family: "Source Code Pro", monospace;
-}
-footer {
-  font-size: small;
-  width: 100%;
-  background-color: #000 !important;
-  color: #fff !important;
-}
 .CodeMirror-overlayscroll .CodeMirror-gutter-filler,
 .CodeMirror-overlayscroll .CodeMirror-scrollbar-filler,
 .switch input {
@@ -31,42 +21,19 @@ footer {
   -o-transition: max-height 0.6s ease-in-out;
   transition: max-height 0.6s ease-in-out;
 }
-section {
-  max-width: 45em;
-  margin: 0 auto;
-}
-#options,
-footer,
-h1,
-section > div {
-  text-align: center;
-}
-header {
-  position: relative;
-}
-.size {
-  float: right;
-  margin: 15px;
-  position: initial;
-  text-align: right;
-}
-.container-fluid,
-.p-3 {
-  border-radius: 10px;
-}
 .typing-container {
   font-size: 22px;
   color: #333;
 }
 @media only screen and (max-width: 600px) {
+  #dropArea,
   #line-count,
   #line-count-out,
   #minified-size,
   #text-size,
+  .CodeMirror,
+  .content-l,
   .typing-container {
-    font-size: 12px;
-  }
-  .content-l {
     font-size: 12px !important;
   }
   .simp_border {
@@ -78,48 +45,35 @@ header {
   #Unselectall,
   #copy,
   #dw,
+  #load_File,
   #rm,
   #selectall,
-  #share {
+  #share,
+  #up-tx {
     font-size: 14px;
   }
 }
 .blue_big_box {
-  width: 500px;
-  padding: 24px 16px;
-  border-radius: 5px;
   -webkit-box-shadow: 0 1px 3px #999;
   box-shadow: 0 1px 3px #999;
-  border-top: 5px solid #2563eb;
-  margin: 40px 0;
 }
 .simp_border {
   border: 2px solid #d3d3d3;
-  border-radius: 5px;
-  padding: 20px;
-  margin-bottom: 22px;
-  min-height: 230px;
+  min-height: 180px;
 }
 .blue_black_head,
 .red_black_head {
-  margin-top: 30px;
-  margin-bottom: 20px;
-  background: #000;
-  padding: 12px 15px;
-  color: #fff;
   -webkit-box-shadow: 0 0 2px rgb(0 0 0/30%);
   box-shadow: 0 0 2px rgb(0 0 0/30%);
-  display: block;
-  border-radius: 5px;
 }
 .CodeMirror-gutter-filler,
 .CodeMirror-scrollbar-filler,
 .help-content {
   background-color: #fff;
 }
-.cm-tab,
-.switch {
+.cm-tab {
   display: inline-block;
+  text-decoration: inherit;
 }
 .red_black_head {
   border-left: 5px solid #ef4444;
@@ -127,45 +81,15 @@ header {
 .blue_black_head {
   border-left: 5px solid #3b82f6;
 }
-.switch {
-  margin-left: auto;
-  position: relative;
-  width: 32px;
-  height: 32px;
-}
 .CodeMirror-ruler,
-.help-container,
-.help-content,
-.slider,
-.slider:before {
+.help-container {
   position: absolute;
-}
-.slider {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-.slider:before {
-  content: "\f185";
-  font-family: "Font Awesome 6 Free";
-  font-weight: 900;
-  font-size: 18px;
-  top: 3.5px;
-  left: 7px;
-  color: #fff;
 }
 input:checked + .slider:before {
   content: "\f186";
   color: #fff;
   top: 3.5px;
   left: 8px;
-}
-.switch .slider.round {
-  border-radius: 20px;
-}
-.switch:hover .slider.round {
-  background-color: #1d4ed8;
 }
 .help-container {
   left: 10px;
@@ -256,9 +180,6 @@ input:checked + .slider:before {
   50% {
     background-color: transparent;
   }
-}
-.cm-tab {
-  text-decoration: inherit;
 }
 .CodeMirror-rulers {
   position: absolute;
@@ -369,6 +290,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 .CodeMirror {
   position: relative;
   overflow: hidden;
+  border-radius: 5px;
   background: #fff;
 }
 .CodeMirror-scroll {
@@ -540,8 +462,7 @@ div.CodeMirror-dragcursors {
 }
 .CodeMirror-foldgutter-folded,
 .CodeMirror-foldgutter-open,
-.CodeMirror-hint,
-.slider {
+.CodeMirror-hint {
   cursor: pointer;
 }
 .CodeMirror-line::selection,
@@ -779,7 +700,6 @@ li.CodeMirror-hint-active {
 .dark body,
 .dark html {
   color-scheme: dark;
-  background-color: #181a1b;
   border-color: #736b5e;
   color: #e8e6e3;
 }
@@ -835,14 +755,6 @@ li.CodeMirror-hint-active {
 }
 .dark .simp_border {
   border-color: #3c4144;
-}
-.dark .blue_black_head,
-.red_black_head {
-  background-image: initial;
-  background-color: #000;
-  color: #e8e6e3;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 0 2px;
-  box-shadow: rgba(0, 0, 0, 0.3) 0 0 2px;
 }
 .dark .CodeMirror {
   border-color: #3e4446;
@@ -974,14 +886,6 @@ li.CodeMirror-hint-active {
 .dark .cm-s-mdn-like .cm-meta,
 .dark .text-white {
   color: #e8e6e3;
-}
-.dark button,
-.dark input,
-.dark textarea {
-  color: inherit;
-}
-.dark button {
-  background-image: none;
 }
 .dark input::-webkit-input-placeholder,
 .dark textarea::-webkit-input-placeholder {
