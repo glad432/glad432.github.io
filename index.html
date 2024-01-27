@@ -102,9 +102,9 @@
         <img src="https://glad432.github.io/img/logo.webp" height="44" width="196" alt="Glad432" oncontextmenu="return false;">
         </a>
         </span>
-        <label class="switch">
+        <label class="inline-block ml-auto relative w-8 h-8 switch">
         <input type="checkbox" id="darkModeToggle">
-        <span class="slider round"></span>
+        <span class="slider top-0 left-0 right-0 bottom-0 round rounded-full absolute before:font-['Font_Awesome_6_Free'] before:top-[3.5px] before:left-[7px] before:font-black before:text-lg before:text-white before:absolute before:content-['\f185'] cursor-pointer hover:bg-blue-700"></span>
         </label>
         <div class="flex items-center space-x-1">
           <ul class="hidden space-x-2 md:inline-flex">
@@ -137,20 +137,19 @@
       </div>
     </header>
     <section class="mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow transition-all duration-100 ease-in-out">
-      <div class="simp_border">
-        <h1 class="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
+      <div class="rounded p-5 mb-5 border-2 text-center border-solid simp_border">
+        <h1 class="mb-4 text-3xl font-extrabold text-white md:text-5xl lg:text-6xl">
           <span class="select-none cursor-default text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-blue-400 to-blue-400 ">Python Minifier</span>
         </h1>
-        <header class="mb-2 md:mb-4">
-          <div class="typing-container">
+        <div class="mb-2 md:mb-4">
+          <div class="text-[13px] lg:text-[15px] font-['Source_Code_Pro']">
             <span id="text" class="mb-3 text-gray-700 "></span>
             <span id="cursor" class="mb-3 text-gray-700 ">|</span>
           </div>
-          <div id="orderedList" class="mt-4 ml-4"></div>
-        </header>
+        </div>
       </div>
       <p class="hidden">A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks. Its primary purpose is to enhance the loading speed of Python scripts, particularly beneficial for web applications. By reducing the overall size of the code, the minifier contributes to faster script loading times, optimizing web performance. The process of minification streamlines code readability without affecting its functionality or logic. Minified code is more efficiently transmitted and executed across various platforms, aiding developers in delivering smoother user experiences. Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment.</p>
-      <h2 class="select-none text-2xl font-bold blue_black_head py-6">Original Code</h2>
+      <h2 class="select-none relative text-2xl font-bold mt-8 mb-5 text-white bg-black block rounded py-6 pl-[15px] blue_black_head">Original Code</h2>
       <div class="select-none text-left">
         <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Line Count: 42</span>
         <span id="text-size" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">0.992 kB</span>
@@ -166,7 +165,7 @@
           <div class="flex mr-auto text-sm cursor-pointer select-none mt-1 ml-1 space-x-2 font-semibold">
             <div class="help-container relative top-[1.5px] right-0 mr-2" oncontextmenu="return false">
               <i class="fas fa-question-circle fa-sm text-sm text-blue-500"></i>
-              <div class="help-content">
+              <div class="help-content absolute cursor-default">
                 <p class="select-none text-sm text-gray-700">Only Raw Github URLs (1MB) are recommended.</p>
               </div>
             </div>
@@ -176,7 +175,7 @@
         </div>
       </div>
       <input class="hidden" type="file" id="fileInput" accept=".py" />
-      <div id="dropArea" class="select-none cursor-pointer rounded-xl border-dashed border-4 border-gray-300 bg-white p-8 m-5 transition-all duration-0 ease-in-out"> Drag and drop a <span class="font-bold">.py file</span> here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
+      <div id="dropArea" class="select-none cursor-pointer rounded-xl border-dashed border-4 border-gray-300 text-center bg-white p-8 m-5 transition-all duration-0 ease-in-out"> Drag and drop a <span class="font-bold">.py file</span> here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
         </span>
       </div>
       <p id="errmsg"></p>
@@ -225,9 +224,9 @@ if __name__ == "__main__":
     print(f"The square of {number} is {square(number)}")</textarea>
       <button id="rm" class="select-none text-2xl mt-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
       </button>
-      <div class="text-left blue_big_box md:mx-auto md:p-8 ">
+      <div class="text-left w-[500px] my-10 p-4 rounded border-t-[5px] border-solid border-blue-500 blue_big_box md:mx-auto md:p-8 ">
         <div id="toggleContent1" class="collapsible">
-          <p class="cursor-pointer select-none underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
+          <p class="cursor-pointer select-none underline underline-offset-3 decoration-8 decoration-blue-400 decoration-blue-600 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
         </div>
         <div class="select-none content-ll pt-4">
           <div class="mb-4">
@@ -292,7 +291,7 @@ if __name__ == "__main__":
           </div>
         </div>
       </div>
-      <div class="select-none mb-2 md:mb-4">
+      <div class="select-none mb-2 md:mb-4 text-center">
         <span class="relative rounded pt-5 p-4 overflow-hidden group bg-blue-500 relative hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-blue-400 transition-all ease-out duration-300">
         <span class="absolute right-0 w-8 h-40 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
         <span id="minify" class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i></span>
@@ -301,21 +300,21 @@ if __name__ == "__main__":
       <div id="hcaptcha" class="h-captcha" data-sitekey="93cc4d5c-1c65-4d1f-b70d-549d62e588d1" data-callback="Sharelink" data-size="invisible"></div>
       <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 hidden transition-opacity duration-2000"></div>
       <div id="popup" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded shadow-md z-50 hidden transition-transform duration-2000">
-        <div id="downloadLink">
+        <div id="downloadLink" class="text-center">
           <span id="fileLink-load"></span>
           <label id="copy-msg" for="fileLink" class="select-none cursor-pointer block mb-2 text-lg text-neutral-500 font-medium"></label>
           <div class="relative flex items-center">
             <input type="text" id="fileLink" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-51 p-2.5 mr-1" readonly>
             <a id="new_tab"></a>
           </div>
-          <div id="help-msg" class="help-container" oncontextmenu="return false"></div>
+          <div id="help-msg" class="help-container text-left" oncontextmenu="return false"></div>
           <span id="scantocopy"></span>
           <div id="qrCode"></div>
+          <button id="closePopup" class="hidden select-none px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Close</button>
         </div>
-        <button id="closePopup" class="hidden select-none px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Close</button>
       </div>
       <header class="mb-2 md:mb-4">
-        <h2 class="select-none text-2xl font-bold red_black_head py-6">Minified Code</h2>
+        <h2 class="select-none relative text-2xl font-bold mt-8 mb-5 text-white bg-black block rounded py-6 pl-[15px] red_black_head">Minified Code</h2>
         <div class="select-none text-left">
           <span id="line-count-out" class="font-bold px-4 py-2 bg-red-500 rounded text-white">Line Count: 1</span>
           <span id="minified-size" class="font-bold px-4 py-2 bg-red-500 rounded text-white">0.000 kB</span>
@@ -335,25 +334,25 @@ if __name__ == "__main__":
       <span id="show-btn" class="relative cursor-pointer text-center select-none text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 font-bold text-center">Learn More <i id="rot-1" class="fa-solid fa-caret-down"></i></span>
     </div>    
     <article id="article" class="font-['Source_Code_Pro'] mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 mt-8 mb-8 transition-all duration-100 ease-in-out"></article>
-    <footer class="select-none bg-neutral-200 text-center text-white dark:bg-neutral-600">
+    <footer class="select-none bg-black text-xs md:text-sm bg-black text-center text-white">
       <div class="pt-9">
         <div class="mb-9 flex justify-center">
-          <a href="https://gladw-in.github.io/" target="_blank" class="mr-9 text-neutral-800 dark:text-neutral-200 hover:text-blue-700">
+          <a href="https://gladw-in.github.io/" target="_blank" class="mr-9 text-neutral-200 hover:text-blue-700">
           <i class="fa-solid fa-globe fa-xl"></i>
           </a>
-          <a href="https://www.linkedin.com/in/glad432/" target="_blank" class="mr-9 text-neutral-800 dark:text-neutral-200 hover:text-blue-700">
+          <a href="https://www.linkedin.com/in/glad432/" target="_blank" class="mr-9 text-neutral-200 hover:text-blue-700">
           <i class="fa-brands fa-linkedin fa-xl"></i>
           </a>
-          <a href="https://github.com/gladw-in" target="_blank" class="text-neutral-800 dark:text-neutral-200 hover:text-blue-700">
+          <a href="https://github.com/gladw-in" target="_blank" class="text-neutral-200 hover:text-blue-700">
           <i class="fa-brands fa-github fa-xl"></i>
           </a>
         </div>
       </div>
-      <div class="bg-neutral-300 p-4 text-center text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">© GLAD432 <span id="year" class="text-neutral-800 dark:text-neutral-400"></span>
-        <span class="text-neutral-800 dark:text-neutral-400"> All Rights Reserved</span>
+      <div class="bg-neutral-300 p-4 text-center bg-neutral-700 text-neutral-200">© GLAD432 <span id="year" class="text-neutral-400"></span>
+        <span class="text-neutral-400"> All Rights Reserved</span>
       </div>
     </footer>
     <script src="https://glad432.github.io/js/script.min.js"></script>
-    <script src="https://js.hcaptcha.com/1/api.js" defer></script>
+    <script defer src="https://js.hcaptcha.com/1/api.js"></script>
   </body>
 </html>
