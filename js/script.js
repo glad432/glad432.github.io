@@ -99,16 +99,11 @@ function startClearingText() {
 	} else {
 		sentenceIndex = (sentenceIndex + 1) % sentences.length;
 		if (sentenceIndex === 0) {
-			showOrderedList();
+			setTimeout(startClearingText, 20);
 		} else {
 			startTypingNextSentence();
 		}
 	}
-}
-
-function showOrderedList() {
-	const bbbtn = '<span class="cursor-pointer select-none relative inline-flex items-center justify-center inline-block p-4 px-5 py-3 overflow-hidden font-medium text-blue-500 rounded-lg shadow-2xl group"><span class="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-500 bg-blue-700 rounded-full blur-md ease"></span><span class="absolute inset-0 w-full h-full transition duration-700 group-hover:rotate-180 ease"><span class="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-blue-500 rounded-full blur-md"></span><span class="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-blue-700 rounded-full blur-md"></span></span><span id="up-tx" class="font-semibold relative text-white">Read Again</span>'
-	document.getElementById("orderedList").innerHTML = `<div class="collapsible" onclick="toggleContent()">${bbbtn}</div><div class="content-l" style="display: none;"><ol class="mt-4 space-y-1 list-decimal list-inside">${sentences.map(sentence => `<li class="mb-2 text-left">${sentence}</li>`).join('')}</ol></div>`;
 }
 
 function startTypingNextSentence() {
@@ -127,7 +122,7 @@ function startTypingNextSentence() {
 
 shuffleArray(sentences);
 
-startTypingNextSentence();
+window.addEventListener("DOMContentLoaded", startTypingNextSentence);
 
 document.getElementById("year").textContent = new Date().getFullYear().toString();
 
@@ -345,7 +340,7 @@ async function Sharelink(token) {
 				link_newtab.target = "_blank";
 				link_newtab.title = 'Open in new tab';
 				orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
-				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-gray-700">Python file will be deleted after download.<br> Expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
+				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-center text-gray-700">Python file will be deleted after download.<br> Expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
 				orscan.classList.add('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
 				qrCode.style.textAlign = '-moz-center';
@@ -436,22 +431,6 @@ sourceEditor.on("change", function(editor) {
 
 sourceEditor.on("change", updateLineCount);
 
-function toggleContent() {
-	var content = document.querySelector('.content-l');
-	var upTx = document.getElementById('up-tx');
-	if (content.style.display === 'none') {
-		content.style.display = 'block';
-		upTx.textContent = 'Hide';
-	} else {
-		content.style.display = 'none';
-		upTx.textContent = 'Read Again';
-	}
-	if (content) {
-		content.style.display = contentVisible ? 'none' : 'block';
-		contentVisible = !contentVisible;
-	}
-}
-
 function updateLineCount() {
 	document.getElementById("line-count").textContent = `Line Count: ${sourceEditor.lineCount()}`;
 	document.getElementById("text-size").textContent = (new TextEncoder().encode(sourceEditor.getValue()).length / 1024).toFixed(3) + " kB";
@@ -498,6 +477,13 @@ function initializeMinifier() {
 	async function copyClick() {
 		try {
 			await navigator.clipboard.writeText(minifiedEditor.getValue());
+			minifiedEditor.setSelection({
+				line: 0,
+				ch: 0
+			}, {
+				line: minifiedEditor.lastLine(),
+				ch: minifiedEditor.getLineHandle(minifiedEditor.lastLine()).text.length
+			});
 			if (cpyTimeout0) {
 				clearTimeout(cpyTimeout0);
 			}
@@ -591,7 +577,7 @@ function initializeMinifier() {
 
 }
 
-initializeMinifier();
+window.addEventListener("DOMContentLoaded", initializeMinifier);
 
 function clearSource() {
 	animateIcon("fade-5", "fa-fade", 1500);
@@ -782,5 +768,5 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', async () => {
 	const response = await fetch("https://glad432.github.io/article/blog.json");
 	const articleData = await response.json();
-	document.getElementById('article').innerHTML = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h1 class="sm:text-xl lg:text-3xl before:content-['📃'] text-gray-600 text-left font-bold mb-4">${articleData?.article?.title}</h1><p class="text-[13px] lg:text-[15px] text-gray-500 font-bold leading-relaxed">${articleData?.article.date}</p>${articleData?.article?.sections.map(section => `<div class="mb-4"><h2 class="text-[15px] text-gray-500 before:content-['📌'] lg:text-xl font-bold py-4">${section?.section_title}</h2><p class="text-[13px] lg:text-[15px] leading-relaxed">${section?.section_content}</p></div>`).join('')}</div>`;
+	document.getElementById('article').innerHTML = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h1 class="sm:text-xl lg:text-3xl before:font-['Font_Awesome_6_Free'] before:content-['&#xf05a'] before:text-blue-500 before:pr-2 text-gray-600 text-left font-bold mb-4">${articleData?.article?.title}</h1><p class="text-[13px] lg:text-[15px] before:font-['Font_Awesome_6_Free'] before:content-['&#xf152'] before:px-2 text-gray-500 font-bold leading-relaxed">${articleData?.article.date}</p>${articleData?.article?.sections.map(section => `<div class="mb-4"><h2 class="text-[15px] text-gray-500 before:font-['Font_Awesome_6_Free'] before:content-['&#xf219'] before:text-cyan-900 before:pr-2 lg:text-xl font-bold py-4">${section?.section_title}</h2><p class="text-[13px] text-gray-300 lg:text-[15px]">${section?.section_content}</p></div>`).join('')}</div>`;
 });
