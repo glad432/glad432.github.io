@@ -141,7 +141,7 @@ var sourceEditor = CodeMirror.fromTextArea(document.getElementById("source"), {
 	foldGutter: true,
 	extraKeys: {
 		"Ctrl-Space": "autocomplete",
-		"Ctrl-Q": function(cm) {
+		"Ctrl-Q": (cm) => {
 			cm.foldCode(cm.getCursor());
 		}
 	}
@@ -159,13 +159,13 @@ var minifiedEditor = CodeMirror.fromTextArea(document.getElementById("minified")
 	gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
 	foldGutter: true,
 	extraKeys: {
-		"Ctrl-Q": function(cm) {
+		"Ctrl-Q": (cm) => {
 			cm.foldCode(cm.getCursor());
 		}
 	}
 });
 
-CodeMirror.registerHelper("hint", "anyword", function(editor, options) {
+CodeMirror.registerHelper("hint", "anyword", (editor, options) => {
 	var wordList = options.words || words;
 	var cur = editor.getCursor();
 	var curLine = editor.getLine(cur.line);
@@ -176,7 +176,7 @@ CodeMirror.registerHelper("hint", "anyword", function(editor, options) {
 	while (start && /[\w$]+/.test(curLine.charAt(start - 1))) --start;
 
 	var prefix = curLine.slice(start, end).toLowerCase();
-	var list = wordList.filter(function(word) {
+	var list = wordList.filter((word) => {
 		return word.toLowerCase().startsWith(prefix);
 	});
 
@@ -204,7 +204,7 @@ function updateEditorState() {
 	sourceEditor.setCursor(cursor);
 }
 
-sourceEditor.on("beforeChange", function(_, change) {
+sourceEditor.on("beforeChange", (_, change) => {
 	var currentSize = new Blob([sourceEditor.getValue()]).size;
 	var newSize = currentSize + new Blob([change.text.join('')]).size - change.to - change.from;
 
@@ -231,7 +231,7 @@ function setupFileInput() {
 		}
 	}
 
-	fileInput.addEventListener('change', function(event) {
+	fileInput.addEventListener('change', (event) => {
 		const selectedFile = event.target.files[0];
 
 		if (selectedFile) {
@@ -248,20 +248,20 @@ function setupFileInput() {
 		}
 	});
 
-	dropArea.addEventListener('click', function() {
+	dropArea.addEventListener('click', () => {
 		fileInput.click();
 	});
 
-	document.addEventListener('dragover', function(event) {
+	document.addEventListener('dragover', (event) => {
 		event.preventDefault();
 	});
 
-	document.addEventListener('drop', function(event) {
+	document.addEventListener('drop', (event) => {
 		event.preventDefault();
 		dragpy(event)
 	});
 
-	dropArea.addEventListener('drop', function(event) {
+	dropArea.addEventListener('drop', (event) => {
 		event.preventDefault();
 		dragpy(event)
 	});
@@ -270,7 +270,7 @@ function setupFileInput() {
 		if (file.size <= maxFileSizeInBytes) {
 			const reader = new FileReader();
 
-			reader.onload = function(e) {
+			reader.onload = (e) => {
 				sourceEditor.getDoc().setValue(e.target.result);
 				handleErrorMessage()
 			};
@@ -355,10 +355,10 @@ async function Sharelink(token) {
 				file_Link.value = fileLink;
 			}, 1500);
 		} else {
-			minifiedSizeSpan.textContent = 'Error generating share link:';
+			minifiedSizeSpan.textContent = 'Error generating share link';
 		}
 	} catch (error) {
-		minifiedSizeSpan.textContent = 'Error during fetch request:';
+		minifiedSizeSpan.textContent = 'Error during fetch request';
 	}
 }
 
@@ -425,7 +425,7 @@ async function copyfilelink() {
 }
 file_Link.addEventListener('click', copyfilelink);
 
-sourceEditor.on("change", function(editor) {
+sourceEditor.on("change", (editor) => {
 	document.getElementById("source").value = editor.getValue();
 });
 
@@ -567,7 +567,7 @@ function initializeMinifier() {
 	options.forEach(option => {
 		const element = document.getElementById(option);
 		if (element) {
-			element.addEventListener('change', function() {
+			element.addEventListener('change', () => {
 				minifiedEditor.setValue('');
 			});
 		}
@@ -658,7 +658,7 @@ function toggleContent1() {
 document.getElementById('toggleContent1').addEventListener('click', toggleContent1);
 
 function tickAllAndSetGlobals() {
-	checkboxes.forEach(function(checkbox) {
+	checkboxes.forEach((checkbox) => {
 		checkbox.checked = true;
 	});
 
@@ -667,13 +667,13 @@ function tickAllAndSetGlobals() {
 selectallopt.addEventListener('click', tickAllAndSetGlobals);
 
 function resetOptions() {
-	checkboxes.forEach(function(checkbox) {
+	checkboxes.forEach((checkbox) => {
 		checkbox.checked = false;
 	});
 
 	preservedGlobalsInput.value = 'handler';
 
-	document.querySelectorAll('input[type="text"]:not(#preserve_globals)').forEach(function(textField) {
+	document.querySelectorAll('input[type="text"]:not(#preserve_globals)').forEach((textField) => {
 		textField.value = '';
 	});
 }
@@ -686,7 +686,7 @@ function input_from_url() {
 	inputContainer.classList.toggle("flex");
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
 	function loadFileContent(fileUrl) {
 		fetch(fileUrl)
 			.then((response) => {
@@ -768,5 +768,5 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', async () => {
 	const response = await fetch("https://glad432.github.io/article/blog.json");
 	const articleData = await response.json();
-	document.getElementById('article').innerHTML = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h1 class="sm:text-xl lg:text-3xl before:font-['Font_Awesome_6_Free'] before:content-['&#xf05a'] before:text-blue-500 before:pr-2 text-gray-600 text-left font-bold mb-4">${articleData?.article?.title}</h1><p class="text-[13px] lg:text-[15px] before:font-['Font_Awesome_6_Free'] before:content-['&#xf152'] before:px-2 text-gray-500 font-bold leading-relaxed">${articleData?.article.date}</p>${articleData?.article?.sections.map(section => `<div class="mb-4"><h2 class="text-[15px] text-gray-500 before:font-['Font_Awesome_6_Free'] before:content-['&#xf219'] before:text-cyan-900 before:pr-2 lg:text-xl font-bold py-4">${section?.section_title}</h2><p class="text-[13px] text-gray-300 lg:text-[15px]">${section?.section_content}</p></div>`).join('')}</div>`;
+	document.getElementById('article').innerHTML = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h1 class="sm:text-xl lg:text-3xl before:font-['Font_Awesome_6_Free'] before:content-['&#xf05a'] before:text-blue-500 before:pr-2 text-gray-600 text-left font-bold mb-4">${articleData?.article?.title}</h1><p class="text-[13px] lg:text-[15px] before:font-['Font_Awesome_6_Free'] before:content-['&#xf152'] before:px-2 text-gray-500 font-bold leading-relaxed">${articleData?.article.date}</p>${articleData?.article?.sections.map(section => `<div class="mb-4"><h2 class="text-[15px] text-gray-500 before:font-['Font_Awesome_6_Free'] before:content-['&#xf219'] before:text-cyan-900 before:pr-2 lg:text-xl font-bold py-4">${section?.section_title}</h2><p class="text-[13px] lg:text-[15px]">${section?.section_content}</p></div>`).join('')}</div>`;
 });
