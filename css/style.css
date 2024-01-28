@@ -26,7 +26,6 @@
   color: #333;
 }
 @media only screen and (max-width: 600px) {
-  #dropArea,
   #line-count,
   #line-count-out,
   #minified-size,
@@ -48,8 +47,7 @@
   #load_File,
   #rm,
   #selectall,
-  #share,
-  #up-tx {
+  #share {
     font-size: 14px;
   }
 }
