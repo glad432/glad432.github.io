@@ -3,6 +3,7 @@ const copyButton = document.getElementById('copy');
 const textElement = document.getElementById("text");
 const cursorElement = document.getElementById("cursor");
 const errorMessage = document.getElementById('errmsg');
+const pysource = document.getElementById('source');
 const dwButton = document.getElementById('dw');
 const shareButton = document.getElementById("share");
 const dropArea = document.getElementById('dropArea');
@@ -25,7 +26,7 @@ const unselectallopt = document.getElementById('Unselectall');
 const preservedGlobalsInput = document.getElementById('preserve_globals');
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-let errorTimeout, cpyTimeout0, cpyTimeout1;
+let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout;
 const maxFileSizeInBytes = 1 * 1024 * 1024;
 let sentenceIndex = 0;
 let charIndex = 0;
@@ -126,7 +127,7 @@ window.addEventListener("DOMContentLoaded", startTypingNextSentence);
 
 document.getElementById("year").textContent = new Date().getFullYear().toString();
 
-var sourceEditor = CodeMirror.fromTextArea(document.getElementById("source"), {
+var sourceEditor = CodeMirror.fromTextArea(pysource, {
 	mode: "python",
 	theme: "mdn-like",
 	lineNumbers: true,
@@ -213,7 +214,20 @@ sourceEditor.on("beforeChange", (_, change) => {
 	}
 });
 
-sourceEditor.on("change", updateEditorState);
+function readonlyalert() {
+	if (readonlyTimeout) {
+		clearTimeout(readonlyTimeout);
+	}
+	if (minifiedEditor.getValue().length !== 0) {
+		minifiedSizeSpan.innerHTML = `${excir} Read-Only`;
+		readonlyTimeout = setTimeout(() => {
+			minifiedSizeSpan.textContent = `${(minifiedEditor.getValue().length / 1024).toFixed(3)}  kB`;
+			readonlyTimeout = null;
+		}, 2000);
+	}
+}
+
+minifiedEditor.on("cursorActivity", readonlyalert);
 
 function setupFileInput() {
 	function dragpy(event) {
@@ -221,11 +235,11 @@ function setupFileInput() {
 
 		if (droppedFile) {
 			if (droppedFile.name.toLowerCase().endsWith('.py')) {
-				handleErrorMessage()
+				handleErrorMessage();
 				handleFilename(`${code_file} ${droppedFile.name}`);
 				handleFile(droppedFile);
 			} else {
-				handleFilename()
+				handleFilename();
 				handleErrorMessage(`${exctri} Invalid file format. Please select a .py file.`);
 			}
 		}
@@ -236,12 +250,12 @@ function setupFileInput() {
 
 		if (selectedFile) {
 			if (selectedFile.name.toLowerCase().endsWith('.py')) {
-				handleErrorMessage()
+				handleErrorMessage();
 				handleFilename(`${code_file} ${selectedFile.name}`);
 				handleFile(selectedFile);
 			} else {
 				dwButton.disabled = true;
-				handleFilename()
+				handleFilename();
 				handleErrorMessage(`${exctri} Invalid file format. Please select a .py file.`);
 				fileInput.value = '';
 			}
@@ -272,12 +286,12 @@ function setupFileInput() {
 
 			reader.onload = (e) => {
 				sourceEditor.getDoc().setValue(e.target.result);
-				handleErrorMessage()
+				handleErrorMessage();
 			};
 
 			reader.readAsText(file);
 		} else {
-			handleFilename()
+			handleFilename();
 			handleErrorMessage(`${exctri} File size exceeds 1MB. Please select a smaller file.`);
 			fileInput.value = '';
 		}
@@ -335,7 +349,7 @@ async function Sharelink(token) {
 			setTimeout(() => {
 				copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
 				link_newtab.href = fileLink;
-				link_newtab.classList.add('text-white', 'bg-blue-700', 'hover:bg-blue-800', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5', 'dark:bg-blue-600', 'dark:hover:bg-blue-700');
+				link_newtab.classList.add('text-white', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5', 'bg-blue-600', 'hover:bg-blue-700');
 				link_newtab.innerHTML = ` <i class="fa-solid fa-up-right-from-square"></i>`;
 				link_newtab.target = "_blank";
 				link_newtab.title = 'Open in new tab';
@@ -391,7 +405,7 @@ function displayQRCode(fileLink) {
 function closePopup() {
 	qrCode.classList.remove('ml-12', 'p-2', 'mr-12', 'mt-2');
 	orscan.classList.remove('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
-	link_newtab.classList.remove('text-white', 'bg-blue-700', 'hover:bg-blue-800', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5', 'dark:bg-blue-600', 'dark:hover:bg-blue-700');
+	link_newtab.classList.remove('text-white', 'bg-blue-600', 'hover:bg-blue-700', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5');
 	qrCode.style.textAlign = '';
 	qrCode.style.background = '';
 	close_Popup.classList.add('hidden');
@@ -425,11 +439,11 @@ async function copyfilelink() {
 }
 file_Link.addEventListener('click', copyfilelink);
 
-sourceEditor.on("change", (editor) => {
-	document.getElementById("source").value = editor.getValue();
+sourceEditor.on("change", () => {
+	pysource.value = sourceEditor.getValue();
+	updateLineCount();
+	updateEditorState();
 });
-
-sourceEditor.on("change", updateLineCount);
 
 function updateLineCount() {
 	document.getElementById("line-count").textContent = `Line Count: ${sourceEditor.lineCount()}`;
@@ -493,7 +507,7 @@ function initializeMinifier() {
 				cpyTimeout0 = null;
 			}, 2500);
 		} catch {
-			minifiedSizeSpan.textContent = `Copy failed}`;
+			minifiedSizeSpan.textContent = `${excir} Copy failed`;
 		}
 	}
 
@@ -518,12 +532,17 @@ function initializeMinifier() {
 					headers: {
 						'Content-Type': 'text/plain'
 					},
-					body: document.getElementById('source').value
+					body: pysource.value
 				});
 
 				if (response.ok) {
 					const minified = await response.text();
 					minifiedEditor.setValue(minified);
+					minifiedEditor.scrollTo(1, 1);
+					minifiedEditor.setCursor({
+						line: 1,
+						ch: 0
+					});
 					minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)}  kB`;
 					copyButton.disabled = false;
 					shareButton.disabled = false;
@@ -587,11 +606,11 @@ function clearSource() {
 
 	handleFilename();
 
-	handleErrorMessage()
+	handleErrorMessage();
 
 	fileInput.value = '';
 
-	document.getElementById("source").textContent = '';
+	pysource.textContent = '';
 
 	minifiedEditor.setValue('');
 
@@ -711,7 +730,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				sourceEditor.setValue(data);
 			})
 			.catch((error) => {
-				handleFilename()
+				handleFilename();
 				handleErrorMessage(`${exctri} ${error.message}`);
 			});
 	}
@@ -719,16 +738,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	function load_file() {
 		var fileLink = fileLinkInput.value.trim();
 		if (fileLinkInput.value === '' || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
-			handleFilename()
+			handleFilename();
 		} else if (!(/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(fileLink))) {
 			handleFilename()
 			handleErrorMessage(`${exctri} Please enter a valid URL starting with "https://"`);
 		} else if (/\.(py)$/.test(fileLink.toLowerCase())) {
-			handleErrorMessage()
+			handleErrorMessage();
 			animateIcon("fade-3", "fa-fade", 1500);
 			loadFileContent(fileLink);
 		} else {
-			handleFilename()
+			handleFilename();
 			handleErrorMessage(`${exctri} Please enter a valid .py file link`);
 		}
 	}
