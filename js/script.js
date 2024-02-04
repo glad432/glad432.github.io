@@ -27,7 +27,6 @@ var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout;
 const maxFileSizeInBytes = 1 * 1024 * 1024;
-var contentVisible = false;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
 const code_file = `<i class="fa-solid fa-file-code"></i>`;
