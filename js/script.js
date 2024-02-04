@@ -1,7 +1,6 @@
 const minifyButton = document.getElementById('minify');
 const copyButton = document.getElementById('copy');
-const textElement = document.getElementById("text");
-const cursorElement = document.getElementById("cursor");
+const anitext = document.getElementById("anitext");
 const errorMessage = document.getElementById('errmsg');
 const pysource = document.getElementById('source');
 const dwButton = document.getElementById('dw');
@@ -28,9 +27,6 @@ var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout;
 const maxFileSizeInBytes = 1 * 1024 * 1024;
-let sentenceIndex = 0;
-let charIndex = 0;
-let isTyping = true;
 var contentVisible = false;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
@@ -68,6 +64,36 @@ const dateformat = {
 	timeZoneName: 'short'
 };
 
+const features = [{
+		text: 'Efficiency',
+		color: '#4CAF50'
+	},
+	{
+		text: 'Safety',
+		color: '#2196F3'
+	},
+	{
+		text: 'Quick',
+		color: '#FF9800'
+	},
+	{
+		text: 'Speed',
+		color: '#673AB7'
+	},
+	{
+		text: 'Reliability',
+		color: '#F44336'
+	},
+	{
+		text: 'Protection',
+		color: '#009688'
+	},
+	{
+		text: 'Robust',
+		color: '#000080'
+	}
+];
+
 function shuffleArray(array) {
 	for (let i = array.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
@@ -75,56 +101,29 @@ function shuffleArray(array) {
 	}
 }
 
-function type() {
-	if (charIndex < sentences[sentenceIndex].length) {
-		textElement.textContent += sentences[sentenceIndex].charAt(charIndex);
-		charIndex++;
-		setTimeout(type, 20);
-	} else {
-		isTyping = false;
-		cursorElement.classList.remove("inline");
-		cursorElement.classList.add("hidden");
-		setTimeout(() => {
-			startClearingText();
-		}, 3000);
-	}
-}
+shuffleArray(features);
 
-function startClearingText() {
-	if (charIndex >= 0) {
-		cursorElement.classList.remove("hidden");
-		cursorElement.classList.add("inline");
-		const textToClear = sentences[sentenceIndex].substring(0, charIndex);
-		textElement.textContent = textToClear;
-		charIndex--;
-		setTimeout(startClearingText, 20);
-	} else {
-		sentenceIndex = (sentenceIndex + 1) % sentences.length;
-		if (sentenceIndex === 0) {
-			setTimeout(startClearingText, 20);
-		} else {
-			startTypingNextSentence();
-		}
-	}
-}
+const typewriter = new Typewriter(anitext, {
+	loop: true,
+	delay: 50,
+});
 
-function startTypingNextSentence() {
-	textElement.textContent = '';
-	charIndex = 0;
-	cursorElement.classList.remove("hidden");
-	cursorElement.classList.add("inline");
-	if (sentenceIndex > 0) {
-		setTimeout(() => {
-			type();
-		}, 200);
-	} else {
-		type();
-	}
-}
+features.forEach((feature, index) => {
+	typewriter
+		.pauseFor(1000)
+		.deleteAll()
+		.typeString(`<span style="color: ${feature.color}">${feature.text}</span>`)
+		.pauseFor(1000)
+		.callFunction(() => {
+			if (index === features.length - 1) {
+				typewriter.stop();
+			}
+		});
+});
 
-shuffleArray(sentences);
-
-window.addEventListener("DOMContentLoaded", startTypingNextSentence);
+window.addEventListener("load", () => {
+	typewriter.start();
+})
 
 document.getElementById("year").textContent = new Date().getFullYear().toString();
 
