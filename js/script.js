@@ -35,8 +35,8 @@ var contentVisible = false;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
 const code_file = `<i class="fa-solid fa-file-code"></i>`;
-const classlst = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit'];
-const classlst0 = ['select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit'];
+const classlst = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4'];
+const classlst0 = ['select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4'];
 var words = [
 	'and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif',
 	'else', 'except', 'False', 'finally', 'for', 'from', 'global', 'if', 'import',
@@ -51,7 +51,6 @@ var words = [
 	'staticmethod', 'str', 'sum', 'super', 'tuple', 'type', 'vars', 'zip', 'exec', 'Ellipsis',
 	'NotImplemented',
 ]
-
 const sentences = [
 	"A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks.",
 	"Its primary purpose is to enhance the loading speed of Python scripts, particularly beneficial for web applications.",
@@ -60,7 +59,6 @@ const sentences = [
 	"Minified code is more efficiently transmitted and executed across various platforms, aiding developers in delivering smoother user experiences.",
 	"Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment."
 ];
-
 const dateformat = {
 	year: 'numeric',
 	month: '2-digit',
@@ -84,7 +82,8 @@ function type() {
 		setTimeout(type, 20);
 	} else {
 		isTyping = false;
-		cursorElement.style.display = "none";
+		cursorElement.classList.remove("inline");
+		cursorElement.classList.add("hidden");
 		setTimeout(() => {
 			startClearingText();
 		}, 3000);
@@ -93,6 +92,8 @@ function type() {
 
 function startClearingText() {
 	if (charIndex >= 0) {
+		cursorElement.classList.remove("hidden");
+		cursorElement.classList.add("inline");
 		const textToClear = sentences[sentenceIndex].substring(0, charIndex);
 		textElement.textContent = textToClear;
 		charIndex--;
@@ -110,8 +111,8 @@ function startClearingText() {
 function startTypingNextSentence() {
 	textElement.textContent = '';
 	charIndex = 0;
-	cursorElement.style.display = "inline";
-
+	cursorElement.classList.remove("hidden");
+	cursorElement.classList.add("inline");
 	if (sentenceIndex > 0) {
 		setTimeout(() => {
 			type();
@@ -131,7 +132,6 @@ var sourceEditor = CodeMirror.fromTextArea(pysource, {
 	mode: "python",
 	theme: "mdn-like",
 	lineNumbers: true,
-	height: 'auto',
 	viewportMargin: 20,
 	placeholder: "Enter original code...",
 	matchBrackets: true,
@@ -164,15 +164,12 @@ CodeMirror.registerHelper("hint", "anyword", (editor, options) => {
 	var curLine = editor.getLine(cur.line);
 	var start = cur.ch;
 	var end = start;
-
 	while (end < curLine.length && /[\w$]+/.test(curLine.charAt(end))) ++end;
 	while (start && /[\w$]+/.test(curLine.charAt(start - 1))) --start;
-
 	var prefix = curLine.slice(start, end).toLowerCase();
 	var list = wordList.filter((word) => {
 		return word.toLowerCase().startsWith(prefix);
 	});
-
 	return {
 		list: list,
 		from: CodeMirror.Pos(cur.line, start),
@@ -184,7 +181,6 @@ function updateEditorState() {
 	var cursor = sourceEditor.getCursor();
 	var value = sourceEditor.getValue();
 	var fileSizeInBytes = new Blob([value]).size;
-
 	if (fileSizeInBytes > maxFileSizeInBytes) {
 		handleFilename();
 		handleErrorMessage(`${exctri} Maximum Size limit 1MB reached!`);
@@ -193,14 +189,12 @@ function updateEditorState() {
 	} else {
 		sourceEditor.setOption("readOnly", false);
 	}
-
 	sourceEditor.setCursor(cursor);
 }
 
 sourceEditor.on("beforeChange", (_, change) => {
 	var currentSize = new Blob([sourceEditor.getValue()]).size;
 	var newSize = currentSize + new Blob([change.text.join('')]).size - change.to - change.from;
-
 	if (newSize > maxFileSizeInBytes) {
 		change.cancel();
 	}
@@ -225,7 +219,6 @@ minifiedEditor.on("keydown", readonlyalert);
 function setupFileInput() {
 	function dragpy(event) {
 		const droppedFile = event.dataTransfer.files[0];
-
 		if (droppedFile) {
 			if (droppedFile.name.toLowerCase().endsWith('.py')) {
 				handleErrorMessage();
@@ -240,7 +233,6 @@ function setupFileInput() {
 
 	fileInput.addEventListener('change', (event) => {
 		const selectedFile = event.target.files[0];
-
 		if (selectedFile) {
 			if (selectedFile.name.toLowerCase().endsWith('.py')) {
 				handleErrorMessage();
@@ -276,12 +268,10 @@ function setupFileInput() {
 	function handleFile(file) {
 		if (file.size <= maxFileSizeInBytes) {
 			const reader = new FileReader();
-
 			reader.onload = (e) => {
 				sourceEditor.getDoc().setValue(e.target.result);
 				handleErrorMessage();
 			};
-
 			reader.readAsText(file);
 		} else {
 			handleFilename();
@@ -318,19 +308,14 @@ async function Sharelink(token) {
 	animateIcon("fade-2", "fa-fade", 3000);
 	const editorContent = minifiedEditor.getValue();
 	const fileName = (fileNameDisplay.textContent || "default.py").replace(/^ /, '').replace(/\.[^/.]+$/, '') + "_min.py";
-
 	try {
 		const response = await fetch('https://file.io/?expires=2w', {
 			method: 'POST',
 			body: createFormData(editorContent, fileName)
 		});
-
 		const result = await response.json();
-
 		if (result.success) {
 			const fileLink = result.link;
-
-			document.getElementById('downloadLink').style.display = 'block';
 			overlay.classList.remove("hidden");
 			popup.classList.remove("hidden");
 			document.body.classList.add("overflow-y-hidden");
@@ -364,7 +349,7 @@ async function Sharelink(token) {
 		} else {
 			minifiedSizeSpan.textContent = 'Error generating share link';
 		}
-	} catch (error) {
+	} catch {
 		minifiedSizeSpan.textContent = 'Error during fetch request';
 	}
 }
@@ -374,14 +359,11 @@ shareButton.addEventListener('click', validateCH);
 function createFormData(content, fileName) {
 	shuffleArray(sentences);
 	const formData = new FormData();
-
 	const blob = new Blob([content], {
 		type: 'application/x-python'
 	});
-
 	formData.append('file', blob, fileName);
 	formData.append('description', `Python Minifier - Glad432 (glad432.github.io)\n${sentences[0]}`);
-
 	return formData;
 }
 
@@ -392,7 +374,6 @@ function displayQRCode(fileLink) {
 		height: 128,
 		correctLevel: QRCode.CorrectLevel.H,
 	});
-
 }
 
 function closePopup() {
@@ -407,6 +388,7 @@ function closePopup() {
 	document.body.classList.remove("overflow-y-hidden");
 	document.body.classList.add("overflow-y-scroll");
 	qrCode.innerHTML = '';
+	qrCode.title = '';
 	fileLink_load.innerHTML = '';
 	file_Link.value = '';
 	copy_msg.innerHTML = '';
@@ -415,8 +397,8 @@ function closePopup() {
 	link_newtab.innerHTML = '';
 	link_newtab.href = '';
 	link_newtab.target = '';
-
 }
+
 close_Popup.addEventListener('click', closePopup);
 
 async function copyfilelink() {
@@ -430,6 +412,7 @@ async function copyfilelink() {
 		cpyTimeout1 = null;
 	}, 3000);
 }
+
 file_Link.addEventListener('click', copyfilelink);
 
 sourceEditor.on("change", () => {
@@ -465,43 +448,35 @@ function initializeMinifier() {
 			'remove_debug',
 			'remove_explicit_return_none'
 		];
-
 		let query = options.map(option => `${option}=${document.getElementById(option).checked}`).join('&');
-
 		const preserve_globals = document.getElementById('preserve_globals').value;
 		if (preserve_globals) {
 			query += '&preserve_globals=' + encodeURIComponent(preserve_globals);
 		}
-
 		const preserve_locals = document.getElementById('preserve_locals').value;
 		if (preserve_locals) {
 			query += '&preserve_locals=' + encodeURIComponent(preserve_locals);
 		}
-
 		return query;
 	}
 
 	async function copyClick() {
-		try {
-			await navigator.clipboard.writeText(minifiedEditor.getValue());
-			minifiedEditor.setSelection({
-				line: 0,
-				ch: 0
-			}, {
-				line: minifiedEditor.lastLine(),
-				ch: minifiedEditor.getLineHandle(minifiedEditor.lastLine()).text.length
-			});
-			if (cpyTimeout0) {
-				clearTimeout(cpyTimeout0);
-			}
-			copyButton.innerHTML = `Copied <i class="fa-solid fa-clipboard fa-fade"></i>`;
-			cpyTimeout0 = setTimeout(() => {
-				copyButton.innerHTML = `Copy <i class="fa-solid fa-clipboard"></i>`;
-				cpyTimeout0 = null;
-			}, 2500);
-		} catch {
-			minifiedSizeSpan.textContent = `${excir} Copy failed`;
+		await navigator.clipboard.writeText(minifiedEditor.getValue());
+		minifiedEditor.setSelection({
+			line: 0,
+			ch: 0
+		}, {
+			line: minifiedEditor.lastLine(),
+			ch: minifiedEditor.getLineHandle(minifiedEditor.lastLine()).text.length
+		});
+		if (cpyTimeout0) {
+			clearTimeout(cpyTimeout0);
 		}
+		copyButton.innerHTML = `Copied <i class="fa-solid fa-clipboard fa-fade"></i>`;
+		cpyTimeout0 = setTimeout(() => {
+			copyButton.innerHTML = `Copy <i class="fa-solid fa-clipboard"></i>`;
+			cpyTimeout0 = null;
+		}, 2500);
 	}
 
 	async function minifyClick() {
@@ -513,11 +488,9 @@ function initializeMinifier() {
 		unselectallopt.disabled = true;
 		selectallopt.classList.add("cursor-not-allowed");
 		unselectallopt.classList.add("cursor-not-allowed");
-
 		minifiedEditor.setValue('');
 		animateIcon("fade-0", "fa-fade", 1500);
 		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
-
 		if (sourceEditor.getValue() !== '') {
 			try {
 				const response = await fetch("https://api.python-minifier.com/minify?" + build_query(), {
@@ -527,7 +500,6 @@ function initializeMinifier() {
 					},
 					body: pysource.value
 				});
-
 				if (response.ok) {
 					const minified = await response.text();
 					minifiedEditor.setValue(minified);
@@ -540,14 +512,12 @@ function initializeMinifier() {
 					copyButton.disabled = false;
 					shareButton.disabled = false;
 					dwButton.disabled = false;
-
 				} else {
 					copyButton.disabled = true;
 					shareButton.disabled = true;
 					dwButton.disabled = true;
 					minifiedSizeSpan.innerHTML = `${excir} Error`;
 				}
-
 			} catch {
 				shareButton.disabled = true;
 				copyButton.disabled = true;
@@ -557,25 +527,21 @@ function initializeMinifier() {
 		} else {
 			minifiedSizeSpan.textContent = "Enter Code";
 		}
-
 		selectallopt.disabled = false;
 		unselectallopt.disabled = false;
 		selectallopt.classList.remove("cursor-not-allowed");
 		unselectallopt.classList.remove("cursor-not-allowed");
 		minifyButton.disabled = false;
-
 	}
 
 	minifyButton.addEventListener('click', minifyClick);
 	copyButton.addEventListener('click', copyClick);
-
 	const options = [
 		'combine_imports', 'remove_pass', 'remove_literal_statements',
 		'remove_annotations', 'hoist_literals', 'rename_locals',
 		'rename_globals', 'convert_posargs_to_args', 'preserve_shebang',
 		'remove_asserts', 'remove_debug', 'remove_explicit_return_none'
 	];
-
 	options.forEach(option => {
 		const element = document.getElementById(option);
 		if (element) {
@@ -584,9 +550,7 @@ function initializeMinifier() {
 			});
 		}
 	});
-
 	minifyButton.disabled = false;
-
 }
 
 window.addEventListener("DOMContentLoaded", initializeMinifier);
@@ -596,21 +560,14 @@ function clearSource() {
 	shareButton.disabled = true;
 	dwButton.disabled = true;
 	copyButton.disabled = true;
-
 	handleFilename();
-
 	handleErrorMessage();
-
 	fileInput.value = '';
-
 	pysource.textContent = '';
-
 	minifiedEditor.setValue('');
-
 	sourceEditor.setValue('');
-
-	minifiedSizeSpan.textContent = "0.000 kB";
 	fileLinkInput.value = '';
+	minifiedSizeSpan.textContent = '0.000 kB';
 }
 
 document.getElementById('rm').addEventListener('click', clearSource);
@@ -621,9 +578,7 @@ function animateIcon(fade, fade_class, fade_dur) {
 		clearTimeout(aniTimeout);
 	}
 	var ani_icon = document.getElementById(fade);
-
 	ani_icon.classList.add(fade_class);
-
 	aniTimeout = setTimeout(() => {
 		ani_icon.classList.remove(fade_class);
 		aniTimeout = null;
@@ -648,10 +603,8 @@ function handleErrorMessage(text) {
 		if (errorTimeout) {
 			clearTimeout(errorTimeout);
 		}
-
 		errorMessage.innerHTML = text;
 		errorMessage.classList.add(...classlst);
-
 		errorTimeout = setTimeout(() => {
 			errorMessage.classList.remove(...classlst);
 			errorMessage.innerHTML = '';
@@ -667,28 +620,28 @@ function toggleContent1() {
 		content.style.maxHeight = content.scrollHeight + 'px';
 	}
 }
+
 document.getElementById('toggleContent1').addEventListener('click', toggleContent1);
 
 function tickAllAndSetGlobals() {
 	checkboxes.forEach((checkbox) => {
 		checkbox.checked = true;
 	});
-
 	preservedGlobalsInput.value = 'handler';
 }
+
 selectallopt.addEventListener('click', tickAllAndSetGlobals);
 
 function resetOptions() {
 	checkboxes.forEach((checkbox) => {
 		checkbox.checked = false;
 	});
-
 	preservedGlobalsInput.value = 'handler';
-
 	document.querySelectorAll('input[type="text"]:not(#preserve_globals)').forEach((textField) => {
 		textField.value = '';
 	});
 }
+
 unselectallopt.addEventListener('click', resetOptions);
 
 function input_from_url() {
@@ -705,18 +658,14 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (!response.ok) {
 					sourceEditor.setValue('');
 				}
-
 				const contentDisposition = response.headers.get("content-disposition");
 				const fileNameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"/);
 				const fileName = fileNameMatch ? fileNameMatch[1] : fileUrl.split('/').pop();
-
 				handleFilename(`${code_file} ${fileName}`);
-
 				const contentLength = response.headers.get("content-length");
 				if (contentLength && parseInt(contentLength, 10) > maxFileSizeInBytes) {
 					throw new Error(`File size exceeds 1MB limit`);
 				}
-
 				return response.text();
 			})
 			.then((data) => {
@@ -754,6 +703,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			animateIcon("fade-6", "fa-bounce", 1000);
 		}
 	});
+
 	document.getElementById("clear_link").addEventListener("click", () => {
 		if (fileLinkInput.value !== '') {
 			fileLinkInput.value = '';
@@ -761,6 +711,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	});
 });
+
 document.getElementById("from_url").addEventListener("click", input_from_url);
 
 function show_article() {
