@@ -21,22 +21,13 @@
   -o-transition: max-height 0.6s ease-in-out;
   transition: max-height 0.6s ease-in-out;
 }
-.typing-container {
-  font-size: 22px;
-  color: #333;
-}
 @media only screen and (max-width: 600px) {
   #line-count,
   #line-count-out,
   #minified-size,
   #text-size,
-  .CodeMirror,
-  .content-l,
-  .typing-container {
+  .CodeMirror {
     font-size: 12px !important;
-  }
-  .simp_border {
-    min-height: 180px !important;
   }
   .blue_big_box {
     width: auto !important;
@@ -57,7 +48,6 @@
 }
 .simp_border {
   border: 2px solid #d3d3d3;
-  min-height: 180px;
 }
 .blue_black_head,
 .red_black_head {
