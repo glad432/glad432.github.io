@@ -89,7 +89,7 @@ const features = [{
 	},
 	{
 		text: 'Robust',
-		color: '#000080'
+		color: '#c775c9'
 	}
 ];
 
