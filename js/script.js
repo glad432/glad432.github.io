@@ -202,11 +202,11 @@ function readonlyalert() {
 	if (readonlyTimeout) {
 		clearTimeout(readonlyTimeout);
 	}
-	if (minifiedEditor.getValue().length !== 0) {
+	if (!event.key.startsWith('Arrow') && minifiedEditor.getValue().length !== 0) {
 		event.preventDefault();
 		minifiedSizeSpan.innerHTML = `${excir} Read-Only`;
 		readonlyTimeout = setTimeout(() => {
-			minifiedSizeSpan.textContent = `${(minifiedEditor.getValue().length / 1024).toFixed(3)}  kB`;
+			minifiedSizeSpan.textContent = `${(minifiedEditor.getValue().length / 1024).toFixed(3)} kB`;
 			readonlyTimeout = null;
 		}, 2000);
 	}
@@ -421,7 +421,7 @@ sourceEditor.on("change", () => {
 
 function updateLineCount() {
 	document.getElementById("line-count").textContent = `Line Count: ${sourceEditor.lineCount()}`;
-	document.getElementById("text-size").textContent = (new TextEncoder().encode(sourceEditor.getValue()).length / 1024).toFixed(3) + " kB";
+	document.getElementById("text-size").textContent = `${(sourceEditor.getValue().length / 1024).toFixed(3)} kB`;
 }
 
 function updateLineCount_out() {
@@ -506,7 +506,7 @@ function initializeMinifier() {
 						line: 1,
 						ch: 0
 					});
-					minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)}  kB`;
+					minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)} kB`;
 					copyButton.disabled = false;
 					shareButton.disabled = false;
 					dwButton.disabled = false;
