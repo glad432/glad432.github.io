@@ -25,27 +25,14 @@ const unselectallopt = document.getElementById('Unselectall');
 const preservedGlobalsInput = document.getElementById('preserve_globals');
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout;
+let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, sourceEditor, minifiedEditor;
 const maxFileSizeInBytes = 1 * 1024 * 1024;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
 const code_file = `<i class="fa-solid fa-file-code"></i>`;
 const classlst = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4'];
 const classlst0 = ['select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4'];
-var words = [
-	'and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif',
-	'else', 'except', 'False', 'finally', 'for', 'from', 'global', 'if', 'import',
-	'in', 'is', 'lambda', 'None', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return',
-	'True', 'try', 'while', 'with', 'yield', 'abs', 'all', 'any', 'ascii', 'bin',
-	'bool', 'bytearray', 'bytes', 'callable', 'chr', 'classmethod', 'compile', 'complex',
-	'delattr', 'dict', 'dir', 'divmod', 'enumerate', 'eval', 'exec', 'filter', 'float',
-	'format', 'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help', 'hex', 'id',
-	'input', 'int', 'isinstance', 'issubclass', 'iter', 'len', 'list', 'locals', 'map',
-	'max', 'memoryview', 'min', 'next', 'object', 'oct', 'open', 'ord', 'pow', 'print',
-	'property', 'range', 'repr', 'reversed', 'round', 'set', 'setattr', 'slice', 'sorted',
-	'staticmethod', 'str', 'sum', 'super', 'tuple', 'type', 'vars', 'zip', 'exec', 'Ellipsis',
-	'NotImplemented',
-]
+
 const sentences = [
 	"A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks.",
 	"Its primary purpose is to enhance the loading speed of Python scripts, particularly beneficial for web applications.",
@@ -61,6 +48,12 @@ const dateformat = {
 	hour: '2-digit',
 	minute: '2-digit',
 	timeZoneName: 'short'
+};
+
+const fontSizeMap = {
+	pc: 14,
+	tablet: 14,
+	mobile: 12,
 };
 
 const features = [{
@@ -89,7 +82,7 @@ const features = [{
 	},
 	{
 		text: 'Robust',
-		color: '#c775c9'
+		color: '#C775C9'
 	}
 ];
 
@@ -126,93 +119,145 @@ window.addEventListener("load", () => {
 
 document.getElementById("year").textContent = new Date().getFullYear().toString();
 
-var sourceEditor = CodeMirror.fromTextArea(pysource, {
-	mode: "python",
-	theme: "mdn-like",
-	lineNumbers: true,
-	viewportMargin: 20,
-	placeholder: "Enter original code...",
-	matchBrackets: true,
-	autoCloseBrackets: true,
-	hint: CodeMirror.hint.anyword,
-	scrollbarStyle: "overlay",
-	gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-	foldGutter: true,
-	extraKeys: {
-		"Ctrl-Space": "autocomplete"
+require.config({
+	paths: {
+		'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs'
 	}
 });
-
-var minifiedEditor = CodeMirror.fromTextArea(document.getElementById("minified"), {
-	mode: "python",
-	theme: "mdn-like",
-	lineNumbers: true,
-	readOnly: true,
-	viewportMargin: 20,
-	scrollbarStyle: "overlay",
-	matchBrackets: true,
-	placeholder: "Minified code...",
-	gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-	foldGutter: true
+require(['vs/editor/editor.main'], () => {
+	sourceEditor = monaco.editor.create(document.getElementById('editor'), {
+		value: pysource.value,
+		language: 'python',
+		minimap: {
+			enabled: false
+		},
+		theme: 'vs',
+		matchBrackets: 'always',
+		fontFamily: 'Source Code Pro',
+		renderValidationDecorations: 'on',
+		scrollbar: {
+			vertical: 'visible',
+			horizontal: 'visible'
+		},
+		fontWeight: 'bold',
+		formatOnPaste: true,
+		semanticHighlighting: true,
+		folding: true,
+		cursorBlinking: 'smooth',
+		cursorSmoothCaretAnimation: true,
+		cursorStyle: 'line',
+	});
+	minifiedEditor = monaco.editor.create(document.getElementById('minified'), {
+		language: 'python',
+		minimap: {
+			enabled: false
+		},
+		theme: 'vs',
+		matchBrackets: 'always',
+		fontFamily: 'Source Code Pro',
+		renderValidationDecorations: 'on',
+		scrollbar: {
+			vertical: 'visible',
+			horizontal: 'visible'
+		},
+		fontWeight: 'bold',
+		semanticHighlighting: true,
+		folding: true,
+		cursorBlinking: 'smooth',
+		cursorSmoothCaretAnimation: true,
+		cursorStyle: 'line',
+		readOnly: true,
+	});
+	document.getElementById("darkModeToggle").addEventListener("change", setTheme)
+	window.addEventListener("load", setTheme)
+	sourceEditor.onDidChangeModelContent(() => {
+		document.getElementById('line-count').textContent = `Line Count: ${sourceEditor.getModel().getLineCount()}`;
+		document.getElementById('text-size').textContent = `${(sourceEditor.getModel().getValue().length / 1024).toFixed(3)} Kb`;
+	});
+	minifiedEditor.onDidChangeModelContent(() => {
+		document.getElementById('line-count-out').textContent = `Line Count: ${minifiedEditor.getModel().getLineCount()}`;
+		minifiedSizeSpan.textContent = `${(minifiedEditor.getModel().getValue().length / 1024).toFixed(3)} Kb`;
+	});
 });
 
-CodeMirror.registerHelper("hint", "anyword", (editor, options) => {
-	var wordList = options.words || words;
-	var cur = editor.getCursor();
-	var curLine = editor.getLine(cur.line);
-	var start = cur.ch;
-	var end = start;
-	while (end < curLine.length && /[\w$]+/.test(curLine.charAt(end))) ++end;
-	while (start && /[\w$]+/.test(curLine.charAt(start - 1))) --start;
-	var prefix = curLine.slice(start, end).toLowerCase();
-	var list = wordList.filter((word) => {
-		return word.toLowerCase().startsWith(prefix);
+function setTheme() {
+	darkmode = localStorage.getItem("darkMode");
+	if (darkmode === "true") {
+		sourceEditor.updateOptions({
+			theme: 'vs-dark'
+		});
+	} else {
+		sourceEditor.updateOptions({
+			theme: 'vs'
+		});
+	}
+}
+
+function getFontSize() {
+	const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+	if (width <= 600) {
+		return fontSizeMap.mobile;
+	} else if (width > 600 && width <= 1024) {
+		return fontSizeMap.tablet;
+	} else {
+		return fontSizeMap.pc;
+	}
+};
+
+function isMobile() {
+	const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+	return width <= 600;
+};
+window.addEventListener('load', () => {
+	sourceEditor.updateOptions({
+		fontSize: getFontSize()
 	});
-	return {
-		list: list,
-		from: CodeMirror.Pos(cur.line, start),
-		to: CodeMirror.Pos(cur.line, end)
-	};
+	minifiedEditor.updateOptions({
+		fontSize: getFontSize()
+	});
+	if (isMobile()) {
+		sourceEditor.updateOptions({
+			folding: false
+		});
+		minifiedEditor.updateOptions({
+			folding: false
+		});
+	} else if (!isMobile()) {
+		sourceEditor.updateOptions({
+			folding: true
+		});
+		minifiedEditor.updateOptions({
+			folding: true
+		});
+	}
+	sourceEditor.onDidChangeModelContent(() => {
+		pysource.value = sourceEditor.getModel().getValue();
+	});
+	minifiedEditor.onDidChangeModelContent(() => {
+		updateEditorState();
+	});
 });
 
 function updateEditorState() {
-	var cursor = sourceEditor.getCursor();
-	var value = sourceEditor.getValue();
-	var fileSizeInBytes = new Blob([value]).size;
-	if (fileSizeInBytes > maxFileSizeInBytes) {
-		handleFilename();
-		handleErrorMessage(`${exctri} Maximum Size limit 1MB reached!`);
-		sourceEditor.setValue(value.substring(0, value.length - (fileSizeInBytes - maxFileSizeInBytes)));
-		sourceEditor.setOption("readOnly", true);
-	} else {
-		sourceEditor.setOption("readOnly", false);
+	const cursor = sourceEditor.getPosition();
+	const value = sourceEditor.getModel().getValue();
+	if (value) {
+		const fileSizeInBytes = new Blob([value]).size;
+		if (fileSizeInBytes > maxFileSizeInBytes) {
+			sourceEditor.updateOptions({
+				readOnly: true
+			});
+			const truncatedValue = value.substring(0, maxFileSizeInBytes);
+			sourceEditor.getModel().setValue(truncatedValue);
+			handleErrorMessage(`Maximum Size limit (1MB) reached!`);
+		} else {
+			sourceEditor.updateOptions({
+				readOnly: false
+			});
+		}
 	}
-	sourceEditor.setCursor(cursor);
+	sourceEditor.setPosition(cursor);
 }
-
-sourceEditor.on("beforeChange", (_, change) => {
-	var currentSize = new Blob([sourceEditor.getValue()]).size;
-	var newSize = currentSize + new Blob([change.text.join('')]).size - change.to - change.from;
-	if (newSize > maxFileSizeInBytes) {
-		change.cancel();
-	}
-});
-
-function readonlyalert() {
-	if (readonlyTimeout) {
-		clearTimeout(readonlyTimeout);
-	}
-	if (!event.key.startsWith('Arrow') && minifiedEditor.getValue().length !== 0) {
-		event.preventDefault();
-		minifiedSizeSpan.innerHTML = `${excir} Read-Only`;
-		readonlyTimeout = setTimeout(() => {
-			minifiedSizeSpan.textContent = `${(minifiedEditor.getValue().length / 1024).toFixed(3)} kB`;
-			readonlyTimeout = null;
-		}, 2000);
-	}
-}
-
-minifiedEditor.on("keydown", readonlyalert);
 
 function setupFileInput() {
 	function dragpy(event) {
@@ -267,7 +312,7 @@ function setupFileInput() {
 		if (file.size <= maxFileSizeInBytes) {
 			const reader = new FileReader();
 			reader.onload = (e) => {
-				sourceEditor.getDoc().setValue(e.target.result);
+				sourceEditor.getModel().setValue(e.target.result);
 				handleErrorMessage();
 			};
 			reader.readAsText(file);
@@ -283,7 +328,7 @@ window.addEventListener('load', setupFileInput);
 
 function dw_py() {
 	animateIcon("fade-1", "fa-fade", 3000);
-	var blob = new Blob([minifiedEditor.getValue()], {
+	var blob = new Blob([minifiedEditor.getModel().getValue()], {
 		type: "text/x-python"
 	});
 	var dataUri = URL.createObjectURL(blob);
@@ -304,7 +349,7 @@ function validateCH(event) {
 
 async function Sharelink(token) {
 	animateIcon("fade-2", "fa-fade", 3000);
-	const editorContent = minifiedEditor.getValue();
+	const editorContent = minifiedEditor.getModel().getValue();
 	const fileName = (fileNameDisplay.textContent || "default.py").replace(/^ /, '').replace(/\.[^/.]+$/, '') + "_min.py";
 	try {
 		const response = await fetch('https://file.io/?expires=2w', {
@@ -413,23 +458,6 @@ async function copyfilelink() {
 
 file_Link.addEventListener('click', copyfilelink);
 
-sourceEditor.on("change", () => {
-	pysource.value = sourceEditor.getValue();
-	updateLineCount();
-	updateEditorState();
-});
-
-function updateLineCount() {
-	document.getElementById("line-count").textContent = `Line Count: ${sourceEditor.lineCount()}`;
-	document.getElementById("text-size").textContent = `${(sourceEditor.getValue().length / 1024).toFixed(3)} kB`;
-}
-
-function updateLineCount_out() {
-	document.getElementById("line-count-out").textContent = `Line Count: ${minifiedEditor.lineCount()}`;
-}
-
-minifiedEditor.on("change", updateLineCount_out);
-
 function initializeMinifier() {
 	function build_query() {
 		const options = [
@@ -459,13 +487,14 @@ function initializeMinifier() {
 	}
 
 	async function copyClick() {
-		await navigator.clipboard.writeText(minifiedEditor.getValue());
+		await navigator.clipboard.writeText(minifiedEditor.getModel().getValue());
+		const lastLineNumber = minifiedEditor.getModel().getLineCount();
+		minifiedEditor.revealLine(lastLineNumber);
 		minifiedEditor.setSelection({
-			line: 0,
-			ch: 0
-		}, {
-			line: minifiedEditor.lastLine(),
-			ch: minifiedEditor.getLineHandle(minifiedEditor.lastLine()).text.length
+			startLineNumber: 1,
+			startColumn: 1,
+			endLineNumber: minifiedEditor.getModel().getLineCount(),
+			endColumn: minifiedEditor.getModel().getLineMaxColumn(minifiedEditor.getModel().getLineCount())
 		});
 		if (cpyTimeout0) {
 			clearTimeout(cpyTimeout0);
@@ -489,7 +518,7 @@ function initializeMinifier() {
 		minifiedEditor.setValue('');
 		animateIcon("fade-0", "fa-fade", 1500);
 		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
-		if (sourceEditor.getValue() !== '') {
+		if (sourceEditor.getModel().getValue() !== '') {
 			try {
 				const response = await fetch("https://api.python-minifier.com/minify?" + build_query(), {
 					method: 'POST',
@@ -500,12 +529,7 @@ function initializeMinifier() {
 				});
 				if (response.ok) {
 					const minified = await response.text();
-					minifiedEditor.setValue(minified);
-					minifiedEditor.scrollTo(1, 1);
-					minifiedEditor.setCursor({
-						line: 1,
-						ch: 0
-					});
+					minifiedEditor.getModel().setValue(minified);
 					minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)} kB`;
 					copyButton.disabled = false;
 					shareButton.disabled = false;
@@ -544,7 +568,7 @@ function initializeMinifier() {
 		const element = document.getElementById(option);
 		if (element) {
 			element.addEventListener('change', () => {
-				minifiedEditor.setValue('');
+				minifiedEditor.getModel().setValue('');
 			});
 		}
 	});
@@ -562,8 +586,8 @@ function clearSource() {
 	handleErrorMessage();
 	fileInput.value = '';
 	pysource.textContent = '';
-	minifiedEditor.setValue('');
-	sourceEditor.setValue('');
+	minifiedEditor.getModel().setValue('');
+	sourceEditor.getModel().setValue('');
 	fileLinkInput.value = '';
 	minifiedSizeSpan.textContent = '0.000 kB';
 }
@@ -654,7 +678,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		fetch(fileUrl)
 			.then((response) => {
 				if (!response.ok) {
-					sourceEditor.setValue('');
+					sourceEditor.getModel().setValue('');
 				}
 				const contentDisposition = response.headers.get("content-disposition");
 				const fileNameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"/);
@@ -667,7 +691,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				return response.text();
 			})
 			.then((data) => {
-				sourceEditor.setValue(data);
+				sourceEditor.getModel().setValue(data);
 			})
 			.catch((error) => {
 				handleFilename();
