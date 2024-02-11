@@ -230,33 +230,33 @@ window.addEventListener('load', () => {
 			folding: true
 		});
 	}
-	sourceEditor.onDidChangeModelContent(() => {
+	sourceEditor.onDidChangeModelContent(async () => {
+		if ((new Blob([sourceEditor.getModel().getValue()])).size / maxFileSizeInBytes > 1) {
+			sourceEditor.getModel().setValue(await truncateCode(sourceEditor.getModel().getValue()));
+			var lastLine = sourceEditor.getModel().getLineCount();
+			sourceEditor.setPosition({
+				lineNumber: lastLine,
+				column: sourceEditor.getModel().getLineMaxColumn(lastLine)
+			});
+			handleErrorMessage(`${exctri} Maximum Size limit (1MB) reached!`);
+		}
 		pysource.value = sourceEditor.getModel().getValue();
 	});
-	minifiedEditor.onDidChangeModelContent(() => {
-		updateEditorState();
-	});
+
 });
 
-function updateEditorState() {
-	const cursor = sourceEditor.getPosition();
-	const value = sourceEditor.getModel().getValue();
-	if (value) {
-		const fileSizeInBytes = new Blob([value]).size;
-		if (fileSizeInBytes > maxFileSizeInBytes) {
-			sourceEditor.updateOptions({
-				readOnly: true
-			});
-			const truncatedValue = value.substring(0, maxFileSizeInBytes);
-			sourceEditor.getModel().setValue(truncatedValue);
-			handleErrorMessage(`Maximum Size limit (1MB) reached!`);
-		} else {
-			sourceEditor.updateOptions({
-				readOnly: false
-			});
-		}
+function truncateCode(content) {
+	var pyblob = new Blob([content]);
+	if (pyblob.size > maxFileSizeInBytes) {
+		return new Promise(resolve => {
+			var pyreader = new FileReader();
+			pyreader.onloadend = () => {
+				resolve(pyreader.result);
+			};
+			pyreader.readAsText(pyblob.slice(0, maxFileSizeInBytes));
+		});
 	}
-	sourceEditor.setPosition(cursor);
+	return Promise.resolve(content);
 }
 
 function setupFileInput() {
@@ -283,6 +283,8 @@ function setupFileInput() {
 				handleFile(selectedFile);
 			} else {
 				dwButton.disabled = true;
+				shareButton.disabled = true;
+				copyButton.disabled = true;
 				handleFilename();
 				handleErrorMessage(`${exctri} Invalid file format. Please select a .py file.`);
 				fileInput.value = '';
