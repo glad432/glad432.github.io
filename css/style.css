@@ -64,6 +64,7 @@ input:checked + .slider:before {
   border-left: 6px solid rgba(0, 83, 159, 0.65);
 }
 .margin-view-overlays {
+  user-select: none;
   font-size: small;
   width: 68px !important;
   background: rgb(69 69 69 / 7%);
@@ -92,7 +93,9 @@ input:checked + .slider:before {
   #line-count,
   #line-count-out,
   #minified-size,
-  #text-size {
+  #text-size,
+  #errmsg,
+  #fileNameDisplay {
     font-size: 12px !important;
   }
   .blue_big_box {
