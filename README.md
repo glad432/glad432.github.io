@@ -1,16 +1,14 @@
 # Python Minifier - Glad432
 
-Welcome to my Python Minifier - Glad432 This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes and CodeMirror for code highlighting. Additionally, it utilizes the python-minifier.com API to minify Python files, file.io for file sharing and hCaptcha for human verification.
+Welcome to my Python Minifier - Glad432. This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes, and Monaco Editor for code editing. Additionally, it utilizes the python-minifier.com API to minify Python files, file.io for file sharing, and hCaptcha for human verification.
 
-![python minifier - glad432](https://gladw-in.github.io/projects/images/python%20minifier.webp)
-
-Below you'll find more information about the technologies used and the benefits of minifying Python files.
+![python minifier - glad432](https://glad432.github.io/img/favicon.png)
 
 ## Technologies Used
 
 - HTML
 - CSS (including Tailwind CSS)
-- JavaScript (including CodeMirror)
+- JavaScript (including Monaco Editor)
 - [python-minifier.com API](https://www.python-minifier.com/)
 - [file.io](https://www.file.io/) for file sharing
 - [Font Awesome](https://fontawesome.com/) for scalable vector icons
@@ -21,9 +19,9 @@ Below you'll find more information about the technologies used and the benefits 
 
 This project takes advantage of the [Tailwind CSS](https://tailwindcss.com/) framework, which makes styling and designing web pages faster and more efficient. Tailwind CSS provides utility classes that enable you to create beautiful and responsive designs with minimal effort.
 
-## CodeMirror
+## Monaco Editor
 
-[Codemirror](https://codemirror.net/) is used for code syntax highlighting in this project. It supports a wide range of programming languages and offers a visually appealing way to display code snippets on your web pages.
+[Monaco Editor](https://microsoft.github.io/monaco-editor/) is used for code editing in this project. Developed by Microsoft, Monaco Editor provides a fast and feature-rich code editing experience. It supports a wide range of programming languages and offers advanced editing features.
 
 ## Python Minification Benefits
 
@@ -39,7 +37,7 @@ The [python-minifier.com API](https://www.python-minifier.com/) allows you to pr
 
 ## File Sharing with file.io
 
-[file.io](https://www.file.io/) is used for easy and secure file sharing. It provides a simple and temporary solution for sharing python files with others.
+[file.io](https://www.file.io/) is used for easy and secure file sharing. It provides a simple and temporary solution for sharing Python files with others.
 
 ## Font Awesome
 
@@ -56,7 +54,7 @@ The [python-minifier.com API](https://www.python-minifier.com/) allows you to pr
 ## Credits
 
 - [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework for rapid UI development.
-- [Codemirror](https://codemirror.net/) - A lightweight, extensible syntax highlighter.
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/) - A fast and feature-rich code editor by Microsoft.
 - [python-minifier.com](https://www.python-minifier.com/) - API for minifying Python files.
 - [file.io](https://www.file.io/) - Simple and secure file sharing.
 - [Font Awesome](https://fontawesome.com/) - Scalable vector icons.
