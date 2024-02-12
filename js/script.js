@@ -22,7 +22,8 @@ const link_newtab = document.getElementById("new_tab");
 const fileLinkInput = document.getElementById("fileLinkInput");
 const selectallopt = document.getElementById('selectall');
 const unselectallopt = document.getElementById('Unselectall');
-const preservedGlobalsInput = document.getElementById('preserve_globals');
+const preserve_globals = document.getElementById('preserve_globals');
+const preserve_locals = document.getElementById('preserve_locals');
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, sourceEditor, minifiedEditor;
@@ -84,6 +85,21 @@ const features = [{
 		text: 'Robust',
 		color: '#C775C9'
 	}
+];
+
+var options = [
+	'combine_imports',
+	'remove_pass',
+	'remove_literal_statements',
+	'remove_annotations',
+	'hoist_literals',
+	'rename_locals',
+	'rename_globals',
+	'convert_posargs_to_args',
+	'preserve_shebang',
+	'remove_asserts',
+	'remove_debug',
+	'remove_explicit_return_none'
 ];
 
 function shuffleArray(array) {
@@ -233,11 +249,12 @@ window.addEventListener('load', () => {
 	sourceEditor.onDidChangeModelContent(async () => {
 		if ((new Blob([sourceEditor.getModel().getValue()])).size / maxFileSizeInBytes > 1) {
 			sourceEditor.getModel().setValue(await truncateCode(sourceEditor.getModel().getValue()));
-			var lastLine = sourceEditor.getModel().getLineCount();
+			var totalLines = sourceEditor.getModel().getLineCount();
 			sourceEditor.setPosition({
-				lineNumber: lastLine,
-				column: sourceEditor.getModel().getLineMaxColumn(lastLine)
+				lineNumber: totalLines,
+				column: sourceEditor.getModel().getLineMaxColumn(totalLines)
 			});
+			sourceEditor.revealLineInCenter(Math.max(totalLines - 5, 1));
 			handleErrorMessage(`${exctri} Maximum Size limit (1MB) reached!`);
 		}
 		pysource.value = sourceEditor.getModel().getValue();
@@ -315,6 +332,7 @@ function setupFileInput() {
 			const reader = new FileReader();
 			reader.onload = (e) => {
 				sourceEditor.getModel().setValue(e.target.result);
+				sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 				handleErrorMessage();
 			};
 			reader.readAsText(file);
@@ -462,26 +480,10 @@ file_Link.addEventListener('click', copyfilelink);
 
 function initializeMinifier() {
 	function build_query() {
-		const options = [
-			'combine_imports',
-			'remove_pass',
-			'remove_literal_statements',
-			'remove_annotations',
-			'hoist_literals',
-			'rename_locals',
-			'rename_globals',
-			'convert_posargs_to_args',
-			'preserve_shebang',
-			'remove_asserts',
-			'remove_debug',
-			'remove_explicit_return_none'
-		];
 		let query = options.map(option => `${option}=${document.getElementById(option).checked}`).join('&');
-		const preserve_globals = document.getElementById('preserve_globals').value;
 		if (preserve_globals) {
 			query += '&preserve_globals=' + encodeURIComponent(preserve_globals);
 		}
-		const preserve_locals = document.getElementById('preserve_locals').value;
 		if (preserve_locals) {
 			query += '&preserve_locals=' + encodeURIComponent(preserve_locals);
 		}
@@ -515,6 +517,12 @@ function initializeMinifier() {
 		dwButton.disabled = true;
 		selectallopt.disabled = true;
 		unselectallopt.disabled = true;
+		options.push("preserve_locals", "preserve_globals");
+		options.forEach(option => {
+			const checkbox = document.getElementById(option);
+			checkbox.classList.add("cursor-not-allowed");
+			checkbox.disabled = true;
+		});
 		selectallopt.classList.add("cursor-not-allowed");
 		unselectallopt.classList.add("cursor-not-allowed");
 		minifiedEditor.setValue('');
@@ -532,6 +540,7 @@ function initializeMinifier() {
 				if (response.ok) {
 					const minified = await response.text();
 					minifiedEditor.getModel().setValue(minified);
+					minifiedEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 					minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)} kB`;
 					copyButton.disabled = false;
 					shareButton.disabled = false;
@@ -553,6 +562,11 @@ function initializeMinifier() {
 		}
 		selectallopt.disabled = false;
 		unselectallopt.disabled = false;
+		options.forEach(option => {
+			const checkbox = document.getElementById(option);
+			checkbox.classList.remove("cursor-not-allowed");
+			checkbox.disabled = false;
+		});
 		selectallopt.classList.remove("cursor-not-allowed");
 		unselectallopt.classList.remove("cursor-not-allowed");
 		minifyButton.disabled = false;
@@ -560,20 +574,6 @@ function initializeMinifier() {
 
 	minifyButton.addEventListener('click', minifyClick);
 	copyButton.addEventListener('click', copyClick);
-	const options = [
-		'combine_imports', 'remove_pass', 'remove_literal_statements',
-		'remove_annotations', 'hoist_literals', 'rename_locals',
-		'rename_globals', 'convert_posargs_to_args', 'preserve_shebang',
-		'remove_asserts', 'remove_debug', 'remove_explicit_return_none'
-	];
-	options.forEach(option => {
-		const element = document.getElementById(option);
-		if (element) {
-			element.addEventListener('change', () => {
-				minifiedEditor.getModel().setValue('');
-			});
-		}
-	});
 	minifyButton.disabled = false;
 }
 
@@ -651,7 +651,7 @@ function tickAllAndSetGlobals() {
 	checkboxes.forEach((checkbox) => {
 		checkbox.checked = true;
 	});
-	preservedGlobalsInput.value = 'handler';
+	preserve_globals.value = 'handler';
 }
 
 selectallopt.addEventListener('click', tickAllAndSetGlobals);
@@ -660,7 +660,7 @@ function resetOptions() {
 	checkboxes.forEach((checkbox) => {
 		checkbox.checked = false;
 	});
-	preservedGlobalsInput.value = 'handler';
+	preserve_globals.value = 'handler';
 	document.querySelectorAll('input[type="text"]:not(#preserve_globals)').forEach((textField) => {
 		textField.value = '';
 	});
@@ -676,29 +676,27 @@ function input_from_url() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-	function loadFileContent(fileUrl) {
-		fetch(fileUrl)
-			.then((response) => {
-				if (!response.ok) {
-					sourceEditor.getModel().setValue('');
-				}
-				const contentDisposition = response.headers.get("content-disposition");
-				const fileNameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"/);
-				const fileName = fileNameMatch ? fileNameMatch[1] : fileUrl.split('/').pop();
-				handleFilename(`${code_file} ${fileName}`);
-				const contentLength = response.headers.get("content-length");
-				if (contentLength && parseInt(contentLength, 10) > maxFileSizeInBytes) {
-					throw new Error(`File size exceeds 1MB limit`);
-				}
-				return response.text();
-			})
-			.then((data) => {
-				sourceEditor.getModel().setValue(data);
-			})
-			.catch((error) => {
-				handleFilename();
-				handleErrorMessage(`${exctri} ${error.message}`);
-			});
+	async function loadFileContent(fileUrl) {
+		try {
+			const response = await fetch(fileUrl);
+			if (!response.ok) {
+				sourceEditor.getModel().setValue('');
+			}
+			const contentDisposition = response.headers.get("content-disposition");
+			const fileNameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"/);
+			const fileName = fileNameMatch ? fileNameMatch[1] : fileUrl.split('/').pop();
+			handleFilename(`${code_file} ${fileName}`);
+			const contentLength = response.headers.get("content-length");
+			if (contentLength && parseInt(contentLength, 10) > maxFileSizeInBytes) {
+				throw new Error(`File size exceeds 1MB limit`);
+			}
+			const data = await response.text();
+			sourceEditor.getModel().setValue(data);
+			sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
+		} catch (error) {
+			handleFilename();
+			handleErrorMessage(`${exctri} ${error.message}`);
+		}
 	}
 
 	function load_file() {
