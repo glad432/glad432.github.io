@@ -19,7 +19,11 @@ const overlay = document.getElementById("overlay");
 const orscan = document.getElementById('scantocopy');
 const help_msg = document.getElementById('help-msg');
 const link_newtab = document.getElementById("new_tab");
+const inputContainer = document.getElementById("inputContainer");
 const fileLinkInput = document.getElementById("fileLinkInput");
+const savefilebtn = document.getElementById("savefilename");
+const editfilename = document.getElementById('editfileName');
+const edit_msg = document.getElementById('editmsg');
 const selectallopt = document.getElementById('selectall');
 const unselectallopt = document.getElementById('Unselectall');
 const preserve_globals = document.getElementById('preserve_globals');
@@ -279,6 +283,8 @@ function truncateCode(content) {
 function setupFileInput() {
 	function dragpy(event) {
 		const droppedFile = event.dataTransfer.files[0];
+		loadfiledit()
+		loadeditbtn();
 		if (droppedFile) {
 			if (droppedFile.name.toLowerCase().endsWith('.py')) {
 				handleErrorMessage();
@@ -293,6 +299,8 @@ function setupFileInput() {
 
 	fileInput.addEventListener('change', (event) => {
 		const selectedFile = event.target.files[0];
+		loadfiledit()
+		loadeditbtn();
 		if (selectedFile) {
 			if (selectedFile.name.toLowerCase().endsWith('.py')) {
 				handleErrorMessage();
@@ -440,26 +448,29 @@ function displayQRCode(fileLink) {
 }
 
 function closePopup() {
-	qrCode.classList.remove('ml-12', 'p-2', 'mr-12', 'mt-2');
-	orscan.classList.remove('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
-	link_newtab.classList.remove('text-white', 'bg-blue-600', 'hover:bg-blue-700', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5');
-	qrCode.style.textAlign = '';
-	qrCode.style.background = '';
-	close_Popup.classList.add('hidden');
-	overlay.classList.add("hidden");
-	popup.classList.add("hidden");
-	document.body.classList.remove("overflow-y-hidden");
-	document.body.classList.add("overflow-y-scroll");
-	qrCode.innerHTML = '';
-	qrCode.title = '';
-	fileLink_load.innerHTML = '';
-	file_Link.value = '';
-	copy_msg.innerHTML = '';
-	orscan.innerHTML = '';
-	help_msg.innerHTML = '';
-	link_newtab.innerHTML = '';
-	link_newtab.href = '';
-	link_newtab.target = '';
+	animateIcon("closePopup", "fa-fade", 700);
+	setTimeout(() => {
+		qrCode.classList.remove('ml-12', 'p-2', 'mr-12', 'mt-2');
+		orscan.classList.remove('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
+		link_newtab.classList.remove('text-white', 'bg-blue-600', 'hover:bg-blue-700', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5');
+		qrCode.style.textAlign = '';
+		qrCode.style.background = '';
+		close_Popup.classList.add('hidden');
+		overlay.classList.add("hidden");
+		popup.classList.add("hidden");
+		document.body.classList.remove("overflow-y-hidden");
+		document.body.classList.add("overflow-y-scroll");
+		qrCode.innerHTML = '';
+		qrCode.title = '';
+		fileLink_load.innerHTML = '';
+		file_Link.value = '';
+		copy_msg.innerHTML = '';
+		orscan.innerHTML = '';
+		help_msg.innerHTML = '';
+		link_newtab.innerHTML = '';
+		link_newtab.href = '';
+		link_newtab.target = '';
+	}, 800)
 }
 
 close_Popup.addEventListener('click', closePopup);
@@ -596,6 +607,52 @@ function clearSource() {
 
 document.getElementById('rm').addEventListener('click', clearSource);
 
+function loadfiledit() {
+	fileNameDisplay.classList.remove('hidden');
+	editfilename.classList.add('hidden');
+	savefilebtn.classList.add("hidden");
+}
+
+function loadeditbtn() {
+	edit_msg.innerHTML = `<i id="fade-8" class="fa-regular fa-pen-to-square fa-lg"></i>`;
+	edit_msg.classList.add('pl-2', 'pb-1', 'cursor-pointer', 'text-blue-600');
+	edit_msg.title = `Edit filename`;
+}
+
+function makeEditable() {
+	animateIcon("fade-8", "fa-beat-fade", 400);
+	setTimeout(() => {
+		edit_msg.textContent = '';
+		savefilebtn.classList.remove("hidden");
+		fileNameDisplay.classList.add('hidden');
+		editfilename.classList.remove('hidden');
+		editfilename.value = fileNameDisplay.textContent.trim();
+		editfilename.focus();
+	}, 500);
+}
+edit_msg.addEventListener("click", makeEditable);
+
+function saveChanges() {
+	var cleanedString = editfilename.value;
+	animateIcon("savefilename", "fa-fade", 800);
+	setTimeout(() => {
+		if (/^[a-zA-Z0-9_.]+$/.test(cleanedString)) {
+			if (cleanedString.indexOf('.py', cleanedString.indexOf('.py') + 1) !== -1) {
+				cleanedString = cleanedString.replace(/\.py(?!.*\.py)/, '');
+			}
+			editfilename.value = cleanedString;
+			if (/\.py$/.test(cleanedString)) {
+				handleFilename(`${code_file} ${cleanedString}`);
+			} else {
+				handleFilename(`${code_file} ${cleanedString}.py`);
+			}
+			loadfiledit();
+		}
+	}, 1000);
+
+}
+savefilebtn.addEventListener("click", saveChanges);
+
 function animateIcon(fade, fade_class, fade_dur) {
 	let aniTimeout;
 	if (aniTimeout) {
@@ -611,9 +668,11 @@ function animateIcon(fade, fade_class, fade_dur) {
 
 function handleFilename(text) {
 	if (text === undefined) {
+		edit_msg.textContent = '';
 		fileNameDisplay.textContent = '';
 		fileNameDisplay.classList.remove(...classlst0);
 	} else {
+		loadeditbtn();
 		fileNameDisplay.innerHTML = text;
 		fileNameDisplay.classList.add(...classlst0);
 	}
@@ -638,6 +697,7 @@ function handleErrorMessage(text) {
 }
 
 function toggleContent1() {
+	animateIcon("toggleContent1", "fa-fade", 1000);
 	if (content.style.maxHeight) {
 		content.style.maxHeight = null;
 	} else {
@@ -648,6 +708,7 @@ function toggleContent1() {
 document.getElementById('toggleContent1').addEventListener('click', toggleContent1);
 
 function tickAllAndSetGlobals() {
+	animateIcon("selectall", "fa-fade", 800);
 	checkboxes.forEach((checkbox) => {
 		checkbox.checked = true;
 	});
@@ -657,6 +718,7 @@ function tickAllAndSetGlobals() {
 selectallopt.addEventListener('click', tickAllAndSetGlobals);
 
 function resetOptions() {
+	animateIcon("Unselectall", "fa-fade", 800);
 	checkboxes.forEach((checkbox) => {
 		checkbox.checked = false;
 	});
@@ -670,9 +732,11 @@ unselectallopt.addEventListener('click', resetOptions);
 
 function input_from_url() {
 	animateIcon("fade-4", "fa-fade", 1000);
-	var inputContainer = document.getElementById("inputContainer");
-	inputContainer.classList.toggle("hidden");
-	inputContainer.classList.toggle("flex");
+	setTimeout(() => {
+		fileLinkInput.focus();
+		inputContainer.classList.toggle("hidden");
+		inputContainer.classList.toggle("flex");
+	}, 500);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -709,6 +773,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		} else if (/\.(py)$/.test(fileLink.toLowerCase())) {
 			handleErrorMessage();
 			animateIcon("fade-3", "fa-fade", 1500);
+			loadfiledit()
+			loadeditbtn();
 			loadFileContent(fileLink);
 		} else {
 			handleFilename();
@@ -720,15 +786,19 @@ document.addEventListener("DOMContentLoaded", () => {
 	document.getElementById("sample_link").addEventListener("click", () => {
 		const githubrawlink = "https:\/\/gist.githubusercontent.com\/glad432\/4d1935413e012cd54130a1fc6f31b4bf\/raw\/5f3aaae4b9a360b64a1146e6540804af4a91b7b1\/sample.py";
 		if (fileLinkInput.value !== githubrawlink) {
-			fileLinkInput.value = githubrawlink;
-			load_file();
 			animateIcon("fade-6", "fa-bounce", 1000);
+			fileLinkInput.value = githubrawlink;
+			loadfiledit()
+			loadeditbtn();
+			load_file();
 		}
 	});
 
 	document.getElementById("clear_link").addEventListener("click", () => {
 		if (fileLinkInput.value !== '') {
 			fileLinkInput.value = '';
+			loadfiledit()
+			loadeditbtn();
 			animateIcon("fade-7", "fa-fade", 1000);
 		}
 	});
