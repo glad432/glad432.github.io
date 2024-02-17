@@ -90,12 +90,15 @@ input:checked + .slider:before {
   border-radius: 3px;
 }
 @media only screen and (max-width: 600px) {
+  #editfileName,
+  #editmsg,
+  #errmsg,
+  #fileNameDisplay,
   #line-count,
   #line-count-out,
   #minified-size,
-  #text-size,
-  #errmsg,
-  #fileNameDisplay {
+  #savefilename,
+  #text-size {
     font-size: 12px !important;
   }
   .blue_big_box {
@@ -161,12 +164,6 @@ input:checked + .slider:before {
 }
 .dark ::-webkit-scrollbar-corner {
   background-color: #181a1b;
-}
-.dark ::-moz-selection {
-  background-color: #373e46 !important;
-}
-.dark ::selection {
-  background-color: #373e46 !important;
 }
 .dark .help-content {
   background: #181a1b;
