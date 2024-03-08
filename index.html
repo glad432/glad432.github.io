@@ -172,7 +172,8 @@
       <p id="errmsg"></p>
       <div class="flex items-end">
         <span id="fileNameDisplay"></span>
-        <input type="text" id="editfileName" placeholder="Enter file name:" class="select-none placeholder-white focus:outline-none font-bold bg-green-500 text-white py-1 px-2 rounded max-w-fit mt-4 hidden">
+        <i id="input-icon" class="fa-solid fa-file-code select-none placeholder-white focus:outline-none font-bold bg-green-500 text-white p-[8px] rounded-l max-w-fit mt-4 hidden-imp"></i>
+        <input type="text" id="editfileName" placeholder="Enter:" class="select-none placeholder-white cursor-text focus:outline-none font-bold bg-green-500 text-white py-1 rounded-r mt-4 hidden">
         <button id="savefilename" class="select-none text-base ml-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hidden">Save</button>
         <button id="editmsg"></button>
       </div>
@@ -289,9 +290,9 @@ if __name__ == "__main__":
         </div>
       </div>
       <div class="select-none mb-2 md:mb-4 text-center">
-        <span class="relative rounded pt-5 p-4 overflow-hidden group bg-blue-500 relative hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-blue-400 transition-all ease-out duration-300">
+        <span id="minify" class="relative rounded cursor-pointer pt-5 p-4 overflow-hidden group bg-blue-500 relative hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-blue-400 transition-all ease-out duration-300">
           <span class="absolute right-0 w-8 h-40 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
-          <span id="minify" class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i>
+          <span class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i>
           </span>
         </span>
       </div>
@@ -318,11 +319,11 @@ if __name__ == "__main__":
       </div>
       <div id="minified" class="w-auto h-[300px] mt-4 rounded overflow-hidden"></div>
       <div class="mb-2 md:mb-4 select-none">
-        <button id="dw" disabled class="px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download <i id="fade-1" class="fa-solid fa-download"></i>
+        <button id="dw" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download <i id="fade-1" class="fa-solid fa-download"></i>
         </button>
-        <button id="copy" disabled class="px-4 py-2 mt-2 font-bold bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Copy <i class="fa-solid fa-clipboard"></i>
+        <button id="copy" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Copy <i class="fa-solid fa-clipboard"></i>
         </button>
-        <button id="share" disabled class="px-4 py-2 mt-2 font-bold bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Share <i id="fade-2" class="fa-solid fa-share-from-square"></i>
+        <button id="share" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Share <i id="fade-2" class="fa-solid fa-share-from-square"></i>
         </button>
       </div>
     </section>
