@@ -688,8 +688,6 @@ function handleFilename(text) {
 
 function handleErrorMessage(text) {
 	if (text === undefined) {
-		sourceEditor.getModel().setValue('');
-		minifiedEditor.getModel().setValue('');
 		errorMessage.textContent = '';
 		errorMessage.classList.remove(...classlst);
 	} else {
