@@ -24,6 +24,7 @@ const fileLinkInput = document.getElementById("fileLinkInput");
 const savefilebtn = document.getElementById("savefilename");
 const editfilename = document.getElementById('editfileName');
 const edit_msg = document.getElementById('editmsg');
+const inputBtnIcon = document.getElementById("input-icon");
 const selectallopt = document.getElementById('selectall');
 const unselectallopt = document.getElementById('Unselectall');
 const preserve_globals = document.getElementById('preserve_globals');
@@ -34,9 +35,9 @@ let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, sourceEditor, minif
 const maxFileSizeInBytes = 1 * 1024 * 1024;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
-const code_file = `<i class="fa-solid fa-file-code"></i>`;
+const code_file = `<i class="fa-solid fa-file-code self-center pr-2"></i>`;
 const classlst = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4'];
-const classlst0 = ['select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4'];
+const classlst0 = ['select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'inline-flex', 'overflow-auto', 'mt-4'];
 
 const sentences = [
 	"A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks.",
@@ -611,21 +612,25 @@ function loadfiledit() {
 	fileNameDisplay.classList.remove('hidden');
 	editfilename.classList.add('hidden');
 	savefilebtn.classList.add("hidden");
+	inputBtnIcon.classList.add("hidden-imp");
 }
 
 function loadeditbtn() {
+	inputBtnIcon.classList.add("hidden-imp");
 	edit_msg.innerHTML = `<i id="fade-8" class="fa-regular fa-pen-to-square fa-lg"></i>`;
 	edit_msg.classList.add('pl-2', 'pb-1', 'cursor-pointer', 'text-blue-600');
 	edit_msg.title = `Edit filename`;
 }
 
 function makeEditable() {
+	editfilename.style.width = `${fileNameDisplay.offsetWidth - 28}px`;
 	animateIcon("fade-8", "fa-beat-fade", 400);
 	setTimeout(() => {
 		edit_msg.textContent = '';
 		savefilebtn.classList.remove("hidden");
 		fileNameDisplay.classList.add('hidden');
 		editfilename.classList.remove('hidden');
+		inputBtnIcon.classList.remove("hidden-imp");
 		editfilename.value = fileNameDisplay.textContent.trim();
 		editfilename.focus();
 	}, 500);
@@ -636,7 +641,8 @@ function saveChanges() {
 	var cleanedString = editfilename.value;
 	animateIcon("savefilename", "fa-fade", 800);
 	setTimeout(() => {
-		if (/^[a-zA-Z0-9_.]+$/.test(cleanedString)) {
+		if (/^[a-zA-Z0-9 _.]+$/.test(cleanedString) && cleanedString.length <= 256) {
+			cleanedString = cleanedString.replace(/ /g, "_");
 			if (cleanedString.indexOf('.py', cleanedString.indexOf('.py') + 1) !== -1) {
 				cleanedString = cleanedString.replace(/\.py(?!.*\.py)/, '');
 			}
@@ -668,6 +674,8 @@ function animateIcon(fade, fade_class, fade_dur) {
 
 function handleFilename(text) {
 	if (text === undefined) {
+		sourceEditor.getModel().setValue('');
+		minifiedEditor.getModel().setValue('');
 		edit_msg.textContent = '';
 		fileNameDisplay.textContent = '';
 		fileNameDisplay.classList.remove(...classlst0);
@@ -680,6 +688,8 @@ function handleFilename(text) {
 
 function handleErrorMessage(text) {
 	if (text === undefined) {
+		sourceEditor.getModel().setValue('');
+		minifiedEditor.getModel().setValue('');
 		errorMessage.textContent = '';
 		errorMessage.classList.remove(...classlst);
 	} else {
@@ -766,9 +776,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	function load_file() {
 		var fileLink = fileLinkInput.value.trim();
 		if (fileLinkInput.value === '' || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
-			handleFilename();
+			handleErrorMessage();
 		} else if (!(/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(fileLink))) {
-			handleFilename()
+			handleFilename();
 			handleErrorMessage(`${exctri} Please enter a valid URL starting with "https://"`);
 		} else if (/\.(py)$/.test(fileLink.toLowerCase())) {
 			handleErrorMessage();
