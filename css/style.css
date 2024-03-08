@@ -89,6 +89,13 @@ input:checked + .slider:before {
   --vscode-scrollbarSlider-activeBackground: rgba(28, 88, 145, 0.65);
   border-radius: 3px;
 }
+#fileNameDisplay {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+.hidden-imp {
+  display: none !important;
+}
 @media only screen and (max-width: 600px) {
   #editfileName,
   #editmsg,
@@ -100,6 +107,9 @@ input:checked + .slider:before {
   #savefilename,
   #text-size {
     font-size: 12px !important;
+  }
+  #input-icon {
+    font-size: 10px !important;
   }
   .blue_big_box {
     width: auto !important;
