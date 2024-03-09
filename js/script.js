@@ -37,7 +37,7 @@ const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
 const code_file = `<i class="fa-solid fa-file-code self-center pr-2"></i>`;
 const classlst = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4'];
-const classlst0 = ['select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'inline-flex', 'overflow-auto', 'mt-4'];
+const classlst0 = ['select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'whitespace-nowrap', 'inline-flex', 'overflow-auto', 'mt-4'];
 
 const sentences = [
 	"A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks.",
@@ -638,24 +638,19 @@ function makeEditable() {
 edit_msg.addEventListener("click", makeEditable);
 
 function saveChanges() {
-	var cleanedString = editfilename.value;
-	animateIcon("savefilename", "fa-fade", 800);
-	setTimeout(() => {
-		if (/^[a-zA-Z0-9 _.]+$/.test(cleanedString) && cleanedString.length <= 256) {
-			cleanedString = cleanedString.replace(/ /g, "_");
-			if (cleanedString.indexOf('.py', cleanedString.indexOf('.py') + 1) !== -1) {
-				cleanedString = cleanedString.replace(/\.py(?!.*\.py)/, '');
-			}
-			editfilename.value = cleanedString;
-			if (/\.py$/.test(cleanedString)) {
-				handleFilename(`${code_file} ${cleanedString}`);
-			} else {
-				handleFilename(`${code_file} ${cleanedString}.py`);
-			}
-			loadfiledit();
+	var cleanedStrnopy = editfilename.value.replace(/\.py$/, '');
+	if (!(/^\s+$/.test(cleanedStrnopy)) && (cleanedStrnopy.length >= 1 && cleanedStrnopy.length <= 256)) {
+		var cleanedString = cleanedStrnopy.replace(/[^a-zA-Z0-9,\s]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_");
+		if (cleanedString.indexOf('.py', cleanedString.indexOf('.py') + 1) !== -1) {
+			cleanedString = cleanedString.replace(/\.py(?!.*\.py)/, '');
 		}
-	}, 1000);
-
+		animateIcon("savefilename", "fa-fade", 800);
+		setTimeout(() => {
+			editfilename.value = cleanedString;
+			handleFilename(`${code_file} ${cleanedString}.py`);
+			loadfiledit();
+		}, 1000);
+	}
 }
 savefilebtn.addEventListener("click", saveChanges);
 
@@ -773,7 +768,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	function load_file() {
 		var fileLink = fileLinkInput.value.trim();
-		if (fileLinkInput.value === '' || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
+		if (fileLinkInput.value.trim() === '' || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
 			handleErrorMessage();
 		} else if (!(/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(fileLink))) {
 			handleFilename();
