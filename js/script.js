@@ -229,6 +229,7 @@ function isMobile() {
 	const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 	return width <= 600;
 };
+
 window.addEventListener('load', () => {
 	sourceEditor.updateOptions({
 		fontSize: getFontSize()
@@ -617,16 +618,17 @@ function loadfiledit() {
 
 function loadeditbtn() {
 	inputBtnIcon.classList.add("hidden-imp");
+	edit_msg.classList.remove("hidden-imp")
 	edit_msg.innerHTML = `<i id="fade-8" class="fa-regular fa-pen-to-square fa-lg"></i>`;
 	edit_msg.classList.add('pl-2', 'pb-1', 'cursor-pointer', 'text-blue-600');
-	edit_msg.title = `Edit filename`;
+	edit_msg.title = `Click to edit py file name`;
 }
 
 function makeEditable() {
 	editfilename.style.width = `${fileNameDisplay.offsetWidth - 28}px`;
 	animateIcon("fade-8", "fa-beat-fade", 400);
 	setTimeout(() => {
-		edit_msg.textContent = '';
+		edit_msg.classList.add("hidden-imp")
 		savefilebtn.classList.remove("hidden");
 		fileNameDisplay.classList.add('hidden');
 		editfilename.classList.remove('hidden');
@@ -635,12 +637,13 @@ function makeEditable() {
 		editfilename.focus();
 	}, 500);
 }
+
 edit_msg.addEventListener("click", makeEditable);
 
 function saveChanges() {
 	var cleanedStrnopy = editfilename.value.replace(/\.py$/, '');
 	if (!(/^\s+$/.test(cleanedStrnopy)) && (cleanedStrnopy.length >= 1 && cleanedStrnopy.length <= 256)) {
-		var cleanedString = cleanedStrnopy.replace(/[^a-zA-Z0-9,\s]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_");
+		var cleanedString = cleanedStrnopy.replace(/[^a-zA-Z0-9,\s.]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_");
 		if (cleanedString.indexOf('.py', cleanedString.indexOf('.py') + 1) !== -1) {
 			cleanedString = cleanedString.replace(/\.py(?!.*\.py)/, '');
 		}
@@ -652,7 +655,13 @@ function saveChanges() {
 		}, 1000);
 	}
 }
+
 savefilebtn.addEventListener("click", saveChanges);
+editfilename.addEventListener("keyup", (event) => {
+	if (event.key === 'Enter') {
+		saveChanges();
+	}
+});
 
 function animateIcon(fade, fade_class, fade_dur) {
 	let aniTimeout;
@@ -736,9 +745,9 @@ unselectallopt.addEventListener('click', resetOptions);
 function input_from_url() {
 	animateIcon("fade-4", "fa-fade", 1000);
 	setTimeout(() => {
-		fileLinkInput.focus();
 		inputContainer.classList.toggle("hidden");
 		inputContainer.classList.toggle("flex");
+		fileLinkInput.focus();
 	}, 500);
 }
 
@@ -796,6 +805,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			load_file();
 		}
 	});
+	fileLinkInput.addEventListener("keyup", (event) => {
+		if (event.key === "Enter") {
+			load_file();
+		}
+	})
 
 	document.getElementById("clear_link").addEventListener("click", () => {
 		if (fileLinkInput.value !== '') {
