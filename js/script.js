@@ -47,6 +47,7 @@ const sentences = [
 	"Minified code is more efficiently transmitted and executed across various platforms, aiding developers in delivering smoother user experiences.",
 	"Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment."
 ];
+
 const dateformat = {
 	year: 'numeric',
 	month: '2-digit',
@@ -142,7 +143,7 @@ document.getElementById("year").textContent = new Date().getFullYear().toString(
 
 require.config({
 	paths: {
-		'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs'
+		'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs'
 	}
 });
 require(['vs/editor/editor.main'], () => {
