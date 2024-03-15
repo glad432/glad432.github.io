@@ -25,6 +25,7 @@ const savefilebtn = document.getElementById("savefilename");
 const editfilename = document.getElementById('editfileName');
 const edit_msg = document.getElementById('editmsg');
 const inputBtnIcon = document.getElementById("input-icon");
+const darkModeToggle = document.getElementById("darkModeToggle");
 const selectallopt = document.getElementById('selectall');
 const unselectallopt = document.getElementById('Unselectall');
 const preserve_globals = document.getElementById('preserve_globals');
@@ -190,8 +191,6 @@ require(['vs/editor/editor.main'], () => {
 		cursorStyle: 'line',
 		readOnly: true,
 	});
-	document.getElementById("darkModeToggle").addEventListener("change", setTheme)
-	window.addEventListener("load", setTheme)
 	sourceEditor.onDidChangeModelContent(() => {
 		document.getElementById('line-count').textContent = `Line Count: ${sourceEditor.getModel().getLineCount()}`;
 		document.getElementById('text-size').textContent = `${(sourceEditor.getModel().getValue().length / 1024).toFixed(3)} Kb`;
@@ -203,17 +202,18 @@ require(['vs/editor/editor.main'], () => {
 });
 
 function setTheme() {
-	darkmode = localStorage.getItem("darkMode");
-	if (darkmode === "true") {
-		sourceEditor.updateOptions({
-			theme: 'vs-dark'
-		});
-	} else {
-		sourceEditor.updateOptions({
-			theme: 'vs'
-		});
-	}
+	const darkModeEnabled = darkModeToggle.checked;
+	const theme = darkModeEnabled ? 'vs-dark' : 'vs';
+	sourceEditor.updateOptions({
+		theme: theme
+	});
+	minifiedEditor.updateOptions({
+		theme: theme
+	});
 }
+
+darkModeToggle.addEventListener("change", setTheme)
+window.addEventListener("load", setTheme)
 
 function getFontSize() {
 	const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
