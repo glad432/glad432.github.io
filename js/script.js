@@ -202,8 +202,7 @@ require(['vs/editor/editor.main'], () => {
 });
 
 function setTheme() {
-	const darkModeEnabled = darkModeToggle.checked;
-	const theme = darkModeEnabled ? 'vs-dark' : 'vs';
+	const theme = darkModeToggle.checked ? 'vs-dark' : 'vs';
 	sourceEditor.updateOptions({
 		theme: theme
 	});
@@ -693,18 +692,31 @@ function handleFilename(text) {
 
 function handleErrorMessage(text) {
 	if (text === undefined) {
+		errorMessage.classList.remove('transition', 'duration-500', 'opacity-100', 'text-white');
+		errorMessage.classList.add('opacity-0');
 		errorMessage.textContent = '';
 		errorMessage.classList.remove(...classlst);
 	} else {
 		if (errorTimeout) {
 			clearTimeout(errorTimeout);
 		}
+		errorMessage.classList.add('transition', 'duration-500', 'opacity-0');
 		errorMessage.innerHTML = text;
 		errorMessage.classList.add(...classlst);
+		setTimeout(() => {
+			errorMessage.classList.remove('opacity-0');
+			errorMessage.classList.add('opacity-100');
+		}, 0);
+
 		errorTimeout = setTimeout(() => {
-			errorMessage.classList.remove(...classlst);
-			errorMessage.innerHTML = '';
-			errorTimeout = null;
+			errorMessage.classList.remove('opacity-100');
+			errorMessage.classList.add('opacity-0');
+			setTimeout(() => {
+				errorMessage.textContent = '';
+				errorMessage.classList.remove(...classlst);
+				errorMessage.classList.add('opacity-0');
+				errorTimeout = null;
+			}, 500);
 		}, 3500);
 	}
 }
