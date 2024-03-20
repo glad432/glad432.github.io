@@ -32,12 +32,12 @@ const preserve_globals = document.getElementById('preserve_globals');
 const preserve_locals = document.getElementById('preserve_locals');
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, sourceEditor, minifiedEditor;
+let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, sourceEditor, minifiedEditor, downloadCount = 0;
 const maxFileSizeInBytes = 1 * 1024 * 1024;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
 const code_file = `<i class="fa-solid fa-file-code self-center pr-2"></i>`;
-const classlst = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4'];
+const classlst = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4', 'transition', 'opacity-100'];
 const classlst0 = ['select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'whitespace-nowrap', 'inline-flex', 'overflow-auto', 'mt-4'];
 
 const sentences = [
@@ -364,8 +364,15 @@ function dw_py() {
 	var dataUri = URL.createObjectURL(blob);
 	var downloadLink = document.createElement("a");
 	downloadLink.href = dataUri;
-	downloadLink.download = (fileNameDisplay.textContent || "default.py").replace(/^ /, '').replace(/\.[^/.]+$/, '') + "_min.py";
-	downloadLink.click();
+	downloadLink.download = (fileNameDisplay.textContent || "default.py").trim().replace(/\.[^/.]+$/, '') + "_min.py";
+	downloadCount++;
+	if (downloadCount % 5 === 0) {
+		if (window.confirm("Download limit reached!!\nProceed with download?")) {
+			downloadLink.click();
+		}
+	} else {
+		downloadLink.click();
+	}
 	URL.revokeObjectURL(dataUri);
 }
 
@@ -380,7 +387,7 @@ function validateCH(event) {
 async function Sharelink(token) {
 	animateIcon("fade-2", "fa-fade", 3000);
 	const editorContent = minifiedEditor.getModel().getValue();
-	const fileName = (fileNameDisplay.textContent || "default.py").replace(/^ /, '').replace(/\.[^/.]+$/, '') + "_min.py";
+	const fileName = (fileNameDisplay.textContent || "default.py").trim().replace(/\.[^/.]+$/, '') + "_min.py";
 	try {
 		const response = await fetch('https://file.io/?expires=2w', {
 			method: 'POST',
@@ -692,7 +699,6 @@ function handleFilename(text) {
 
 function handleErrorMessage(text) {
 	if (text === undefined) {
-		errorMessage.classList.remove('transition', 'duration-500', 'opacity-100', 'text-white');
 		errorMessage.classList.add('opacity-0');
 		errorMessage.textContent = '';
 		errorMessage.classList.remove(...classlst);
@@ -700,14 +706,12 @@ function handleErrorMessage(text) {
 		if (errorTimeout) {
 			clearTimeout(errorTimeout);
 		}
-		errorMessage.classList.add('transition', 'duration-500', 'opacity-0');
 		errorMessage.innerHTML = text;
 		errorMessage.classList.add(...classlst);
 		setTimeout(() => {
 			errorMessage.classList.remove('opacity-0');
-			errorMessage.classList.add('opacity-100');
-		}, 0);
-
+			errorMessage.classList.add('opacity-100', 'duration-500');
+		}, 50);
 		errorTimeout = setTimeout(() => {
 			errorMessage.classList.remove('opacity-100');
 			errorMessage.classList.add('opacity-0');
