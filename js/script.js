@@ -202,13 +202,15 @@ require(['vs/editor/editor.main'], () => {
 });
 
 function setTheme() {
-	const theme = darkModeToggle.checked ? 'vs-dark' : 'vs';
-	sourceEditor.updateOptions({
-		theme: theme
-	});
-	minifiedEditor.updateOptions({
-		theme: theme
-	});
+	if (typeof darkModeToggle !== 'undefined' && 'checked' in darkModeToggle) {
+		const theme = darkModeToggle.checked ? 'vs-dark' : 'vs';
+		sourceEditor.updateOptions({
+			theme: theme
+		});
+		minifiedEditor.updateOptions({
+			theme: theme
+		});
+	}
 }
 
 darkModeToggle.addEventListener("change", setTheme)
@@ -517,8 +519,8 @@ function initializeMinifier() {
 		minifiedEditor.setSelection({
 			startLineNumber: 1,
 			startColumn: 1,
-			endLineNumber: minifiedEditor.getModel().getLineCount(),
-			endColumn: minifiedEditor.getModel().getLineMaxColumn(minifiedEditor.getModel().getLineCount())
+			endLineNumber: lastLineNumber,
+			endColumn: minifiedEditor.getModel().getLineMaxColumn(lastLineNumber)
 		});
 		if (cpyTimeout0) {
 			clearTimeout(cpyTimeout0);
