@@ -16,6 +16,7 @@ const file_Link = document.getElementById("fileLink");
 const close_Popup = document.getElementById('closePopup');
 const popup = document.getElementById("popup");
 const overlay = document.getElementById("overlay");
+const type_overlay = document.getElementById("type-overlay");
 const orscan = document.getElementById('scantocopy');
 const help_msg = document.getElementById('help-msg');
 const link_newtab = document.getElementById("new_tab");
@@ -149,7 +150,7 @@ require.config({
 });
 require(['vs/editor/editor.main'], () => {
 	sourceEditor = monaco.editor.create(document.getElementById('editor'), {
-		value: pysource.value,
+		value: "",
 		language: 'python',
 		minimap: {
 			enabled: false
@@ -199,6 +200,29 @@ require(['vs/editor/editor.main'], () => {
 		document.getElementById('line-count-out').textContent = `Line Count: ${minifiedEditor.getModel().getLineCount()}`;
 		minifiedSizeSpan.textContent = `${(minifiedEditor.getModel().getValue().length / 1024).toFixed(3)} Kb`;
 	});
+
+	function typeInEditor() {
+		let typingPYcode = document.getElementById("source").value;
+		if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+			type_overlay.classList.remove('!hidden');
+			let index = 0;
+			const type = () => {
+				if (typingPYcode.length > index) {
+					sourceEditor.trigger('', 'type', {
+						text: typingPYcode[index]
+					});
+					index++;
+					setTimeout(type, 1);
+				} else {
+					type_overlay.classList.add('!hidden');
+				}
+			};
+			type();
+		} else {
+			sourceEditor.getModel().setValue(typingPYcode);
+		}
+	}
+	typeInEditor();
 });
 
 function setTheme() {
@@ -225,12 +249,14 @@ function getFontSize() {
 	} else {
 		return fontSizeMap.pc;
 	}
-};
+}
 
 function isMobile() {
 	const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-	return width <= 600;
-};
+	if (width <= 600) {
+		return fontSizeMap.mobile;
+	}
+}
 
 window.addEventListener('load', () => {
 	sourceEditor.updateOptions({
@@ -287,8 +313,6 @@ function truncateCode(content) {
 function setupFileInput() {
 	function dragpy(event) {
 		const droppedFile = event.dataTransfer.files[0];
-		loadfiledit()
-		loadeditbtn();
 		if (droppedFile) {
 			if (droppedFile.name.toLowerCase().endsWith('.py')) {
 				handleErrorMessage();
@@ -303,8 +327,6 @@ function setupFileInput() {
 
 	fileInput.addEventListener('change', (event) => {
 		const selectedFile = event.target.files[0];
-		loadfiledit()
-		loadeditbtn();
 		if (selectedFile) {
 			if (selectedFile.name.toLowerCase().endsWith('.py')) {
 				handleErrorMessage();
@@ -622,12 +644,12 @@ function loadfiledit() {
 	fileNameDisplay.classList.remove('hidden');
 	editfilename.classList.add('hidden');
 	savefilebtn.classList.add("hidden");
-	inputBtnIcon.classList.add("hidden-imp");
+	inputBtnIcon.classList.add("!hidden");
 }
 
 function loadeditbtn() {
-	inputBtnIcon.classList.add("hidden-imp");
-	edit_msg.classList.remove("hidden-imp")
+	inputBtnIcon.classList.add("!hidden");
+	edit_msg.classList.remove("!hidden")
 	edit_msg.innerHTML = `<i id="fade-8" class="fa-regular fa-pen-to-square fa-lg"></i>`;
 	edit_msg.classList.add('pl-2', 'pb-1', 'cursor-pointer', 'text-blue-600');
 	edit_msg.title = `Click to edit py file name`;
@@ -637,11 +659,11 @@ function makeEditable() {
 	editfilename.style.width = `${fileNameDisplay.offsetWidth - 28}px`;
 	animateIcon("fade-8", "fa-beat-fade", 400);
 	setTimeout(() => {
-		edit_msg.classList.add("hidden-imp")
+		edit_msg.classList.add("!hidden")
 		savefilebtn.classList.remove("hidden");
 		fileNameDisplay.classList.add('hidden');
 		editfilename.classList.remove('hidden');
-		inputBtnIcon.classList.remove("hidden-imp");
+		inputBtnIcon.classList.remove("!hidden");
 		editfilename.value = fileNameDisplay.textContent.trim();
 		editfilename.focus();
 	}, 500);
