@@ -206,7 +206,8 @@ require(['vs/editor/editor.main'], () => {
 		if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
 			type_overlay.classList.remove('!hidden');
 			let index = 0;
-			const type = () => {
+
+			function type() {
 				if (typingPYcode.length > index) {
 					sourceEditor.trigger('', 'type', {
 						text: typingPYcode[index]
@@ -222,7 +223,7 @@ require(['vs/editor/editor.main'], () => {
 			sourceEditor.getModel().setValue(typingPYcode);
 		}
 	}
-	typeInEditor();
+	window.addEventListener("load", typeInEditor);
 });
 
 function setTheme() {
