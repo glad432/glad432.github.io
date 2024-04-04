@@ -172,7 +172,7 @@
       <p id="errmsg"></p>
       <div class="flex items-end">
         <span id="fileNameDisplay"></span>
-        <i id="input-icon" class="fa-solid fa-file-code select-none placeholder-white focus:outline-none font-bold bg-green-500 text-white p-[8px] rounded-l max-w-fit mt-4 hidden-imp"></i>
+        <i id="input-icon" class="fa-solid fa-file-code select-none placeholder-white focus:outline-none font-bold bg-green-500 text-white p-[8px] rounded-l max-w-fit mt-4 !hidden"></i>
         <input type="text" id="editfileName" placeholder="Enter:" class="select-none placeholder-white cursor-text focus:outline-none font-bold bg-green-500 text-white py-1 rounded-r mt-4 hidden">
         <button id="savefilename" title="Or click Enter button to save" class="select-none text-base ml-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform hidden">Save</button>
         <button id="editmsg"></button>
@@ -219,7 +219,9 @@ if __name__ == "__main__":
     # Using the square lambda function
     number = 5
     print(f"The square of {number} is {square(number)}")</textarea>
-      <div id="editor" class="w-auto h-[300px] mt-4 rounded overflow-hidden"></div>
+      <div id="editor" class="w-auto h-[300px] mt-4 rounded overflow-hidden">
+        <div id="type-overlay" class="md:cursor-text md:absolute md:w-[100vh] md:h-[50vh] md:z-10 md:bg-transparent"></div>
+      </div>
       <button id="rm" class="select-none text-2xl mt-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
       </button>
       <div class="text-left w-[500px] my-10 p-4 rounded border-t-[5px] border-solid border-blue-500 blue_big_box md:mx-auto md:p-8">
