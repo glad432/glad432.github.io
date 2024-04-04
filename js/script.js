@@ -253,9 +253,7 @@ function getFontSize() {
 
 function isMobile() {
 	const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-	if (width <= 600) {
-		return fontSizeMap.mobile;
-	}
+	return width <= 600;
 }
 
 window.addEventListener('load', () => {
