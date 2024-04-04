@@ -64,6 +64,9 @@ input:checked + .slider:before {
   border-left: 6px solid rgba(0, 83, 159, 0.65);
 }
 .margin-view-overlays {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   font-size: small;
   width: 68px !important;
@@ -92,9 +95,6 @@ input:checked + .slider:before {
 #fileNameDisplay {
   scroll-behavior: smooth;
   scrollbar-width: thin;
-}
-.hidden-imp {
-  display: none !important;
 }
 @media only screen and (max-width: 600px) {
   #editfileName,
