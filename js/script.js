@@ -33,7 +33,8 @@ const preserve_globals = document.getElementById('preserve_globals');
 const preserve_locals = document.getElementById('preserve_locals');
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, sourceEditor, minifiedEditor, downloadCount = 0;
+let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, typingTimeout, sourceEditor, minifiedEditor, downloadCount = 0;
+let typingInProgress = false;
 const maxFileSizeInBytes = 1 * 1024 * 1024;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
@@ -202,6 +203,7 @@ require(['vs/editor/editor.main'], () => {
 	});
 
 	function typeInEditor() {
+		if (typingInProgress) return;
 		let typingPYcode = document.getElementById("source").value;
 		if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
 			type_overlay.classList.remove('!hidden');
@@ -213,18 +215,26 @@ require(['vs/editor/editor.main'], () => {
 						text: typingPYcode[index]
 					});
 					index++;
-					setTimeout(type, 1);
+					typingTimeout = setTimeout(type, 1);
 				} else {
 					type_overlay.classList.add('!hidden');
+					typingInProgress = false;
 				}
 			};
 			type();
+			typingInProgress = true;
 		} else {
 			sourceEditor.getModel().setValue(typingPYcode);
 		}
 	}
 	window.addEventListener("load", typeInEditor);
 });
+
+function disableTyping() {
+	clearTimeout(typingTimeout);
+	typingInProgress = false;
+	type_overlay.classList.add('!hidden');
+}
 
 function setTheme() {
 	if (typeof darkModeToggle !== 'undefined' && 'checked' in darkModeToggle) {
@@ -311,6 +321,7 @@ function truncateCode(content) {
 
 function setupFileInput() {
 	function dragpy(event) {
+		disableTyping();
 		const droppedFile = event.dataTransfer.files[0];
 		if (droppedFile) {
 			if (droppedFile.name.toLowerCase().endsWith('.py')) {
@@ -325,6 +336,7 @@ function setupFileInput() {
 	}
 
 	fileInput.addEventListener('change', (event) => {
+		disableTyping();
 		const selectedFile = event.target.files[0];
 		if (selectedFile) {
 			if (selectedFile.name.toLowerCase().endsWith('.py')) {
@@ -816,6 +828,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	function load_file() {
+		disableTyping();
 		var fileLink = fileLinkInput.value.trim();
 		if (fileLinkInput.value.trim() === '' || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
 			handleErrorMessage();
