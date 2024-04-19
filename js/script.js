@@ -636,6 +636,7 @@ window.addEventListener("DOMContentLoaded", initializeMinifier);
 
 function clearSource() {
 	animateIcon("fade-5", "fa-fade", 1500);
+	disableTyping();
 	shareButton.disabled = true;
 	dwButton.disabled = true;
 	copyButton.disabled = true;
