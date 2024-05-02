@@ -31,16 +31,20 @@ const selectallopt = document.getElementById('selectall');
 const unselectallopt = document.getElementById('Unselectall');
 const preserve_globals = document.getElementById('preserve_globals');
 const preserve_locals = document.getElementById('preserve_locals');
+const fileTabs = document.getElementById('file-tabs');
+const addNewTabBtn = document.getElementById("addNewTab");
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, typingTimeout, sourceEditor, minifiedEditor, downloadCount = 0;
 let typingInProgress = false;
+var sources = ['#PyFile-1'],
+	currentTabIndex = 0;
 const maxFileSizeInBytes = 1 * 1024 * 1024;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
-const code_file = `<i class="fa-solid fa-file-code self-center pr-2"></i>`;
+const code_file = '<i class="fa-solid fa-file-code text-blue-600 pr-2"></i>';
+const editFileNameIcon = '<i class="fa-solid fa-pen-to-square"></i>';
 const classlst = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4', 'transition', 'opacity-100'];
-const classlst0 = ['select-none', 'font-bold', 'bg-green-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'whitespace-nowrap', 'inline-flex', 'overflow-auto', 'mt-4'];
 
 const sentences = [
 	"A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks.",
@@ -194,12 +198,14 @@ require(['vs/editor/editor.main'], () => {
 		readOnly: true,
 	});
 	sourceEditor.onDidChangeModelContent(() => {
+		saveEditorContent();
 		document.getElementById('line-count').textContent = `Line Count: ${sourceEditor.getModel().getLineCount()}`;
-		document.getElementById('text-size').textContent = `${(sourceEditor.getModel().getValue().length / 1024).toFixed(3)} Kb`;
+		document.getElementById('text-size').textContent = `${(sourceEditor.getModel().getValueLength() / 1024).toFixed(3)} Kb`;
 	});
+
 	minifiedEditor.onDidChangeModelContent(() => {
 		document.getElementById('line-count-out').textContent = `Line Count: ${minifiedEditor.getModel().getLineCount()}`;
-		minifiedSizeSpan.textContent = `${(minifiedEditor.getModel().getValue().length / 1024).toFixed(3)} Kb`;
+		minifiedSizeSpan.textContent = `${(minifiedEditor.getModel().getValueLength() / 1024).toFixed(3)} Kb`;
 	});
 
 	function typeInEditor() {
@@ -326,10 +332,8 @@ function setupFileInput() {
 		if (droppedFile) {
 			if (droppedFile.name.toLowerCase().endsWith('.py')) {
 				handleErrorMessage();
-				handleFilename(`${code_file} ${droppedFile.name}`);
 				handleFile(droppedFile);
 			} else {
-				handleFilename();
 				handleErrorMessage(`${exctri} Invalid file format. Please select a .py file.`);
 			}
 		}
@@ -341,13 +345,11 @@ function setupFileInput() {
 		if (selectedFile) {
 			if (selectedFile.name.toLowerCase().endsWith('.py')) {
 				handleErrorMessage();
-				handleFilename(`${code_file} ${selectedFile.name}`);
 				handleFile(selectedFile);
 			} else {
 				dwButton.disabled = true;
 				shareButton.disabled = true;
 				copyButton.disabled = true;
-				handleFilename();
 				handleErrorMessage(`${exctri} Invalid file format. Please select a .py file.`);
 				fileInput.value = '';
 			}
@@ -379,10 +381,10 @@ function setupFileInput() {
 				sourceEditor.getModel().setValue(e.target.result);
 				sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 				handleErrorMessage();
+				updateNametoTab(file.name)
 			};
 			reader.readAsText(file);
 		} else {
-			handleFilename();
 			handleErrorMessage(`${exctri} File size exceeds 1MB. Please select a smaller file.`);
 			fileInput.value = '';
 		}
@@ -391,27 +393,39 @@ function setupFileInput() {
 
 window.addEventListener('load', setupFileInput);
 
-function dw_py() {
+function DownloadPyFile() {
 	animateIcon("fade-1", "fa-fade", 3000);
 	var blob = new Blob([minifiedEditor.getModel().getValue()], {
 		type: "text/x-python"
 	});
 	var dataUri = URL.createObjectURL(blob);
 	var downloadLink = document.createElement("a");
+	var activeTabName = fileTabs.children[currentTabIndex].textContent;
 	downloadLink.href = dataUri;
-	downloadLink.download = (fileNameDisplay.textContent || "default.py").trim().replace(/\.[^/.]+$/, '') + "_min.py";
+	downloadLink.download = (activeTabName || "default.py").trim().replace(/\.[^/.]+$/, '') + "_min.py";
 	downloadCount++;
 	if (downloadCount % 5 === 0) {
-		if (window.confirm("Download limit reached!!\nProceed with download?")) {
-			downloadLink.click();
-		}
+		Swal.fire({
+			title: "Download limit reached!!",
+			text: "Proceed with download?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Yes"
+		}).then((result) => {
+			if (result.isConfirmed) {
+				downloadLink.click();
+			}
+		});
 	} else {
 		downloadLink.click();
 	}
 	URL.revokeObjectURL(dataUri);
 }
 
-document.getElementById('dw').addEventListener('click', dw_py);
+document.getElementById('dw').addEventListener('click', DownloadPyFile);
+
 
 function validateCH(event) {
 	animateIcon("fade-2", "fa-fade", 2000);
@@ -422,7 +436,9 @@ function validateCH(event) {
 async function Sharelink(token) {
 	animateIcon("fade-2", "fa-fade", 3000);
 	const editorContent = minifiedEditor.getModel().getValue();
-	const fileName = (fileNameDisplay.textContent || "default.py").trim().replace(/\.[^/.]+$/, '') + "_min.py";
+	const activeTabIndex = currentTabIndex;
+	const activeTabElement = fileTabs.children[activeTabIndex];
+	const fileName = (activeTabElement.textContent || "default.py").trim().replace(/\.[^/.]+$/, '') + "_min.py";
 	try {
 		const response = await fetch('https://file.io/?expires=2w', {
 			method: 'POST',
@@ -636,11 +652,11 @@ window.addEventListener("DOMContentLoaded", initializeMinifier);
 
 function clearSource() {
 	animateIcon("fade-5", "fa-fade", 1500);
+	deleteAllTabs();
 	disableTyping();
 	shareButton.disabled = true;
 	dwButton.disabled = true;
 	copyButton.disabled = true;
-	handleFilename();
 	handleErrorMessage();
 	fileInput.value = '';
 	pysource.textContent = '';
@@ -651,60 +667,6 @@ function clearSource() {
 }
 
 document.getElementById('rm').addEventListener('click', clearSource);
-
-function loadfiledit() {
-	fileNameDisplay.classList.remove('hidden');
-	editfilename.classList.add('hidden');
-	savefilebtn.classList.add("hidden");
-	inputBtnIcon.classList.add("!hidden");
-}
-
-function loadeditbtn() {
-	inputBtnIcon.classList.add("!hidden");
-	edit_msg.classList.remove("!hidden")
-	edit_msg.innerHTML = `<i id="fade-8" class="fa-regular fa-pen-to-square fa-lg"></i>`;
-	edit_msg.classList.add('pl-2', 'pb-1', 'cursor-pointer', 'text-blue-600');
-	edit_msg.title = `Click to edit py file name`;
-}
-
-function makeEditable() {
-	editfilename.style.width = `${fileNameDisplay.offsetWidth - 28}px`;
-	animateIcon("fade-8", "fa-beat-fade", 400);
-	setTimeout(() => {
-		edit_msg.classList.add("!hidden")
-		savefilebtn.classList.remove("hidden");
-		fileNameDisplay.classList.add('hidden');
-		editfilename.classList.remove('hidden');
-		inputBtnIcon.classList.remove("!hidden");
-		editfilename.value = fileNameDisplay.textContent.trim();
-		editfilename.focus();
-	}, 500);
-}
-
-edit_msg.addEventListener("click", makeEditable);
-
-function saveChanges() {
-	var cleanedStrnopy = editfilename.value.replace(/\.py$/, '');
-	if (!(/^\s+$/.test(cleanedStrnopy)) && (cleanedStrnopy.length >= 1 && cleanedStrnopy.length <= 256)) {
-		var cleanedString = cleanedStrnopy.replace(/[^a-zA-Z0-9,\s.]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_");
-		if (cleanedString.indexOf('.py', cleanedString.indexOf('.py') + 1) !== -1) {
-			cleanedString = cleanedString.replace(/\.py(?!.*\.py)/, '');
-		}
-		animateIcon("savefilename", "fa-fade", 800);
-		setTimeout(() => {
-			editfilename.value = cleanedString;
-			handleFilename(`${code_file} ${cleanedString}.py`);
-			loadfiledit();
-		}, 1000);
-	}
-}
-
-savefilebtn.addEventListener("click", saveChanges);
-editfilename.addEventListener("keyup", (event) => {
-	if (event.key === 'Enter') {
-		saveChanges();
-	}
-});
 
 function animateIcon(fade, fade_class, fade_dur) {
 	let aniTimeout;
@@ -717,20 +679,6 @@ function animateIcon(fade, fade_class, fade_dur) {
 		ani_icon.classList.remove(fade_class);
 		aniTimeout = null;
 	}, fade_dur);
-}
-
-function handleFilename(text) {
-	if (text === undefined) {
-		sourceEditor.getModel().setValue('');
-		minifiedEditor.getModel().setValue('');
-		edit_msg.textContent = '';
-		fileNameDisplay.textContent = '';
-		fileNameDisplay.classList.remove(...classlst0);
-	} else {
-		loadeditbtn();
-		fileNameDisplay.innerHTML = text;
-		fileNameDisplay.classList.add(...classlst0);
-	}
 }
 
 function handleErrorMessage(text) {
@@ -814,7 +762,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			const contentDisposition = response.headers.get("content-disposition");
 			const fileNameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"/);
 			const fileName = fileNameMatch ? fileNameMatch[1] : fileUrl.split('/').pop();
-			handleFilename(`${code_file} ${fileName}`);
 			const contentLength = response.headers.get("content-length");
 			if (contentLength && parseInt(contentLength, 10) > maxFileSizeInBytes) {
 				throw new Error(`File size exceeds 1MB limit`);
@@ -822,8 +769,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			const data = await response.text();
 			sourceEditor.getModel().setValue(data);
 			sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
+			updateNametoTab(fileName);
 		} catch (error) {
-			handleFilename();
 			handleErrorMessage(`${exctri} ${error.message}`);
 		}
 	}
@@ -834,16 +781,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (fileLinkInput.value.trim() === '' || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
 			handleErrorMessage();
 		} else if (!(/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(fileLink))) {
-			handleFilename();
 			handleErrorMessage(`${exctri} Please enter a valid URL starting with "https://"`);
 		} else if (/\.(py)$/.test(fileLink.toLowerCase())) {
 			handleErrorMessage();
 			animateIcon("fade-3", "fa-fade", 1500);
-			loadfiledit()
-			loadeditbtn();
 			loadFileContent(fileLink);
 		} else {
-			handleFilename();
 			handleErrorMessage(`${exctri} Please enter a valid .py file link`);
 		}
 	}
@@ -854,8 +797,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (fileLinkInput.value !== githubrawlink) {
 			animateIcon("fade-6", "fa-bounce", 1000);
 			fileLinkInput.value = githubrawlink;
-			loadfiledit()
-			loadeditbtn();
 			load_file();
 		}
 	});
@@ -868,8 +809,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	document.getElementById("clear_link").addEventListener("click", () => {
 		if (fileLinkInput.value !== '') {
 			fileLinkInput.value = '';
-			loadfiledit()
-			loadeditbtn();
 			animateIcon("fade-7", "fa-fade", 1000);
 		}
 	});
@@ -896,3 +835,256 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const articleData = await response.json();
 	document.getElementById('article').innerHTML = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h1 class="sm:text-xl lg:text-3xl before:font-['Font_Awesome_6_Free'] before:content-['&#xf05a'] before:text-blue-500 before:pr-2 text-gray-600 text-left font-bold mb-4">${articleData?.article?.title}</h1>${articleData?.article?.sections.map(section => `<div class="mb-4"><h2 class="text-[15px] text-gray-500 before:font-['Font_Awesome_6_Free'] before:content-['&#xf219'] before:text-cyan-900 before:pr-2 lg:text-xl font-bold py-4">${section?.section_title}</h2><p class="text-[13px] lg:text-[15px]">${section?.section_content}</p></div>`).join('')}</div>`;
 });
+
+function updateEditorContent() {
+	var encryptedSource = sessionStorage.getItem(sources[currentTabIndex]);
+	if (encryptedSource && editor) {
+		sourceEditor.getModel().setValue(CryptoJS.AES.decrypt(encryptedSource, '4#>5p[:/v,o2q/(\*=:6').toString(CryptoJS.enc.Utf8));
+	}
+}
+
+function saveEditorContent() {
+	sessionStorage.setItem(sources[currentTabIndex], CryptoJS.AES.encrypt(sourceEditor.getModel().getValue(), '4#>5p[:/v,o2q/(\*=:6').toString());
+}
+
+function editTabName() {
+	var activeTab = fileTabs.children[currentTabIndex];
+	var tabNameInput = document.createElement('input');
+	tabNameInput.type = 'text';
+	tabNameInput.placeholder = "Enter:";
+	tabNameInput.value = activeTab.textContent;
+	tabNameInput.autocorrect = "off";
+	tabNameInput.spellcheck = false;
+	tabNameInput.id = 'tab-name-input';
+	tabNameInput.className = "focus:outline-none bg-transparent";
+	tabNameInput.style.width = `${activeTab.offsetWidth - 90}px`;
+	tabNameInput.addEventListener('keypress', (event) => {
+		if (event.key === 'Enter') {
+			updateTabName();
+		}
+	});
+	tabNameInput.addEventListener('blur', () => {
+		updateTabName();
+	});
+
+	var saveIcon = document.createElement('button');
+	saveIcon.className = 'save-tab-icon hover:text-green-400 text-green-500';
+	saveIcon.title = 'Save or press enter';
+	saveIcon.innerHTML = '<i class="fa-solid fa-floppy-disk px-[2px]"></i>';
+	saveIcon.onclick = () => {
+		saveEditorContent();
+		editIcon.classList.remove('hidden');
+	};
+
+	var editIcon = document.createElement('button');
+	editIcon.className = 'edit-tab-icon hover:text-blue-400 text-blue-600 hidden';
+	editIcon.title = 'Edit file name';
+	editIcon.innerHTML = editFileNameIcon;
+	editIcon.onclick = editTabName;
+
+	var icon = document.createElement('i');
+	icon.className = "fa-solid fa-file-code text-blue-600 pr-2";
+
+	activeTab.innerHTML = '';
+	activeTab.appendChild(icon);
+	activeTab.appendChild(tabNameInput);
+	activeTab.appendChild(saveIcon);
+	activeTab.appendChild(editIcon);
+	tabNameInput.focus();
+}
+
+function updateTabName() {
+	var tabNameInput = document.getElementById('tab-name-input');
+	var newName = tabNameInput.value.trim();
+	if (newName === '') {
+		return;
+	}
+	var cleanedStrnopy = newName.replace(/\.py$/, '');
+	if (!(/^\s+$/.test(cleanedStrnopy)) && (cleanedStrnopy.length >= 1 && cleanedStrnopy.length <= 256)) {
+		var cleanedString = cleanedStrnopy.replace(/[^a-zA-Z0-9,\s.]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_");
+		if (cleanedString.indexOf('.py', cleanedString.indexOf('.py') + 1) !== -1) {
+			cleanedString = cleanedString.replace(/\.py(?!.*\.py)/, '');
+		}
+		fileTabs.children[currentTabIndex].textContent = `${cleanedString}.py`;
+		var icon = document.createElement('i');
+		icon.className = "fa-solid fa-file-code text-blue-600 pr-2";
+		fileTabs.children[currentTabIndex].insertBefore(icon, fileTabs.children[currentTabIndex].childNodes[0]);
+		tabNameInput.value = cleanedString;
+	} else {
+		handleErrorMessage(`${exctri} Filename shouldn't contain invalid characters`);
+	}
+}
+
+function updateNametoTab(fileName) {
+	var activeTabIndex = currentTabIndex;
+	var tabToUpdate = fileTabs.children[activeTabIndex];
+	if (tabToUpdate) {
+		tabToUpdate.innerHTML = `${code_file + fileName}`;
+	}
+}
+
+function addEmptyTab() {
+	disableTyping(true);
+	if (!isMobile() && sources.length >= 20) {
+		Swal.fire({
+			icon: "error",
+			html: `${exctri} You can't add more than 20 tabs.`,
+		});
+		return;
+	} else if (isMobile() && sources.length >= 10) {
+		Swal.fire({
+			icon: "error",
+			html: `${exctri} You can't add more than 10 tabs.`,
+		});
+		return;
+	}
+	addNewTabBtn.classList.remove("hidden")
+	var newFileIndex = sources.length;
+	var newSourceId = `#PyFile-${newFileIndex + 1}`;
+	var newTab = document.createElement('li');
+	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] bg-white select-none transition-opacity';
+	newTab.innerHTML = `${code_file} File ${newFileIndex + 1}.py`;
+	newTab.id = `file-${newFileIndex + 1}`;
+	newTab.onclick = () => {
+		switchTab(newFileIndex);
+	};
+	updateTabStyles();
+	fileTabs.appendChild(newTab);
+	sources.push(newSourceId);
+	switchTab(newFileIndex);
+	sessionStorage.setItem(newSourceId, '');
+	sourceEditor.getModel().setValue('');
+	fileTabs.scrollLeft = fileTabs.scrollWidth - fileTabs.clientWidth;
+	if ((!isMobile() && sources.length >= 20) || (isMobile() && sources.length >= 10)) {
+		addNewTabBtn.classList.add("hidden");
+	}
+}
+
+addNewTabBtn.addEventListener("click", () => {
+	animateIcon("addNewTab", "fa-fade", 600);
+	setTimeout(addEmptyTab, 500);
+});
+
+function updateTabStyles() {
+	var tabs = document.querySelectorAll('.file-tab');
+	if (currentTabIndex < tabs.length && currentTabIndex >= 0) {
+		tabs.forEach((tab, index) => {
+			var icon = tab.querySelector('.fa-file-code');
+			if (index === currentTabIndex) {
+				tab.classList.add('active');
+				icon.classList.add('text-blue-600');
+				var editBtn = tab.querySelector('.edit-tab-icon');
+				var deleteBtn = tab.querySelector('.delete-tab-icon');
+				if (!editBtn) {
+					editBtn = document.createElement('button');
+					editBtn.id = `editbtn-${currentTabIndex + 1}`;
+					editBtn.className = 'edit-tab-icon mr-[2px] ml-[3px] hover:text-blue-400 text-blue-600';
+					editBtn.title = 'Edit file name';
+					editBtn.innerHTML = editFileNameIcon;
+					editBtn.onclick = () => {
+						animateIcon(`editbtn-${currentTabIndex + 1}`, "fa-bounce", 800);
+						setTimeout(() => {
+							editTabName();
+						}, 800)
+					};
+					tab.appendChild(editBtn);
+				}
+				if (index === tabs.length - 1 && !deleteBtn) {
+					deleteBtn = document.createElement('button');
+					deleteBtn.id = `delbtn-${currentTabIndex + 1}`;
+					deleteBtn.className = 'delete-tab-icon absolute pl-[5px] right-[5px] top-[8px] font-bold cursor-pointer mr-[2px] ml-[3px] hover:text-red-400 text-red-500';
+					deleteBtn.title = 'Delete this tab';
+					deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+					deleteBtn.onclick = () => {
+						animateIcon(`delbtn-${currentTabIndex + 1}`, "fa-bounce", 800);
+						setTimeout(() => {
+							confirmDeleteFile(currentTabIndex);
+						}, 800)
+					};
+					tab.appendChild(deleteBtn);
+				}
+			} else {
+				tab.classList.remove('active');
+				icon.classList.remove('text-blue-600');
+				var editBtn = tab.querySelector('.edit-tab-icon');
+				var deleteBtn = tab.querySelector('.delete-tab-icon');
+				if (editBtn) {
+					tab.removeChild(editBtn);
+				}
+				if (deleteBtn) {
+					tab.removeChild(deleteBtn);
+				}
+			}
+		});
+	}
+}
+
+function deleteFile(index) {
+	addNewTabBtn.classList.remove("hidden");
+	sources.splice(index, 1);
+	sessionStorage.removeItem(sources[index]);
+	fileTabs.removeChild(fileTabs.children[index]);
+	if (currentTabIndex >= sources.length) {
+		currentTabIndex = sources.length - 1;
+	} else if (currentTabIndex > index) {
+		currentTabIndex--;
+	}
+	updateTabStyles();
+	switchTab(currentTabIndex);
+	updateEditorContent();
+}
+
+function confirmDeleteFile(index) {
+	if (sources.length === 1) {
+		Swal.fire({
+			icon: "error",
+			html: `${exctri} You can't delete this tab`,
+			confirmButtonText: "Close",
+			confirmButtonColor: "#179fff"
+		});
+		return;
+	}
+	Swal.fire({
+		text: "Are you sure you want to delete this tab?",
+		icon: "warning",
+		showCancelButton: true,
+		confirmButtonColor: "#3085d6",
+		cancelButtonColor: "#d33",
+		confirmButtonText: "Yes"
+	}).then((result) => {
+		if (result.isConfirmed) {
+			deleteFile(index);
+		}
+	});
+}
+
+function deleteAllTabs() {
+	var numTabs = sources.length;
+	if (numTabs > 1) {
+		for (var i = numTabs - 1; i > 0; i--) {
+			deleteFile(i);
+		}
+	}
+	if (numTabs === 0) {
+		addEmptyTab();
+	}
+}
+
+function clearSessionStorage() {
+	sessionStorage.clear();
+}
+window.addEventListener('beforeunload', clearSessionStorage);
+
+function switchTab(index) {
+	disableTyping();
+	var previousIndex = currentTabIndex;
+	currentTabIndex = Math.max(0, Math.min(index, sources.length - 1));
+	animateIcon(`file-${currentTabIndex + 1}`, "animate-pulse", 700);
+	updateEditorContent();
+	updateTabStyles();
+	if (previousIndex !== currentTabIndex) {
+		if (fileTabs.children[previousIndex].querySelector('#tab-name-input')) {
+			updateTabName();
+		}
+	}
+}
