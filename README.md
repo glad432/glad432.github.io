@@ -1,9 +1,5 @@
-
-<div align="center">
-
 ![Lines of code](https://sloc.xyz/github/glad432/glad432.github.io)
 
-</div>
 # Python Minifier - Glad432
 
 Welcome to my Python Minifier - Glad432. This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes, Monaco Editor for code editing, CryptoJS for cryptographic tasks, and SweetAlert2 for beautiful popup boxes. Additionally, it utilizes the python-minifier.com API to minify Python files, file.io for file sharing, and hCaptcha for human verification.
