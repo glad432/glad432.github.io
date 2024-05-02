@@ -1,6 +1,12 @@
+
+<div align="center">
+
+![Lines of code](https://sloc.xyz/github/glad432/glad432.github.io)
+
+</div>
 # Python Minifier - Glad432
 
-Welcome to my Python Minifier - Glad432. This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes, and Monaco Editor for code editing. Additionally, it utilizes the python-minifier.com API to minify Python files, file.io for file sharing, and hCaptcha for human verification.
+Welcome to my Python Minifier - Glad432. This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes, Monaco Editor for code editing, CryptoJS for cryptographic tasks, and SweetAlert2 for beautiful popup boxes. Additionally, it utilizes the python-minifier.com API to minify Python files, file.io for file sharing, and hCaptcha for human verification.
 
 ![python minifier - glad432](https://gladw-in.github.io/projects/images/python%20minifier.webp)
 
@@ -14,6 +20,8 @@ Welcome to my Python Minifier - Glad432. This repository showcases my work using
 - [Font Awesome](https://fontawesome.com/) for scalable vector icons
 - [QRCode.js](https://davidshimjs.github.io/qrcodejs/) for generating QR codes
 - [hCaptcha](https://www.hcaptcha.com/) for human verification
+- [CryptoJS](https://github.com/brix/crypto-js) for cryptographic tasks
+- [SweetAlert2](https://sweetalert2.github.io/) for beautiful popup boxes
 
 ## Tailwind CSS
 
@@ -51,6 +59,14 @@ The [python-minifier.com API](https://www.python-minifier.com/) allows you to pr
 
 [hCaptcha](https://www.hcaptcha.com/) adds an extra layer of security by verifying that users interacting with file share are human. It prevents automated abuse and spam.
 
+## CryptoJS
+
+[CryptoJS](https://github.com/brix/crypto-js) is a JavaScript library that provides cryptographic algorithms and components. It can be used for various encryption and decryption tasks, adding an extra layer of security to your application.
+
+## SweetAlert2
+
+[SweetAlert2](https://sweetalert2.github.io) is a beautiful, responsive, customizable, and accessible (WAI-ARIA) replacement for JavaScript's popup boxes. It enhances the user experience by providing visually appealing alerts, prompts, and confirmations.
+
 ## Credits
 
 - [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework for rapid UI development.
@@ -60,7 +76,8 @@ The [python-minifier.com API](https://www.python-minifier.com/) allows you to pr
 - [Font Awesome](https://fontawesome.com/) - Scalable vector icons.
 - [QRCode.js](https://davidshimjs.github.io/qrcodejs/) - Library for generating QR codes.
 - [hCaptcha](https://www.hcaptcha.com/) - Human verification service for security.
-
+- [CryptoJS](https://github.com/brix/crypto-js) - JavaScript library for cryptographic tasks..
+- [SweetAlert2](https://sweetalert2.github.io/) - Replacement for JavaScript's popup boxes with beautiful designs.
 ---
 
 Thank you for visiting my Python Minifier - Glad432. Feel free to explore the code and reach out to me with any questions or feedback.
