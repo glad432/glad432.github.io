@@ -33,8 +33,8 @@ var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, typingTimeout, sourceEditor, minifiedEditor, downloadCount = 0;
 let typingInProgress = false;
-var sources = ['#PyFile-1'],
-	currentTabIndex = 0;
+var sources = ['#PyFile-1'];
+var currentTabIndex = 0;
 const maxFileSizeInBytes = 1 * 1024 * 1024;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
@@ -378,7 +378,7 @@ function setupFileInput() {
 				sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 				handleErrorMessage();
 				updateNametoTab(file.name);
-				fileTabs.scrollLeft = fileTabs.scrollWidth - fileTabs.clientWidth;
+				handleAutoScroll();
 			};
 			reader.readAsText(file);
 		} else {
@@ -769,7 +769,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			sourceEditor.getModel().setValue(data);
 			sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 			updateNametoTab(fileName);
-			fileTabs.scrollLeft = fileTabs.scrollWidth - fileTabs.clientWidth;
+			handleAutoScroll();
 		} catch (error) {
 			handleErrorMessage(`${exctri} ${error.message}`);
 		}
@@ -836,6 +836,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 	document.getElementById('article').innerHTML = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h1 class="sm:text-xl lg:text-3xl before:font-['Font_Awesome_6_Free'] before:content-['&#xf05a'] before:text-blue-500 before:pr-2 text-gray-600 text-left font-bold mb-4">${articleData?.article?.title}</h1>${articleData?.article?.sections.map(section => `<div class="mb-4"><h2 class="text-[15px] text-gray-500 before:font-['Font_Awesome_6_Free'] before:content-['&#xf219'] before:text-cyan-900 before:pr-2 lg:text-xl font-bold py-4">${section?.section_title}</h2><p class="text-[13px] lg:text-[15px]">${section?.section_content}</p></div>`).join('')}</div>`;
 });
 
+function handleAutoScroll() {
+	if (currentTabIndex === 0) {
+		fileTabs.scrollLeft = 0;
+	} else if (currentTabIndex === sources.length - 1) {
+		fileTabs.scrollLeft = fileTabs.scrollWidth - fileTabs.clientWidth;
+	}
+}
+
 function updateEditorContent() {
 	var encryptedSource = sessionStorage.getItem(sources[currentTabIndex]);
 	if (encryptedSource && editor) {
@@ -861,6 +869,7 @@ function editTabName() {
 	tabNameInput.addEventListener('keypress', (event) => {
 		if (event.key === 'Enter') {
 			updateTabName();
+			handleAutoScroll();
 		}
 	});
 	tabNameInput.addEventListener('blur', () => {
@@ -983,6 +992,7 @@ function updateTabStyles() {
 						animateIcon(`editbtn-${currentTabIndex + 1}`, "fa-bounce", 800);
 						setTimeout(() => {
 							editTabName();
+							handleAutoScroll();
 						}, 800)
 					};
 					tab.appendChild(editBtn);
