@@ -19,14 +19,6 @@ Welcome to my Python Minifier - Glad432. This repository showcases my work using
 - [CryptoJS](https://github.com/brix/crypto-js) for cryptographic tasks
 - [SweetAlert2](https://sweetalert2.github.io/) for beautiful popup boxes
 
-## Tailwind CSS
-
-This project takes advantage of the [Tailwind CSS](https://tailwindcss.com/) framework, which makes styling and designing web pages faster and more efficient. Tailwind CSS provides utility classes that enable you to create beautiful and responsive designs with minimal effort.
-
-## Monaco Editor
-
-[Monaco Editor](https://microsoft.github.io/monaco-editor/) is used for code editing in this project. Developed by Microsoft, Monaco Editor provides a fast and feature-rich code editing experience. It supports a wide range of programming languages and offers advanced editing features.
-
 ## Python Minification Benefits
 
 Minifying Python files involves removing unnecessary whitespace, comments, and reducing variable names. This process offers several benefits:
@@ -34,6 +26,14 @@ Minifying Python files involves removing unnecessary whitespace, comments, and r
 1. **Reduced File Size:** Minified files are smaller in size, leading to faster load times and improved performance.
 2. **Improved Load Times:** Smaller files require less bandwidth, resulting in quicker page rendering.
 3. **Code Protection:** Minified code can be harder to read and understand, providing a level of code protection.
+
+## Tailwind CSS
+
+This project takes advantage of the [Tailwind CSS](https://tailwindcss.com/) framework, which makes styling and designing web pages faster and more efficient. Tailwind CSS provides utility classes that enable you to create beautiful and responsive designs with minimal effort.
+
+## Monaco Editor
+
+[Monaco Editor](https://microsoft.github.io/monaco-editor/) is used for code editing in this project. Developed by Microsoft, Monaco Editor provides a fast and feature-rich code editing experience. It supports a wide range of programming languages and offers advanced editing features.
 
 ## Minifying Python Files with python-minifier.com API
 
