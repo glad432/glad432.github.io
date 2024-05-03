@@ -377,7 +377,8 @@ function setupFileInput() {
 				sourceEditor.getModel().setValue(e.target.result);
 				sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 				handleErrorMessage();
-				updateNametoTab(file.name)
+				updateNametoTab(file.name);
+				fileTabs.scrollLeft = fileTabs.scrollWidth - fileTabs.clientWidth;
 			};
 			reader.readAsText(file);
 		} else {
@@ -768,6 +769,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			sourceEditor.getModel().setValue(data);
 			sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 			updateNametoTab(fileName);
+			fileTabs.scrollLeft = fileTabs.scrollWidth - fileTabs.clientWidth;
 		} catch (error) {
 			handleErrorMessage(`${exctri} ${error.message}`);
 		}
