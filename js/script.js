@@ -431,14 +431,14 @@ function validateCH(event) {
 
 async function Sharelink(token) {
 	animateIcon("fade-2", "fa-fade", 3000);
-	const editorContent = minifiedEditor.getModel().getValue();
+	fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin-pulse"></i></span>`;
 	const activeTabIndex = currentTabIndex;
 	const activeTabElement = fileTabs.children[activeTabIndex];
-	const fileName = (activeTabElement.textContent || "default.py").trim().replace(/\.[^/.]+$/, '') + "_min.py";
 	try {
+
 		const response = await fetch('https://file.io/?expires=2w', {
 			method: 'POST',
-			body: createFormData(editorContent, fileName)
+			body: createFormData(minifiedEditor.getModel().getValue(), (activeTabElement.textContent || "default.py").trim().replace(/\.[^/.]+$/, '') + "_min.py")
 		});
 		const result = await response.json();
 		if (result.success) {
@@ -450,7 +450,7 @@ async function Sharelink(token) {
 			file_Link.classList.add('hidden');
 			copy_msg.textContent = '';
 			help_msg.innerHTML = '';
-			fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin-pulse"></i></span>`;
+
 			setTimeout(() => {
 				copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
 				link_newtab.href = fileLink;
@@ -480,6 +480,7 @@ async function Sharelink(token) {
 		minifiedSizeSpan.textContent = 'Error during fetch request';
 	}
 }
+
 
 shareButton.addEventListener('click', validateCH);
 
@@ -649,6 +650,7 @@ window.addEventListener("DOMContentLoaded", initializeMinifier);
 function clearSource() {
 	animateIcon("fade-5", "fa-fade", 1500);
 	deleteAllTabs();
+	updateNametoTab("File 1.py");
 	disableTyping();
 	shareButton.disabled = true;
 	dwButton.disabled = true;
@@ -848,7 +850,7 @@ function editTabName() {
 	var tabNameInput = document.createElement('input');
 	tabNameInput.type = 'text';
 	tabNameInput.placeholder = "Enter:";
-	tabNameInput.value = activeTab.textContent;
+	tabNameInput.value = activeTab.textContent.trim();
 	tabNameInput.autocorrect = "off";
 	tabNameInput.spellcheck = false;
 	tabNameInput.id = 'tab-name-input';
@@ -869,7 +871,6 @@ function editTabName() {
 	saveIcon.innerHTML = '<i class="fa-solid fa-floppy-disk px-[2px]"></i>';
 	saveIcon.onclick = () => {
 		saveEditorContent();
-		editIcon.classList.remove('hidden');
 	};
 
 	var editIcon = document.createElement('button');
@@ -892,9 +893,6 @@ function editTabName() {
 function updateTabName() {
 	var tabNameInput = document.getElementById('tab-name-input');
 	var newName = tabNameInput.value.trim();
-	if (newName === '') {
-		return;
-	}
 	var cleanedStrnopy = newName.replace(/\.py$/, '');
 	if (!(/^\s+$/.test(cleanedStrnopy)) && (cleanedStrnopy.length >= 1 && cleanedStrnopy.length <= 256)) {
 		var cleanedString = cleanedStrnopy.replace(/[^a-zA-Z0-9,\s.]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_");
@@ -906,8 +904,10 @@ function updateTabName() {
 		icon.className = "fa-solid fa-file-code text-blue-600 pr-2";
 		fileTabs.children[currentTabIndex].insertBefore(icon, fileTabs.children[currentTabIndex].childNodes[0]);
 		tabNameInput.value = cleanedString;
+	} else if (newName === '') {
+		return;
 	} else {
-		handleErrorMessage(`${exctri} Filename shouldn't contain invalid characters`);
+		handleErrorMessage(`${exctri} File name shouldn't contain invalid characters`);
 	}
 }
 
@@ -938,7 +938,7 @@ function addEmptyTab() {
 	var newFileIndex = sources.length;
 	var newSourceId = `#PyFile-${newFileIndex + 1}`;
 	var newTab = document.createElement('li');
-	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] bg-white select-none transition-opacity';
+	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] select-none transition-opacity';
 	newTab.innerHTML = `${code_file} File ${newFileIndex + 1}.py`;
 	newTab.id = `file-${newFileIndex + 1}`;
 	newTab.onclick = () => {
@@ -1084,3 +1084,7 @@ function switchTab(index) {
 		}
 	}
 }
+
+document.getElementById("file-1").addEventListener('click', () => {
+	switchTab(0);
+})
