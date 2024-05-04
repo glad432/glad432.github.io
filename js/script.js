@@ -75,7 +75,7 @@ const features = [{
 		color: '#2196F3'
 	},
 	{
-		text: 'Quick',
+		text: 'Quickness',
 		color: '#FF9800'
 	},
 	{
@@ -125,22 +125,25 @@ const typewriter = new Typewriter(anitext, {
 	delay: 50,
 });
 
-features.forEach((feature, index) => {
-	typewriter
-		.pauseFor(1000)
-		.deleteAll()
-		.typeString(`<span style="color: ${feature.color}">${feature.text}</span>`)
-		.pauseFor(1000)
-		.callFunction(() => {
-			if (index === features.length - 1) {
-				typewriter.stop();
-			}
-		});
-});
+function typeFeatures() {
+	features.forEach((feature, index) => {
+		typewriter
+			.pauseFor(1000)
+			.deleteAll()
+			.typeString(`<span style="color: ${feature.color}">${feature.text}</span>`)
+			.pauseFor(1000)
+			.callFunction(() => {
+				if (index === features.length - 1) {
+					typeFeatures();
+				}
+			});
+	});
+}
 
 window.addEventListener("load", () => {
+	typeFeatures();
 	typewriter.start();
-})
+});
 
 document.getElementById("year").textContent = new Date().getFullYear().toString();
 
@@ -837,10 +840,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function handleAutoScroll() {
-	if (currentTabIndex === 0) {
-		fileTabs.scrollLeft = 0;
-	} else if (currentTabIndex === sources.length - 1) {
-		fileTabs.scrollLeft = fileTabs.scrollWidth - fileTabs.clientWidth;
+	var activeTab = fileTabs.children[currentTabIndex];
+	var tabPosition = activeTab.offsetLeft - fileTabs.offsetLeft;
+	var leftVisible = fileTabs.scrollLeft;
+	var rightVisible = leftVisible + fileTabs.offsetWidth;
+
+	if (tabPosition >= leftVisible && tabPosition + activeTab.offsetWidth <= rightVisible) {
+		return;
+	}
+
+	if (tabPosition < leftVisible) {
+		fileTabs.scrollLeft = tabPosition;
+	} else if (tabPosition + activeTab.offsetWidth > rightVisible) {
+		fileTabs.scrollLeft = tabPosition + activeTab.offsetWidth - fileTabs.offsetWidth;
 	}
 }
 
@@ -899,6 +911,7 @@ function editTabName() {
 	activeTab.appendChild(saveIcon);
 	activeTab.appendChild(editIcon);
 	tabNameInput.focus();
+	handleAutoScroll();
 }
 
 function updateTabName() {
@@ -936,12 +949,14 @@ function addEmptyTab() {
 		Swal.fire({
 			icon: "error",
 			html: `${exctri} You can't add more than 20 tabs.`,
+			confirmButtonColor: "#179fff"
 		});
 		return;
 	} else if (isMobile() && sources.length >= 10) {
 		Swal.fire({
 			icon: "error",
 			html: `${exctri} You can't add more than 10 tabs.`,
+			confirmButtonColor: "#179fff"
 		});
 		return;
 	}
@@ -961,7 +976,6 @@ function addEmptyTab() {
 	switchTab(newFileIndex);
 	sessionStorage.setItem(newSourceId, '');
 	sourceEditor.getModel().setValue('');
-	fileTabs.scrollLeft = fileTabs.scrollWidth - fileTabs.clientWidth;
 	if ((!isMobile() && sources.length >= 20) || (isMobile() && sources.length >= 10)) {
 		addNewTabBtn.classList.add("hidden");
 	}
@@ -973,6 +987,7 @@ addNewTabBtn.addEventListener("click", () => {
 });
 
 function updateTabStyles() {
+	handleAutoScroll();
 	var tabs = document.querySelectorAll('.file-tab');
 	if (currentTabIndex < tabs.length && currentTabIndex >= 0) {
 		tabs.forEach((tab, index) => {
@@ -1029,8 +1044,8 @@ function updateTabStyles() {
 
 function deleteFile(index) {
 	addNewTabBtn.classList.remove("hidden");
-	sources.splice(index, 1);
 	sessionStorage.removeItem(sources[index]);
+	sources.splice(index, 1);
 	fileTabs.removeChild(fileTabs.children[index]);
 	if (currentTabIndex >= sources.length) {
 		currentTabIndex = sources.length - 1;
@@ -1047,7 +1062,6 @@ function confirmDeleteFile(index) {
 		Swal.fire({
 			icon: "error",
 			html: `${exctri} You can't delete this tab`,
-			confirmButtonText: "Close",
 			confirmButtonColor: "#179fff"
 		});
 		return;
