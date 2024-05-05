@@ -965,7 +965,7 @@ function addEmptyTab() {
 	var newSourceId = `#PyFile-${newFileIndex + 1}`;
 	var newTab = document.createElement('li');
 	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] select-none transition-opacity';
-	newTab.innerHTML = `${code_file} File ${newFileIndex + 1}.py`;
+	newTab.innerHTML = `${code_file}File ${newFileIndex + 1}.py`;
 	newTab.id = `file-${newFileIndex + 1}`;
 	newTab.onclick = () => {
 		switchTab(newFileIndex);
