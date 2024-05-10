@@ -31,7 +31,7 @@ const fileTabs = document.getElementById('file-tabs');
 const addNewTabBtn = document.getElementById("addNewTab");
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, typingTimeout, sourceEditor, minifiedEditor, downloadCount = 0;
+let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, typingTimeout, sourceEditor, minifiedEditor;
 let typingInProgress = false;
 var sources = ['#PyFile-1'];
 var currentTabIndex = 0;
@@ -152,6 +152,7 @@ require.config({
 		'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs'
 	}
 });
+
 require(['vs/editor/editor.main'], () => {
 	sourceEditor = monaco.editor.create(document.getElementById('editor'), {
 		value: "",
@@ -346,9 +347,6 @@ function setupFileInput() {
 				handleErrorMessage();
 				handleFile(selectedFile);
 			} else {
-				dwButton.disabled = true;
-				shareButton.disabled = true;
-				copyButton.disabled = true;
 				handleErrorMessage(`${exctri} Invalid file format. Please select a .py file.`);
 				fileInput.value = '';
 			}
@@ -403,24 +401,7 @@ function DownloadPyFile() {
 	var activeTabName = fileTabs.children[currentTabIndex].textContent;
 	downloadLink.href = dataUri;
 	downloadLink.download = (activeTabName || "default.py").trim().replace(/\.[^/.]+$/, '') + "_min.py";
-	downloadCount++;
-	if (downloadCount % 5 === 0) {
-		Swal.fire({
-			title: "Download limit reached!!",
-			text: "Proceed with download?",
-			icon: "warning",
-			showCancelButton: true,
-			confirmButtonColor: "#3085d6",
-			cancelButtonColor: "#d33",
-			confirmButtonText: "Yes"
-		}).then((result) => {
-			if (result.isConfirmed) {
-				downloadLink.click();
-			}
-		});
-	} else {
-		downloadLink.click();
-	}
+	downloadLink.click();
 	URL.revokeObjectURL(dataUri);
 }
 
@@ -484,7 +465,6 @@ async function Sharelink(token) {
 		minifiedSizeSpan.textContent = 'Error during fetch request';
 	}
 }
-
 
 shareButton.addEventListener('click', validateCH);
 
@@ -584,9 +564,7 @@ function initializeMinifier() {
 
 	async function minifyClick() {
 		minifyButton.disabled = false;
-		shareButton.disabled = true;
-		copyButton.disabled = true;
-		dwButton.disabled = true;
+		disableDwSrCpBtn(true);
 		selectallopt.disabled = true;
 		unselectallopt.disabled = true;
 		options.push("preserve_locals", "preserve_globals");
@@ -597,7 +575,7 @@ function initializeMinifier() {
 		});
 		selectallopt.classList.add("cursor-not-allowed");
 		unselectallopt.classList.add("cursor-not-allowed");
-		minifiedEditor.setValue('');
+		minifiedEditor.getModel().setValue('');
 		animateIcon("fade-0", "fa-fade", 1500);
 		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
 		if (sourceEditor.getModel().getValue() !== '') {
@@ -614,19 +592,13 @@ function initializeMinifier() {
 					minifiedEditor.getModel().setValue(minified);
 					minifiedEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 					minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)} kB`;
-					copyButton.disabled = false;
-					shareButton.disabled = false;
-					dwButton.disabled = false;
+					disableDwSrCpBtn(false);
 				} else {
-					copyButton.disabled = true;
-					shareButton.disabled = true;
-					dwButton.disabled = true;
+					disableDwSrCpBtn(false);
 					minifiedSizeSpan.innerHTML = `${excir} Error`;
 				}
 			} catch {
-				shareButton.disabled = true;
-				copyButton.disabled = true;
-				dwButton.disabled = true;
+				disableDwSrCpBtn(true);
 				minifiedSizeSpan.innerHTML = `${excir} Something went wrong!!`;
 			}
 		} else {
@@ -656,9 +628,7 @@ function clearSource() {
 	deleteAllTabs();
 	updateNametoTab("File 1.py");
 	disableTyping();
-	shareButton.disabled = true;
-	dwButton.disabled = true;
-	copyButton.disabled = true;
+	disableDwSrCpBtn(true);
 	handleErrorMessage();
 	fileInput.value = '';
 	pysource.textContent = '';
@@ -669,6 +639,12 @@ function clearSource() {
 }
 
 document.getElementById('rm').addEventListener('click', clearSource);
+
+function disableDwSrCpBtn(disable) {
+	copyButton.disabled = disable;
+	shareButton.disabled = disable;
+	dwButton.disabled = disable;
+}
 
 function animateIcon(fade, fade_class, fade_dur) {
 	let aniTimeout;
@@ -858,7 +834,7 @@ function handleAutoScroll() {
 
 function updateEditorContent() {
 	var encryptedSource = sessionStorage.getItem(sources[currentTabIndex]);
-	if (encryptedSource && editor) {
+	if (encryptedSource && sourceEditor) {
 		sourceEditor.getModel().setValue(CryptoJS.AES.decrypt(encryptedSource, '4#>5p[:/v,o2q/(\*=:6').toString(CryptoJS.enc.Utf8));
 	}
 }
