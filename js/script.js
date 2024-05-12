@@ -31,7 +31,7 @@ const fileTabs = document.getElementById('file-tabs');
 const addNewTabBtn = document.getElementById("addNewTab");
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, typingTimeout, sourceEditor, minifiedEditor;
+let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, typingTimeout, sourceEditor, minifiedEditor, minifiedFilename, minifiedFileIndex;
 let typingInProgress = false;
 var sources = ['#PyFile-1'];
 var currentTabIndex = 0;
@@ -311,7 +311,7 @@ window.addEventListener('load', () => {
 
 });
 
-function truncateCode(content) {
+async function truncateCode(content) {
 	var pyblob = new Blob([content]);
 	if (pyblob.size > maxFileSizeInBytes) {
 		return new Promise(resolve => {
@@ -398,9 +398,8 @@ function DownloadPyFile() {
 	});
 	var dataUri = URL.createObjectURL(blob);
 	var downloadLink = document.createElement("a");
-	var activeTabName = fileTabs.children[currentTabIndex].textContent;
 	downloadLink.href = dataUri;
-	downloadLink.download = (activeTabName || "default.py").trim().replace(/\.[^/.]+$/, '') + "_min.py";
+	downloadLink.download = `${(minifiedFilename || "default.py").trim().replace(/\.[^/.]+$/, '')}_min.py`;
 	downloadLink.click();
 	URL.revokeObjectURL(dataUri);
 }
@@ -423,7 +422,7 @@ async function Sharelink(token) {
 
 		const response = await fetch('https://file.io/?expires=2w', {
 			method: 'POST',
-			body: createFormData(minifiedEditor.getModel().getValue(), (activeTabElement.textContent || "default.py").trim().replace(/\.[^/.]+$/, '') + "_min.py")
+			body: createFormData(minifiedEditor.getModel().getValue(), `${(minifiedFilename || "default.py").trim().replace(/\.[^/.]+$/, '')}_min.py`)
 		});
 		const result = await response.json();
 		if (result.success) {
@@ -459,10 +458,18 @@ async function Sharelink(token) {
 				file_Link.value = fileLink;
 			}, 1500);
 		} else {
-			minifiedSizeSpan.textContent = 'Error generating share link';
+			Swal.fire({
+				html: `${excir} Failed to create share link, try again later`,
+				icon: "error",
+				confirmButtonColor: "#179fff"
+			});
 		}
 	} catch {
-		minifiedSizeSpan.textContent = 'Error during fetch request';
+		Swal.fire({
+			html: `${excir} Failed to create share link, try again later`,
+			icon: "error",
+			confirmButtonColor: "#179fff"
+		});
 	}
 }
 
@@ -580,7 +587,7 @@ function initializeMinifier() {
 		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
 		if (sourceEditor.getModel().getValue() !== '') {
 			try {
-				const response = await fetch("https://api.python-minifier.com/minify?" + build_query(), {
+				const response = await fetch(`https://api.python-minifier.com/minify?${build_query()}`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'text/plain'
@@ -590,11 +597,12 @@ function initializeMinifier() {
 				if (response.ok) {
 					const minified = await response.text();
 					minifiedEditor.getModel().setValue(minified);
+					minifiedFileIndex = currentTabIndex;
+					minifiedFilename = fileTabs.children[currentTabIndex].textContent;
 					minifiedEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
-					minifiedSizeSpan.textContent = `${(minified.length / 1024).toFixed(3)} kB`;
 					disableDwSrCpBtn(false);
 				} else {
-					disableDwSrCpBtn(false);
+					disableDwSrCpBtn(true);
 					minifiedSizeSpan.innerHTML = `${excir} Error`;
 				}
 			} catch {
@@ -692,7 +700,7 @@ function toggleContent1() {
 	if (content.style.maxHeight) {
 		content.style.maxHeight = null;
 	} else {
-		content.style.maxHeight = content.scrollHeight + 'px';
+		content.style.maxHeight = `${content.scrollHeight}px`;
 	}
 }
 
@@ -904,6 +912,10 @@ function updateTabName() {
 		icon.className = "fa-solid fa-file-code text-blue-600 pr-2";
 		fileTabs.children[currentTabIndex].insertBefore(icon, fileTabs.children[currentTabIndex].childNodes[0]);
 		tabNameInput.value = cleanedString;
+		if (minifiedFileIndex === currentTabIndex) {
+			minifiedFilename = fileTabs.children[currentTabIndex].textContent;
+
+		}
 	} else if (newName === '') {
 		return;
 	} else {
@@ -1044,7 +1056,7 @@ function confirmDeleteFile(index) {
 	}
 	Swal.fire({
 		text: "Are you sure you want to delete this tab?",
-		icon: "warning",
+		icon: "question",
 		showCancelButton: true,
 		confirmButtonColor: "#3085d6",
 		cancelButtonColor: "#d33",
