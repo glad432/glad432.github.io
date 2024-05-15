@@ -33,8 +33,8 @@
     <script src="https://glad432.github.io/js/tailwind.min.js" rel="stylesheet"></script>
     <link href="https://glad432.github.io/css/style.min.css" rel="stylesheet">
     <script src="https://glad432.github.io/js/qrcode.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.9/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.10/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/typewriter-effect@2.21.0/dist/core.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/loader.js"></script>
@@ -168,12 +168,12 @@
         </span>
       </div>
       <div class="select-none text-left">
-        <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Line Count: 42</span>
+        <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Line: 42</span>
         <span id="text-size" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">0.992 kB</span>
       </div>
       <p id="errmsg"></p>
       <div class="flex items-center">
-        <ul id="file-tabs" class="flex list-none [transition:all_1s_ease] pr-[1px] [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto">
+        <ul id="file-tabs" class="flex list-none [transition:all_1s_ease] pr-[1px] mr-[4px] [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto">
           <li class="file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] select-none transition-opacity active" id="file-1">
             <i class="fa-solid fa-file-code text-blue-600 pr-2"></i>File 1.py
           </li>
@@ -303,7 +303,7 @@ if __name__ == "__main__":
           </span>
         </span>
       </div>
-      <div id="hcaptcha" class="h-captcha" data-sitekey="93cc4d5c-1c65-4d1f-b70d-549d62e588d1" data-callback="Sharelink" data-size="invisible"></div>
+      <div id="hcaptcha" class="h-captcha" data-sitekey="93cc4d5c-1c65-4d1f-b70d-549d62e588d1" data-callback="shareLink" data-size="invisible"></div>
       <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 hidden transition-opacity duration-2000"></div>
       <div id="popup" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded shadow-md z-50 hidden transition-transform duration-2000">
         <div id="downloadLink" class="text-center">
@@ -321,7 +321,7 @@ if __name__ == "__main__":
       </div>
       <h2 class="select-none relative text-2xl font-bold mt-8 mb-5 text-white bg-black block rounded py-6 pl-[15px] [box-shadow:0_0_2px_rgb(0_0_0/30%)] [border-left:5px_solid_#ef4444]">Minified Code</h2>
       <div class="select-none text-left">
-        <span id="line-count-out" class="font-bold px-4 py-2 bg-red-500 rounded text-white">Line Count: 1</span>
+        <span id="line-count-out" class="font-bold px-4 py-2 bg-red-500 rounded text-white">Lines: 1</span>
         <span id="minified-size" class="font-bold px-4 py-2 bg-red-500 rounded text-white">0.000 kB</span>
       </div>
       <div id="minified" class="w-auto h-[300px] mt-4 rounded overflow-hidden border-[1px] border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]"></div>
