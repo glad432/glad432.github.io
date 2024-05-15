@@ -199,12 +199,12 @@ require(['vs/editor/editor.main'], () => {
 	});
 	sourceEditor.onDidChangeModelContent(() => {
 		saveEditorContent();
-		document.getElementById('line-count').textContent = `Line Count: ${sourceEditor.getModel().getLineCount()}`;
+		document.getElementById('line-count').textContent = `Lines: ${sourceEditor.getModel().getLineCount()}`;
 		document.getElementById('text-size').textContent = `${(sourceEditor.getModel().getValueLength() / 1024).toFixed(3)} Kb`;
 	});
 
 	minifiedEditor.onDidChangeModelContent(() => {
-		document.getElementById('line-count-out').textContent = `Line Count: ${minifiedEditor.getModel().getLineCount()}`;
+		document.getElementById('line-count-out').textContent = `Lines: ${minifiedEditor.getModel().getLineCount()}`;
 		minifiedSizeSpan.textContent = `${(minifiedEditor.getModel().getValueLength() / 1024).toFixed(3)} Kb`;
 	});
 
@@ -413,64 +413,66 @@ function validateCH(event) {
 	hcaptcha.execute();
 }
 
-async function Sharelink(token) {
-	animateIcon("fade-2", "fa-fade", 3000);
-	fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin-pulse"></i></span>`;
-	const activeTabIndex = currentTabIndex;
-	const activeTabElement = fileTabs.children[activeTabIndex];
+async function createShareLink() {
 	try {
-
-		const response = await fetch('https://file.io/?expires=2w', {
+		const response = await fetch('https://file.io/?expires=1w', {
 			method: 'POST',
 			body: createFormData(minifiedEditor.getModel().getValue(), `${(minifiedFilename || "default.py").trim().replace(/\.[^/.]+$/, '')}_min.py`)
 		});
 		const result = await response.json();
-		if (result.success) {
-			const fileLink = result.link;
-			overlay.classList.remove("hidden");
-			popup.classList.remove("hidden");
-			document.body.classList.add("overflow-y-hidden");
-			document.body.classList.remove("overflow-y-scroll");
-			file_Link.classList.add('hidden');
-			copy_msg.textContent = '';
-			help_msg.innerHTML = '';
+		return result;
+	} catch (error) {
+		throw error;
+	}
+}
 
-			setTimeout(() => {
-				copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
-				link_newtab.href = fileLink;
-				link_newtab.classList.add('text-white', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5', 'bg-blue-600', 'hover:bg-blue-700');
-				link_newtab.innerHTML = ` <i class="fa-solid fa-up-right-from-square"></i>`;
-				link_newtab.target = "_blank";
-				link_newtab.title = 'Open in new tab';
-				orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
-				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-center text-gray-700">Python file will be deleted after download.<br> Expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
-				orscan.classList.add('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
-				close_Popup.classList.remove('hidden');
-				qrCode.style.textAlign = '-moz-center';
-				qrCode.style.textAlign = '-webkit-center';
-				qrCode.style.background = 'rgb(255, 255, 255)';
-				qrCode.classList.add('ml-12', 'p-2', 'mr-12', 'mt-2');
-				file_Link.classList.remove('hidden');
-				fileLink_load.innerHTML = '';
-				displayQRCode(fileLink);
-				qrCode.classList.remove('inline');
-				file_Link.href = fileLink;
-				file_Link.value = fileLink;
-			}, 1500);
-		} else {
+function shareLink(token) {
+	animateIcon("fade-2", "fa-fade", 3000);
+	fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin-pulse"></i></span>`;
+	createShareLink().then(result => {
+			if (result.success) {
+				const fileLink = result.link;
+				overlay.classList.remove("hidden");
+				popup.classList.remove("hidden");
+				document.body.classList.add("overflow-y-hidden");
+				document.body.classList.remove("overflow-y-scroll");
+				file_Link.classList.add('hidden');
+				copy_msg.textContent = '';
+				help_msg.innerHTML = '';
+
+				setTimeout(() => {
+					copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
+					link_newtab.href = fileLink;
+					link_newtab.classList.add('text-white', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5', 'bg-blue-600', 'hover:bg-blue-700');
+					link_newtab.innerHTML = ` <i class="fa-solid fa-up-right-from-square"></i>`;
+					link_newtab.target = "_blank";
+					link_newtab.title = 'Open in new tab';
+					orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
+					help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-center text-gray-700">Python file will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
+					orscan.classList.add('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
+					close_Popup.classList.remove('hidden');
+					qrCode.style.textAlign = '-moz-center';
+					qrCode.style.textAlign = '-webkit-center';
+					qrCode.style.background = 'rgb(255, 255, 255)';
+					qrCode.classList.add('ml-12', 'p-2', 'mr-12', 'mt-2');
+					file_Link.classList.remove('hidden');
+					fileLink_load.innerHTML = '';
+					displayQRCode(fileLink);
+					qrCode.classList.remove('inline');
+					file_Link.href = fileLink;
+					file_Link.value = fileLink;
+				}, 1500);
+			} else {
+				throw new Error('Failed to create share link');
+			}
+		})
+		.catch(error => {
 			Swal.fire({
-				html: `${excir} Failed to create share link, try again later`,
+				html: `${excir} ${error.message}, try again later`,
 				icon: "error",
 				confirmButtonColor: "#179fff"
 			});
-		}
-	} catch {
-		Swal.fire({
-			html: `${excir} Failed to create share link, try again later`,
-			icon: "error",
-			confirmButtonColor: "#179fff"
 		});
-	}
 }
 
 shareButton.addEventListener('click', validateCH);
@@ -490,8 +492,7 @@ function displayQRCode(fileLink) {
 	const qr = new QRCode(qrCode, {
 		text: fileLink,
 		width: 128,
-		height: 128,
-		correctLevel: QRCode.CorrectLevel.H,
+		height: 128
 	});
 }
 
@@ -1046,6 +1047,7 @@ function deleteFile(index) {
 }
 
 function confirmDeleteFile(index) {
+	const tabFileName = fileTabs.children[currentTabIndex].textContent.replace(/\.py$/, "");
 	if (sources.length === 1) {
 		Swal.fire({
 			icon: "error",
@@ -1055,12 +1057,13 @@ function confirmDeleteFile(index) {
 		return;
 	}
 	Swal.fire({
-		text: "Are you sure you want to delete this tab?",
+		html: `Are you sure you want to delete <span class="font-bold text-neutral-500 hover:underline">${tabFileName.length > 15 ? `${tabFileName.slice(0,7)}...${tabFileName.slice(-3)}` : tabFileName}</span> tab?`,
 		icon: "question",
 		showCancelButton: true,
 		confirmButtonColor: "#3085d6",
+		confirmButtonText: "Yes",
+		cancelButtonText: "No",
 		cancelButtonColor: "#d33",
-		confirmButtonText: "Yes"
 	}).then((result) => {
 		if (result.isConfirmed) {
 			deleteFile(index);
