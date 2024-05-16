@@ -328,29 +328,15 @@ async function truncateCode(content) {
 function setupFileInput() {
 	function dragpy(event) {
 		disableTyping();
-		const droppedFile = event.dataTransfer.files[0];
-		if (droppedFile) {
-			if (droppedFile.name.toLowerCase().endsWith('.py')) {
-				handleErrorMessage();
-				handleFile(droppedFile);
-			} else {
-				handleErrorMessage(`${exctri} Invalid file format. Please select a .py file.`);
-			}
-		}
+		const files = event.dataTransfer.files;
+		handleFiles(files);
 	}
 
 	fileInput.addEventListener('change', (event) => {
 		disableTyping();
-		const selectedFile = event.target.files[0];
-		if (selectedFile) {
-			if (selectedFile.name.toLowerCase().endsWith('.py')) {
-				handleErrorMessage();
-				handleFile(selectedFile);
-			} else {
-				handleErrorMessage(`${exctri} Invalid file format. Please select a .py file.`);
-				fileInput.value = '';
-			}
-		}
+		const files = event.target.files;
+		handleFiles(files);
+		fileInput.value = '';
 	});
 
 	dropArea.addEventListener('click', () => {
@@ -363,18 +349,37 @@ function setupFileInput() {
 
 	document.addEventListener('drop', (event) => {
 		event.preventDefault();
-		dragpy(event)
+		dragpy(event);
 	});
 
 	dropArea.addEventListener('drop', (event) => {
 		event.preventDefault();
-		dragpy(event)
+		dragpy(event);
 	});
+
+	function handleFiles(files) {
+		const nonPyFiles = Array.from(files).filter((file) => !file.name.toLowerCase().endsWith('.py'));
+		if (nonPyFiles.length > 0) {
+			handleErrorMessage(`${exctri} Invalid file format. Please select only .py file(s).`);
+			return;
+		}
+
+		Array.from(files).forEach((file) => {
+			if (file.name.toLowerCase().endsWith('.py')) {
+				handleErrorMessage();
+				handleFile(file);
+			}
+		});
+	}
 
 	function handleFile(file) {
 		if (file.size <= maxFileSizeInBytes) {
 			const reader = new FileReader();
 			reader.onload = (e) => {
+				if (sourceEditor.getModel().getValue().trim() !== '') {
+					addEmptyTab();
+				}
+
 				sourceEditor.getModel().setValue(e.target.result);
 				sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 				handleErrorMessage();
@@ -391,7 +396,7 @@ function setupFileInput() {
 
 window.addEventListener('load', setupFileInput);
 
-function DownloadPyFile() {
+function downloadPyFile() {
 	animateIcon("fade-1", "fa-fade", 3000);
 	var blob = new Blob([minifiedEditor.getModel().getValue()], {
 		type: "text/x-python"
@@ -404,7 +409,7 @@ function DownloadPyFile() {
 	URL.revokeObjectURL(dataUri);
 }
 
-document.getElementById('dw').addEventListener('click', DownloadPyFile);
+document.getElementById('dw').addEventListener('click', downloadPyFile);
 
 
 function validateCH(event) {
