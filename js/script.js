@@ -925,7 +925,7 @@ function updateTabName() {
 	} else if (newName === '') {
 		return;
 	} else {
-		handleErrorMessage(`${exctri} File name shouldn't contain invalid characters`);
+		handleErrorMessage(`${exctri} Ensure file name has 256 characters max, no invalid characters`);
 	}
 }
 
