@@ -42,7 +42,7 @@ input:checked + .slider:before {
 }
 .file-tab.active {
   background-color: rgb(69 69 69 / 14%);
-  border-bottom: 1px solid #ccc;
+  border-bottom: 3px solid rgb(59 130 246);
 }
 .margin-view-overlays {
   -webkit-user-select: none;
@@ -101,6 +101,7 @@ input:checked + .slider:before {
 .dark .file-tab.active {
   background-color: #404040ca;
   border-color: transparent;
+  border-bottom: 3px solid rgb(59 130 246);
 }
 
 .dark .file-tab {
