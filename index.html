@@ -168,7 +168,7 @@
         </span>
       </div>
       <div class="select-none text-left">
-        <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Line: 42</span>
+        <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Lines: 42</span>
         <span id="text-size" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">0.992 kB</span>
       </div>
       <p id="errmsg"></p>
@@ -303,7 +303,6 @@ if __name__ == "__main__":
           </span>
         </span>
       </div>
-      <div id="hcaptcha" class="h-captcha" data-sitekey="93cc4d5c-1c65-4d1f-b70d-549d62e588d1" data-callback="shareLink" data-size="invisible"></div>
       <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 hidden transition-opacity duration-2000"></div>
       <div id="popup" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded shadow-md z-50 hidden transition-transform duration-2000">
         <div id="downloadLink" class="text-center">
@@ -334,6 +333,30 @@ if __name__ == "__main__":
         </button>
       </div>
     </section>
+    <div class="flex justify-center items-center pb-[25px]">
+      <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row md:items-center">
+        <div class="mb-6 md:mb-0 md:mr-6">
+          <p class="font-extrabold font-[cursive] text-center tracking-wide select-none uppercase">Share it on..</p>
+        </div>
+        <div class="flex flex-wrap justify-center">
+          <a href="whatsapp://send?text=Check%20out%20this%20python%20minifier!!%20https://glad432.github.io/" target="_blank" class="text-green-500 icon-link mx-2 my-2" title="Share on WhatsApp">
+            <i class="fab fa-whatsapp fa-2x transition-transform transform hover:-translate-y-2"></i>
+          </a>
+          <a href="https://telegram.me/share/url?url=https://glad432.github.io/&text=Check%20out%20this%20python%20minifier!!" target="_blank" class="text-blue-500 icon-link mx-2 my-2" title="Share on Telegram">
+            <i class="fab fa-telegram-plane fa-2x transition-transform transform hover:-translate-y-2"></i>
+          </a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u=https://glad432.github.io/" target="_blank" class="text-blue-700 icon-link mx-2 my-2" title="Share on Facebook">
+            <i class="fab fa-facebook fa-2x transition-transform transform hover:-translate-y-2"></i>
+          </a>
+          <a href="https://x.com/intent/post?url=https://glad432.github.io/&text=Check%20out%20this%20python%20minifier!!" target="_blank" class="text-slate-600 icon-link mx-2 my-2" title="Share on Twitter">
+            <i class="fab fa-x-twitter fa-2x transition-transform transform hover:-translate-y-2"></i>
+          </a>
+          <a href="https://www.reddit.com/submit?url=https://glad432.github.io/&title=Check%20out%20this%20python%20minifier!!" target="_blank" class="text-red-500 icon-link mx-2 my-2" title="Share on Reddit">
+            <i class="fab fa-reddit fa-2x transition-transform transform hover:-translate-y-2"></i>
+          </a>
+        </div>
+      </div>
+    </div>
     <div class="grid place-items-center">
       <span id="show-btn" class="relative cursor-pointer text-center select-none text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 font-bold text-center">Learn More <i id="rot-1" class="fa-solid fa-caret-down"></i>
       </span>
@@ -358,6 +381,5 @@ if __name__ == "__main__":
       </div>
     </footer>
     <script src="https://glad432.github.io/js/script.min.js"></script>
-    <script defer src="https://js.hcaptcha.com/1/api.js"></script>
   </body>
 </html>

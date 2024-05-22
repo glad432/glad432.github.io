@@ -411,13 +411,6 @@ function downloadPyFile() {
 
 document.getElementById('dw').addEventListener('click', downloadPyFile);
 
-
-function validateCH(event) {
-	animateIcon("fade-2", "fa-fade", 2000);
-	event.preventDefault();
-	hcaptcha.execute();
-}
-
 async function createShareLink() {
 	try {
 		const response = await fetch('https://file.io/?expires=1w', {
@@ -431,7 +424,7 @@ async function createShareLink() {
 	}
 }
 
-function shareLink(token) {
+function shareLink() {
 	animateIcon("fade-2", "fa-fade", 3000);
 	fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin-pulse"></i></span>`;
 	createShareLink().then(result => {
@@ -480,7 +473,7 @@ function shareLink(token) {
 		});
 }
 
-shareButton.addEventListener('click', validateCH);
+shareButton.addEventListener('click', shareLink);
 
 function createFormData(content, fileName) {
 	shuffleArray(sentences);
@@ -757,6 +750,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			const contentLength = response.headers.get("content-length");
 			if (contentLength && parseInt(contentLength, 10) > maxFileSizeInBytes) {
 				throw new Error(`File size exceeds 1MB limit`);
+			}
+			if (sourceEditor.getModel().getValue().trim() !== '') {
+				addEmptyTab();
 			}
 			const data = await response.text();
 			sourceEditor.getModel().setValue(data);
