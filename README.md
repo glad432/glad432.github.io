@@ -2,7 +2,7 @@
 
 # Python Minifier - Glad432
 
-Welcome to my Python Minifier - Glad432. This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes, Monaco Editor for code editing, CryptoJS for cryptographic tasks, and SweetAlert2 for beautiful popup boxes. Additionally, it utilizes the python-minifier.com API to minify Python files, file.io for file sharing, and hCaptcha for human verification.
+Welcome to my Python Minifier - Glad432. This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes, Monaco Editor for code editing, CryptoJS for cryptographic tasks, and SweetAlert2 for beautiful popup boxes. Additionally, it utilizes the python-minifier.com API to minify Python files, file.io for file sharing, and zipjs for zipping the python file.
 
 ![python minifier - glad432](https://gladw-in.github.io/projects/images/python%20minifier.webp)
 
@@ -15,7 +15,7 @@ Welcome to my Python Minifier - Glad432. This repository showcases my work using
 - [file.io](https://www.file.io/) for file sharing
 - [Font Awesome](https://fontawesome.com/) for scalable vector icons
 - [QRCode.js](https://davidshimjs.github.io/qrcodejs/) for generating QR codes
-- [hCaptcha](https://www.hcaptcha.com/) for human verification
+- [JSZip](https://stuk.github.io/jszip/) for client-side zip file operations
 - [CryptoJS](https://github.com/brix/crypto-js) for cryptographic tasks
 - [SweetAlert2](https://sweetalert2.github.io/) for beautiful popup boxes
 
@@ -51,9 +51,9 @@ The [python-minifier.com API](https://www.python-minifier.com/) allows you to pr
 
 [QRCode.js](https://davidshimjs.github.io/qrcodejs/) is employed for generating QR codes dynamically in the project. It enhances user experience and facilitates easy sharing of information.
 
-## hCaptcha
+## JSZip
 
-[hCaptcha](https://www.hcaptcha.com/) adds an extra layer of security by verifying that users interacting with file share are human. It prevents automated abuse and spam.
+[ZipJS](https://stuk.github.io/jszip/) is a JavaScript library that allows you to work with zip files directly in your web browser, making it easy to create, extract, and manipulate zip archives without needing server-side processing.
 
 ## CryptoJS
 
@@ -71,7 +71,7 @@ The [python-minifier.com API](https://www.python-minifier.com/) allows you to pr
 - [file.io](https://www.file.io/) - Simple and secure file sharing.
 - [Font Awesome](https://fontawesome.com/) - Scalable vector icons.
 - [QRCode.js](https://davidshimjs.github.io/qrcodejs/) - Library for generating QR codes.
-- [hCaptcha](https://www.hcaptcha.com/) - Human verification service for security.
+- [JSZip](https://stuk.github.io/jszip/) -  JavaScript library for client-side zip file operations.
 - [CryptoJS](https://github.com/brix/crypto-js) - JavaScript library for cryptographic tasks..
 - [SweetAlert2](https://sweetalert2.github.io/) - Replacement for JavaScript's popup boxes with beautiful designs.
 ---

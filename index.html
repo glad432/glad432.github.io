@@ -33,9 +33,10 @@
     <script src="https://glad432.github.io/js/tailwind.min.js" rel="stylesheet"></script>
     <link href="https://glad432.github.io/css/style.min.css" rel="stylesheet">
     <script src="https://glad432.github.io/js/qrcode.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.10/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/typewriter-effect@2.21.0/dist/core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/loader.js"></script>
     <link rel="icon" type="image/png" href="https://glad432.github.io/favicon.ico" />
@@ -173,6 +174,7 @@
       </div>
       <p id="errmsg"></p>
       <div class="flex items-center">
+        <div id="tabs-overlay" class="hidden cursor-default absolute h-[80px] z-10 left-[1vh] right-[1vh] bg-transparent"></div>
         <ul id="file-tabs" class="flex list-none [transition:all_1s_ease] pr-[1px] mr-[4px] [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto">
           <li class="file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] select-none transition-opacity active" id="file-1">
             <i class="fa-solid fa-file-code text-blue-600 pr-2"></i>File 1.py
@@ -290,7 +292,9 @@ if __name__ == "__main__":
             <input type="checkbox" id="remove_explicit_return_none" name="Remove return statements that are not required" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
             <label for="remove_explicit_return_none" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove return statements that are not required</label>
           </div>
-          <div class="select-none space-x-2 text-center">
+          <a class="text-blue-500 text-base hover:underline hover:text-blue-600" href="https://dflook.github.io/python-minifier/transforms" target="_blank">Learn More <i class="fa-solid fa-arrow-up-right-from-square fa-sm"></i>
+          </a>
+          <div class="select-none mt-4 space-x-2 text-center">
             <button id="selectall" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Select all</button>
             <button id="Unselectall" class="text-2xl font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Unselect all</button>
           </div>
@@ -302,6 +306,9 @@ if __name__ == "__main__":
           <span class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i>
           </span>
         </span>
+        <button id="minifyAll" disabled class="hidden px-3 py-2 ml-2 font-bold cursor-pointer bg-blue-500 rounded-full text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">
+          <i class="fa-solid fa-angles-right"></i>
+        </button>
       </div>
       <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 hidden transition-opacity duration-2000"></div>
       <div id="popup" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded shadow-md z-50 hidden transition-transform duration-2000">
@@ -315,7 +322,11 @@ if __name__ == "__main__":
           <div id="help-msg" class="help-container text-left" oncontextmenu="return false"></div>
           <span id="scantocopy"></span>
           <div id="qrCode"></div>
-          <button id="closePopup" class="hidden select-none px-4 py-2 mt-2 font-bold bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Close</button>
+          <div class="flex flex-col">
+            <button id="downloadLinkurl" download class="hidden self-center w-fit inline-block px-4 py-2 mt-2 font-bold bg-green-500 rounded-lg text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download Zip <i class="fa-solid fa-file-zipper"></i>
+            </button>
+            <button id="closePopup" class="hidden select-none px-4 py-2 self-center mt-5 font-bold bg-red-500 rounded-full w-fit text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Close</button>
+          </div>
         </div>
       </div>
       <h2 class="select-none relative text-2xl font-bold mt-8 mb-5 text-white bg-black block rounded py-6 pl-[15px] [box-shadow:0_0_2px_rgb(0_0_0/30%)] [border-left:5px_solid_#ef4444]">Minified Code</h2>
@@ -323,7 +334,15 @@ if __name__ == "__main__":
         <span id="line-count-out" class="font-bold px-4 py-2 bg-red-500 rounded text-white">Lines: 1</span>
         <span id="minified-size" class="font-bold px-4 py-2 bg-red-500 rounded text-white">0.000 kB</span>
       </div>
-      <div id="minified" class="w-auto h-[300px] mt-4 rounded overflow-hidden border-[1px] border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]"></div>
+      <div class="flex items-center">
+        <div id="tabs-overlay-out" class="hidden select-none cursor-default absolute h-[80px] z-10 left-[1vh] right-[1vh] bg-transparent"></div>
+        <ul id="file-tabs-out" class="flex list-none [transition:all_1s_ease] pr-[1px] mr-[4px] [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto">
+          <li class="file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] select-none transition-opacity active" id="file-out-1">
+            <i class="fa-solid fa-file-code text-blue-600 pr-2"></i>File 1.py
+          </li>
+        </ul>
+      </div>
+      <div id="minified" class="w-auto h-[300px] mt-[2px] rounded overflow-hidden border-[1px] border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]"></div>
       <div class="mb-2 md:mb-4 select-none">
         <button id="dw" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download <i id="fade-1" class="fa-solid fa-download"></i>
         </button>
@@ -331,12 +350,19 @@ if __name__ == "__main__":
         </button>
         <button id="share" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Share <i id="fade-2" class="fa-solid fa-share-from-square"></i>
         </button>
+        <button id="zipFile" disabled class="hidden px-4 py-2 mt-2 font-bold cursor-pointer bg-orange-500 rounded text-white hover:bg-orange-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Zip <i id="fade-8" class="fa-solid fa-file-zipper"></i>
+          </i>
+        </button>
+        <div id="zipProgress" class="hidden">
+          <progress id="zipProgressBar" max="100" value="0" class="w-full h-2 mt-4"></progress>
+          <p id="zipProgressStatus" class="mt-2 text-base"></p>
+        </div>
       </div>
     </section>
     <div class="flex justify-center items-center pb-[25px]">
       <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row md:items-center">
         <div class="mb-6 md:mb-0 md:mr-6">
-          <p class="font-extrabold font-[cursive] text-center tracking-wide select-none uppercase">Share it on..</p>
+          <p class="font-extrabold font-['Source_Code_Pro'] text-center tracking-wide select-none uppercase">Share it on..</p>
         </div>
         <div class="flex flex-wrap justify-center">
           <a href="whatsapp://send?text=Check%20out%20this%20python%20minifier!!%20https://glad432.github.io/" target="_blank" class="text-green-500 icon-link mx-2 my-2" title="Share on WhatsApp">
@@ -348,7 +374,7 @@ if __name__ == "__main__":
           <a href="https://www.facebook.com/sharer/sharer.php?u=https://glad432.github.io/" target="_blank" class="text-blue-700 icon-link mx-2 my-2" title="Share on Facebook">
             <i class="fab fa-facebook fa-2x transition-transform transform hover:-translate-y-2"></i>
           </a>
-          <a href="https://x.com/intent/post?url=https://glad432.github.io/&text=Check%20out%20this%20python%20minifier!!" target="_blank" class="text-slate-600 icon-link mx-2 my-2" title="Share on Twitter">
+          <a href="https://x.com/intent/post?url=https://glad432.github.io/&text=Check%20out%20this%20python%20minifier!!" target="_blank" class="text-slate-600 icon-link mx-2 my-2" title="Share on X">
             <i class="fab fa-x-twitter fa-2x transition-transform transform hover:-translate-y-2"></i>
           </a>
           <a href="https://www.reddit.com/submit?url=https://glad432.github.io/&title=Check%20out%20this%20python%20minifier!!" target="_blank" class="text-red-500 icon-link mx-2 my-2" title="Share on Reddit">
