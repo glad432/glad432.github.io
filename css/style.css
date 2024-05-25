@@ -77,7 +77,7 @@ input:checked + .slider:before {
   --vscode-scrollbarSlider-activeBackground: rgba(28, 88, 145, 0.65);
   border-radius: 3px;
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 768px) {
   #errmsg,
   #line-count,
   #line-count-out,
@@ -95,10 +95,12 @@ input:checked + .slider:before {
   #rm,
   #selectall,
   #share,
-  #zipFile,
+  #zipFile {
+    font-size: 10px;
+  }
   .file-tab,
   .file-tab-out {
-    font-size: 10px;
+    font-size: 14px;
   }
   #editor,
   #minified {

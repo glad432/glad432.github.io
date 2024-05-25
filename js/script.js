@@ -638,7 +638,7 @@ async function zipPyFiles() {
 			return CryptoJS.AES.decrypt(sessionStorage.getItem(key), '4#>5p[:/v,o2q/(\*=:6').toString(CryptoJS.enc.Utf8).trim() !== "";
 		});
 
-	if (sortedKeys.length > 0) {
+	if (sortedKeys.length > 1) {
 		animateIcon("fade-8", "fa-fade", 700);
 		handleTabsOverlay(true);
 		shareButton.disabled = true;
