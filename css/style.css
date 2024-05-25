@@ -40,9 +40,13 @@ input:checked + .slider:before {
   display: block;
   opacity: 1;
 }
+.file-tab-out.active,
 .file-tab.active {
   background-color: rgb(69 69 69 / 14%);
   border-bottom: 3px solid rgb(59 130 246);
+}
+.file-tab-out.error {
+  border-bottom: 3px solid #b61616 !important;
 }
 .margin-view-overlays {
   -webkit-user-select: none;
@@ -90,25 +94,28 @@ input:checked + .slider:before {
   #load_File,
   #rm,
   #selectall,
-  #share {
-    font-size: 14px;
+  #share,
+  #zipFile,
+  .file-tab,
+  .file-tab-out {
+    font-size: 10px;
   }
   #editor,
   #minified {
     height: 250px !important;
   }
 }
+.dark .file-tab-out.active,
 .dark .file-tab.active {
   background-color: #404040ca;
   border-color: transparent;
   border-bottom: 3px solid rgb(59 130 246);
 }
-
-.dark .file-tab {
+.dark .file-tab,
+.dark .file-tab-out {
   background-color: #4040406a;
   border-color: transparent;
 }
-
 .dark div:where(.swal2-container) div:where(.swal2-popup) {
   background: #333;
   color: #e8e6e3;
