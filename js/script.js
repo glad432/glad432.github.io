@@ -416,12 +416,16 @@ function downloadPyFile() {
 	var dataUri = URL.createObjectURL(blob);
 	var downloadLink = document.createElement("a");
 	downloadLink.href = dataUri;
-	downloadLink.download = `${(fileTabs.children[currentTabIndex].textContent || "default.py").trim().replace(/\.[^/.]+$/, '')}_min.py`;
+	downloadLink.download = `${(fileTabs.children[currentTabIndex].textContent || "default.py").trim()}`;
 	downloadLink.click();
 	URL.revokeObjectURL(dataUri);
 }
 
-document.getElementById('dw').addEventListener('click', downloadPyFile);
+document.getElementById('dw').addEventListener('click', () => {
+	if (minifiedEditor.getModel().getValue() !== "") {
+		downloadPyFile();
+	}
+});
 
 async function createShareLink(file, filename) {
 	try {
@@ -504,11 +508,13 @@ function shareLink(content, filename, isZip) {
 }
 
 shareButton.addEventListener('click', () => {
-	animateIcon("fade-2", "fa-fade", 3000);
-	const content = minifiedEditor.getModel().getValue();
-	const filename = `${(fileTabs.children[currentTabIndex].textContent || "default.py").trim().replace(/\.[^/.]+$/, '')}_min.py`;
-	zipFileBtn.disabled = true;
-	shareLink(content, filename, false);
+	if (minifiedEditor.getModel().getValue() !== "") {
+		animateIcon("fade-2", "fa-fade", 3000);
+		const content = minifiedEditor.getModel().getValue();
+		const filename = `${(fileTabs.children[currentTabIndex].textContent || "default.py").trim()}`;
+		zipFileBtn.disabled = true;
+		shareLink(content, filename, false);
+	}
 });
 
 function createFormData(content, fileName) {
@@ -575,42 +581,66 @@ async function copyfilelink() {
 
 file_Link.addEventListener('click', copyfilelink);
 
-async function zipFiles(sortedKeys, maxLength, fileTabs, zip, zipProgressBar, zipProgressStatus, zipProgress) {
+async function zipFiles(selectedIndices, sortedKeys, maxLength, zip) {
 	let nonEmptyFilesCount = 0;
+	let fileOccurrences = {};
+	let fileNamesList = 'The list of the python files minified:\n\n';
 
 	function delay(time) {
 		return new Promise((resolve) => {
 			setTimeout(resolve, time);
 		});
 	}
-	let totalZipProgress = 0;
-	let fileNamesList = '';
-	fileNamesList += `The list of the python files minified:\n\n`;
 
-	for (let i = 0; i < maxLength; i++) {
-		const fileKey = sortedKeys[i];
-		const fileNameElement = fileTabs.children[i];
-		if (fileNameElement) {
-			const fileName = fileNameElement.textContent.trim();
+	function getFileNameFromTabId(tabId) {
+		const fileTab = document.getElementById(tabId);
+		return fileTab ? fileTab.textContent.trim() : '';
+	}
+
+	const finalFileNames = selectedIndices.map(index => {
+		const fileNameOut = getFileNameFromTabId(`file-out-${index + 1}`);
+		const fileNameIn = getFileNameFromTabId(`file-${index + 1}`);
+		let finalFileName = fileNameOut || fileNameIn;
+
+		if (!finalFileName) {
+			finalFileName = 'default.py';
+		}
+
+		const occurrence = (fileOccurrences[finalFileName] || 0) + 1;
+		fileOccurrences[finalFileName] = occurrence;
+		if (occurrence > 1) {
+			const extensionIndex = finalFileName.lastIndexOf('.');
+			const basename = extensionIndex === -1 ? finalFileName : finalFileName.slice(0, extensionIndex);
+			const extension = extensionIndex === -1 ? '' : finalFileName.slice(extensionIndex);
+			finalFileName = `${basename}-${occurrence}${extension}`;
+		}
+
+		return finalFileName;
+	});
+
+	for (let i = 0; i < selectedIndices.length; i++) {
+		const fileKey = sortedKeys[selectedIndices[i]];
+		const fileName = finalFileNames[i];
+
+		if (fileName) {
 			const decryptedCode = CryptoJS.AES.decrypt(sessionStorage.getItem(fileKey), '4#>5p[:/v,o2q/(\*=:6').toString(CryptoJS.enc.Utf8);
-			if (decryptedCode.trim() !== "") {
+
+			if (decryptedCode.trim() !== '') {
 				zip.file(fileName, decryptedCode);
 				fileNamesList += `${nonEmptyFilesCount + 1}. ${fileName}\n`;
 				nonEmptyFilesCount++;
-				totalZipProgress = (nonEmptyFilesCount / maxLength) * 100;
+
+				let totalZipProgress = ((nonEmptyFilesCount / maxLength) * 100);
 				zipProgressBar.value = totalZipProgress;
 				zipProgressStatus.innerText = `Zipping... ${totalZipProgress.toFixed(2)}%`;
 				zipProgress.classList.remove('hidden');
-				if (nonEmptyFilesCount > 10) {
-					await delay(300);
-				} else if (nonEmptyFilesCount <= 10) {
-					await delay(600);
-				}
+
+				await delay(nonEmptyFilesCount > 10 ? 300 : 600);
 			}
 		}
 	}
 
-	if (nonEmptyFilesCount > 1) {
+	if (nonEmptyFilesCount > 0) {
 		fileNamesList += `\nMinified on: ${new Date().toLocaleString()}\nhttps://glad432.github.io`;
 		zip.file('readme.txt', fileNamesList);
 		zipProgressBar.value = 100;
@@ -626,6 +656,7 @@ async function zipFiles(sortedKeys, maxLength, fileTabs, zip, zipProgressBar, zi
 
 		setTimeout(() => {
 			shareLink(zipBlob, 'minified_files.zip', true);
+			disableDwSrCpBtn(false);
 		}, 600);
 	}
 }
@@ -633,18 +664,32 @@ async function zipFiles(sortedKeys, maxLength, fileTabs, zip, zipProgressBar, zi
 async function zipPyFiles() {
 	const sortedKeys = Object.keys(sessionStorage)
 		.filter(key => key.startsWith("#PyFile-out-"))
-		.sort((a, b) => parseInt(a.split("-")[2]) - parseInt(b.split("-")[2]))
-		.filter(key => {
-			return CryptoJS.AES.decrypt(sessionStorage.getItem(key), '4#>5p[:/v,o2q/(\*=:6').toString(CryptoJS.enc.Utf8).trim() !== "";
-		});
+		.sort((a, b) => parseInt(a.split("-")[2]) - parseInt(b.split("-")[2]));
 
-	if (sortedKeys.length > 1) {
+	const maxLength = sortedKeys.filter(key => {
+		return CryptoJS.AES.decrypt(sessionStorage.getItem(key), '4#>5p[:/v,o2q/(\*=:6').toString(CryptoJS.enc.Utf8).trim() !== "";
+	}).length;
+
+	const tabContents = Array.from(fileTabsOut.children)
+		.map((tab, index) => ({
+			index: index,
+			content: minifiedEditor.getModel().getValue()
+		}));
+
+	const relevantTabs = tabContents.filter(tab => tab.content !== '');
+
+	const selectedIndices = relevantTabs.map(tab => tab.index);
+
+	if (selectedIndices.length > 0) {
 		animateIcon("fade-8", "fa-fade", 700);
 		handleTabsOverlay(true);
 		shareButton.disabled = true;
-		await zipFiles(sortedKeys, Math.min(20, sortedKeys.length), fileTabs, new JSZip(), zipProgressBar, zipProgressStatus, zipProgress);
+
+		const filteredSortedKeys = selectedIndices.map(index => sortedKeys[index]);
+
+		await zipFiles(selectedIndices, filteredSortedKeys, Math.min(20, maxLength), new JSZip());
 	}
-};
+}
 
 zipFileBtn.addEventListener('click', zipPyFiles);
 
@@ -652,10 +697,10 @@ function initializeMinifier() {
 	function build_query() {
 		let query = options.map(option => `${option}=${document.getElementById(option).checked}`).join('&');
 		if (preserve_globals) {
-			query += '&preserve_globals=' + encodeURIComponent(preserve_globals);
+			query += `&preserve_globals=${encodeURIComponent(preserve_globals)}`;
 		}
 		if (preserve_locals) {
-			query += '&preserve_locals=' + encodeURIComponent(preserve_locals);
+			query += `&preserve_locals=${encodeURIComponent(preserve_locals)}`;
 		}
 		return query;
 	}
@@ -746,26 +791,28 @@ function initializeMinifier() {
 	}
 
 	minifyButton.addEventListener('click', minifyClick);
-	copyButton.addEventListener('click', copyClick);
+	copyButton.addEventListener('click', () => {
+		if (minifiedEditor.getModel().getValue() !== "") {
+			copyClick();
+		}
+	});
 	minifyButton.disabled = false;
 
 	minifyAllBtn.addEventListener('click', async () => {
 		animateIcon(`minifyAll`, "fa-fade", 800);
+		minifyAllBtn.disabled = true;
 		const tabs = document.querySelectorAll('.file-tab-out');
 		const maxIndex = tabs.length;
 		let endIndex = Math.min(startIndex + 5, maxIndex);
 
 		for (let i = startIndex; i < endIndex; i++) {
-			try {
-				switchTabOut(i);
-				await minifyClick();
-				updateEditorContent(true);
-				await delay(100);
-			} catch (error) {
-				console.error('Error minifying content:', error);
-			}
+			switchTabOut(i);
+			await minifyClick();
+			updateEditorContent(true);
+			await delay(100);
 		}
 		startIndex = endIndex;
+		minifyAllBtn.disabled = false;
 	});
 
 	function delay(time) {
@@ -1026,17 +1073,16 @@ function editTabName() {
 	tabNameInput.value = activeTab.textContent.trim();
 	tabNameInput.autocorrect = "off";
 	tabNameInput.spellcheck = false;
-	tabNameInput.id = 'tab-name-input';
-	tabNameInput.className = "focus:outline-none bg-transparent";
+	tabNameInput.className = "tab-name-input focus:outline-none bg-transparent";
 	tabNameInput.style.width = `${activeTab.offsetWidth - 90}px`;
 	tabNameInput.addEventListener('keypress', (event) => {
 		if (event.key === 'Enter') {
-			updateTabName('tab-name-input', fileTabs, currentTabIndex);
+			updateTabName('.tab-name-input', fileTabs, currentTabIndex);
 			handleAutoScroll();
 		}
 	});
 	tabNameInput.addEventListener('blur', () => {
-		updateTabName('tab-name-input', fileTabs, currentTabIndex);
+		updateTabName('.tab-name-input', fileTabs, currentTabIndex);
 	});
 
 	var saveIcon = document.createElement('button');
@@ -1065,8 +1111,8 @@ function editTabName() {
 	handleAutoScroll();
 }
 
-function updateTabName(tabNameInputId, fileTabs, currentTabIndex) {
-	var tabNameInput = document.getElementById(tabNameInputId);
+function updateTabName(tabQueryInput, fileTabs, currentTabIndex) {
+	var tabNameInput = document.querySelector(tabQueryInput);
 	var newName = tabNameInput.value.trim();
 	var cleanedStrnopy = newName.replace(/\.py$/, '');
 	if (!(/^\s+$/.test(cleanedStrnopy)) && (cleanedStrnopy.length >= 1 && cleanedStrnopy.length <= 256)) {
@@ -1298,8 +1344,8 @@ function switchTab(index, fromSwitchTabOut = false) {
 	updateEditorContent();
 	updateTabStyles();
 	if (previousIndex !== currentTabIndex) {
-		if (fileTabs.children[previousIndex].querySelector('#tab-name-input')) {
-			updateTabName('tab-name-input', fileTabs, currentTabIndex);
+		if (fileTabs.children[previousIndex].querySelector('.tab-name-input')) {
+			updateTabName('.tab-name-input', fileTabs, currentTabIndex);
 
 		}
 	}
@@ -1335,17 +1381,16 @@ function editTabNameOut() {
 	tabNameInput.value = activeTab.textContent.trim();
 	tabNameInput.autocorrect = "off";
 	tabNameInput.spellcheck = false;
-	tabNameInput.id = 'tab-name-input-out';
-	tabNameInput.className = "focus:outline-none bg-transparent";
+	tabNameInput.className = "tab-name-input-out focus:outline-none bg-transparent";
 	tabNameInput.style.width = `${activeTab.offsetWidth - 90}px`;
 	tabNameInput.addEventListener('keypress', (event) => {
 		if (event.key === 'Enter') {
-			updateTabName('tab-name-input-out', fileTabsOut, currentTabIndexOut);
+			updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut);
 			handleAutoScrollOut();
 		}
 	});
 	tabNameInput.addEventListener('blur', () => {
-		updateTabName('tab-name-input-out', fileTabsOut, currentTabIndexOut);
+		updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut);
 	});
 
 	var saveIcon = document.createElement('button');
@@ -1453,15 +1498,14 @@ function updateTabStylesOut() {
 
 function switchTabOut(index) {
 	switchTab(index, true);
-	minifiedEditor.getModel().getValue() === '' ? disableDwSrCpBtn(true) : disableDwSrCpBtn(false);
 	var previousIndexOut = currentTabIndexOut;
 	currentTabIndexOut = Math.max(0, Math.min(index, sourcesOut.length - 1));
 	animateIcon(`file-out-${currentTabIndexOut + 1}`, "animate-pulse", 700);
 	updateEditorContent(true);
 	updateTabStylesOut();
 	if (previousIndexOut !== currentTabIndexOut) {
-		if (fileTabsOut.children[previousIndexOut].querySelector('#tab-name-input-out')) {
-			updateTabName('tab-name-input-out', fileTabsOut, currentTabIndexOut);
+		if (fileTabsOut.children[previousIndexOut].querySelector('.tab-name-input-out')) {
+			updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut);
 		}
 	}
 }
