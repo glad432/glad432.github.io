@@ -416,7 +416,7 @@ function downloadPyFile() {
 	var dataUri = URL.createObjectURL(blob);
 	var downloadLink = document.createElement("a");
 	downloadLink.href = dataUri;
-	downloadLink.download = `${(fileTabs.children[currentTabIndex].textContent || "default.py").trim()}`;
+	downloadLink.download = `${(fileTabs.children[currentTabIndex].textContent || fileTabsOut.children[currentTabIndexOut].textContent || "default.py").trim()}`;
 	downloadLink.click();
 	URL.revokeObjectURL(dataUri);
 }
@@ -463,7 +463,7 @@ function shareLink(content, filename, isZip) {
 				link_newtab.title = 'Open in new tab';
 				orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
 				downloadLinkUrl.classList.remove('hidden');
-				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-center text-gray-700">${isZip ? 'Python files will be deleted after download.' : ''}<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
+				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-center text-gray-700">${isZip ? 'Zip File' : 'Python files'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
 				orscan.classList.add('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
 				qrCode.style.textAlign = '-moz-center';
@@ -485,7 +485,7 @@ function shareLink(content, filename, isZip) {
 						const a = document.createElement('a');
 						a.href = url;
 						a.download = filename;
-						a.style.display = 'none';
+						a.classList.add("hidden");
 						document.body.appendChild(a);
 						a.click();
 						window.URL.revokeObjectURL(url);
@@ -511,7 +511,7 @@ shareButton.addEventListener('click', () => {
 	if (minifiedEditor.getModel().getValue() !== "") {
 		animateIcon("fade-2", "fa-fade", 3000);
 		const content = minifiedEditor.getModel().getValue();
-		const filename = `${(fileTabs.children[currentTabIndex].textContent || "default.py").trim()}`;
+		const filename = `${(fileTabs.children[currentTabIndex].textContent || fileTabsOut.children[currentTabIndexOut].textContent || "default.py").trim()}`;
 		zipFileBtn.disabled = true;
 		shareLink(content, filename, false);
 	}
@@ -677,10 +677,9 @@ async function zipPyFiles() {
 		}));
 
 	const relevantTabs = tabContents.filter(tab => tab.content !== '');
-
 	const selectedIndices = relevantTabs.map(tab => tab.index);
 
-	if (selectedIndices.length > 0) {
+	if (selectedIndices.length > 1) {
 		animateIcon("fade-8", "fa-fade", 700);
 		handleTabsOverlay(true);
 		shareButton.disabled = true;
@@ -728,7 +727,6 @@ function initializeMinifier() {
 	async function minifyClick() {
 		fileTabsOverlayOut.classList.remove("hidden");
 		fileTabsOverlay.classList.remove("hidden");
-		minifyButton.disabled = false;
 		disableDwSrCpBtn(true);
 		selectallopt.disabled = true;
 		unselectallopt.disabled = true;
@@ -743,7 +741,7 @@ function initializeMinifier() {
 		minifiedEditor.getModel().setValue('');
 		animateIcon("fade-0", "fa-fade", 1500);
 		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
-		if (sourceEditor.getModel().getValue() !== '') {
+		if (sourceEditor.getModel().getValue() !== '' && minifiedEditor.getModel().getValue() === '') {
 			try {
 				const response = await fetch(`https://api.python-minifier.com/minify?${build_query()}`, {
 					method: 'POST',
@@ -781,7 +779,7 @@ function initializeMinifier() {
 		selectallopt.classList.remove("cursor-not-allowed");
 		unselectallopt.classList.remove("cursor-not-allowed");
 		minifyButton.disabled = false;
-		if (minifiedEditor.getModel().getValue().trim() === "") {
+		if (minifiedEditor.getModel().getValue().trim() === "" && sourceEditor.getModel().getValue() !== "") {
 			fileTabsOut.children[currentTabIndexOut].classList.add("error");
 			document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = "Minification failed , Re-check the Orginal code";
 		} else {
@@ -798,13 +796,16 @@ function initializeMinifier() {
 	});
 	minifyButton.disabled = false;
 
+	let isProcessing = false;
+
 	minifyAllBtn.addEventListener('click', async () => {
+		if (isProcessing) return;
+		isProcessing = true;
 		animateIcon(`minifyAll`, "fa-fade", 800);
 		minifyAllBtn.disabled = true;
 		const tabs = document.querySelectorAll('.file-tab-out');
 		const maxIndex = tabs.length;
 		let endIndex = Math.min(startIndex + 5, maxIndex);
-
 		for (let i = startIndex; i < endIndex; i++) {
 			switchTabOut(i);
 			await minifyClick();
@@ -812,7 +813,13 @@ function initializeMinifier() {
 			await delay(100);
 		}
 		startIndex = endIndex;
-		minifyAllBtn.disabled = false;
+		if (startIndex >= maxIndex) {
+			startIndex = 0;
+		}
+		if (startIndex % 5 === 0) {
+			minifyAllBtn.disabled = false;
+		}
+		isProcessing = false;
 	});
 
 	function delay(time) {
