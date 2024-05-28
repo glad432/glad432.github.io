@@ -429,7 +429,7 @@ document.getElementById('dw').addEventListener('click', () => {
 
 async function createShareLink(file, filename) {
 	try {
-		const response = await fetch('https://file.io/?expires=1w', {
+		const response = await fetch('https://file.io/?expires=2d', {
 			method: 'POST',
 			body: createFormData(file, filename)
 		});
@@ -463,7 +463,7 @@ function shareLink(content, filename, isZip) {
 				link_newtab.title = 'Open in new tab';
 				orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
 				downloadLinkUrl.classList.remove('hidden');
-				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-center text-gray-700">${isZip ? 'Zip File' : 'Python files'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
+				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-center text-gray-700">${isZip ? 'Zip File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
 				orscan.classList.add('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
 				qrCode.style.textAlign = '-moz-center';
@@ -512,6 +512,7 @@ shareButton.addEventListener('click', () => {
 		animateIcon("fade-2", "fa-fade", 3000);
 		const content = minifiedEditor.getModel().getValue();
 		const filename = `${(fileTabs.children[currentTabIndex].textContent || fileTabsOut.children[currentTabIndexOut].textContent || "default.py").trim()}`;
+		shareButton.disabled = true;
 		zipFileBtn.disabled = true;
 		shareLink(content, filename, false);
 	}
@@ -679,9 +680,10 @@ async function zipPyFiles() {
 	const relevantTabs = tabContents.filter(tab => tab.content !== '');
 	const selectedIndices = relevantTabs.map(tab => tab.index);
 
-	if (selectedIndices.length > 1) {
+	if (selectedIndices.length > 1 && maxLength > 1) {
 		animateIcon("fade-8", "fa-fade", 700);
 		handleTabsOverlay(true);
+		zipFileBtn.disabled = true;
 		shareButton.disabled = true;
 
 		const filteredSortedKeys = selectedIndices.map(index => sortedKeys[index]);
