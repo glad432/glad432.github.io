@@ -3,7 +3,6 @@ const minifyAllBtn = document.getElementById('minifyAll');
 const copyButton = document.getElementById('copy');
 const anitext = document.getElementById("anitext");
 const errorMessage = document.getElementById('errmsg');
-const pysource = document.getElementById('source');
 const dwButton = document.getElementById('dw');
 const shareButton = document.getElementById("share");
 const dropArea = document.getElementById('dropArea');
@@ -23,7 +22,6 @@ const help_msg = document.getElementById('help-msg');
 const link_newtab = document.getElementById("new_tab");
 const inputContainer = document.getElementById("inputContainer");
 const fileLinkInput = document.getElementById("fileLinkInput");
-const inputBtnIcon = document.getElementById("input-icon");
 const darkModeToggle = document.getElementById("darkModeToggle");
 const selectallopt = document.getElementById('selectall');
 const unselectallopt = document.getElementById('Unselectall');
@@ -166,7 +164,6 @@ require.config({
 
 require(['vs/editor/editor.main'], () => {
 	sourceEditor = monaco.editor.create(document.getElementById('editor'), {
-		value: "",
 		language: 'python',
 		minimap: {
 			enabled: false
@@ -222,7 +219,7 @@ require(['vs/editor/editor.main'], () => {
 
 	function typeInEditor() {
 		if (typingInProgress) return;
-		let typingPYcode = document.getElementById("source").value;
+		const typingPYcode = CryptoJS.AES.decrypt("U2FsdGVkX193pc0vAtJ5A6OWR/h1wgrCfeKfO/6qgjWA+pkCUbdIupXhCTFRoDR2n65EQf5blOu2I+RDW598wSH7M1e3zTH4XIA0Wcl8+qmoZKaiUJFKC3QaiT9gYtcEFOteoT/6uKl2b8kUNM+Dl2U+A5cezQFkURxj5xxIjCqgX1jcRLpLQY2LIOpV0IbA3GLbvaNuh1wDUUsvwnIx+vnNeYruSD2fOXKdz0Lfyn1bnYPA6BxSWrvRxbgoSXTBVAD4tlN19YxI14tUJdizCFsGAKkLvUtKecD9X72maj6ZzEhvoqVTwMwxGawFCzuUeAm8TyxTlfOrVWfVxPoQatCQ0dOsWqRUiVCY8HE+A/OiJ133mA0+l0W1wvkV9bHDqR1UzqP8VAyh8UPB2YMLYnHZVr+US3Bpgu+iczkl2vewGWtt2WJ991O+HsXGCj0tc6iWcwmPu2PaKfR8t0x1PLWYUfVo2lycMMgBCfjhQyIq61Bfhm9QHMisqlap6hE0k1QsBHZOoL9Q+yCslEM8Us0FkQP/KK07NBCKULM8H47aFac6sOBd1VxCw9k1nnA+L1gNeG8oDVu4leUf6bZjs6m0msJISL1plqZY5cCpjdhrcImSsdNGt1jqXV1p7QnwGgVMl9HuRK9AlzxLCA0YNLyXzGqQNJlbSVrzJYS2JgW0Xw0B9M6vL/0G7FygNn2FefvXfx/Pk1ImUqH1u5y6tiuEUYAnxATe7y2cGcHa1J+f4IEV7AeXTEc/zoSh3mhmze8Y6gQN23YEtD0Pxr+3+42FO1dS1zSy3Un9G4vbpgbAPdb29lP/fVUrHSVokEadqfmWDxbnNsg2kwbkb3SuCVhd95Ev+5k9b++oGzlJ4npthp7mczo0IuaYFAZv42t2dPvbI3B6noUaa1S5hXJz4AWvzXX/M5mNxTxmrTblhu1UfomDBgJPnV7Udz6f2yVsPlSsJwApJYykUiB2xPOwPaQl1Zu4j7JhsSgHo2oP2sJonUtVYV3ui1aHwdJIIDCJT0GxCajxjxlTpEVE/P5FEpWymIScnbZ6kEZiy41OagjHnDx+HsbrNn5z6hpGR6u3U8n1hIeE5mfWMBb6XXRurTGU6x1UYDWTTFviIhLCCK2u7ociPOpvYVuD499vA+MYzfKJy0Itjw4S6rd8Ftw0cGsaaY0VbETbchMMtAWN637HgCf6tssXZG0wnjcicVBHrelgKSp+v2rxjfvBtbkYRJTpKhNoT/M+lf8eMy3Ww9OP7G3W4iM71mv9PC9YCYSFehCWFCyUOaDbhslZHqnNrfCmGJSEELLFGb9nnx1EbCvuy5G5ewRtMYzFPRYk3Sf5BlF6AVbiOjgt70tExE8tToejh5gLHjaf4SAGIy24e0Q=", '4#>5p[:/v,o2q/(\\*=:6').toString(CryptoJS.enc.Utf8);
 		if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
 			type_overlay.classList.remove('!hidden');
 			let index = 0;
@@ -318,7 +315,6 @@ window.addEventListener('load', () => {
 			sourceEditor.revealLineInCenter(Math.max(totalLines - 5, 1));
 			handleErrorMessage(`${exctri} Maximum Size limit (1MB) reached!`);
 		}
-		pysource.value = sourceEditor.getModel().getValue();
 	});
 
 });
@@ -421,7 +417,7 @@ function downloadPyFile() {
 	URL.revokeObjectURL(dataUri);
 }
 
-document.getElementById('dw').addEventListener('click', () => {
+dwButton.addEventListener('click', () => {
 	if (minifiedEditor.getModel().getValue() !== "") {
 		downloadPyFile();
 	}
@@ -750,7 +746,7 @@ function initializeMinifier() {
 					headers: {
 						'Content-Type': 'text/plain'
 					},
-					body: pysource.value
+					body: sourceEditor.getModel().getValue()
 				});
 				if (response.ok) {
 					const minified = await response.text();
@@ -839,7 +835,6 @@ function clearSource() {
 	disableDwSrCpBtn(true);
 	handleErrorMessage();
 	fileInput.value = '';
-	pysource.textContent = '';
 	minifiedEditor.getModel().setValue('');
 	sourceEditor.getModel().setValue('');
 	fileLinkInput.value = '';
@@ -1171,6 +1166,7 @@ function addEmptyTab() {
 		});
 		return;
 	}
+	saveEditorContent();
 	addNewTabBtn.classList.remove("hidden")
 	minifyAllBtn.disabled = false;
 	minifyAllBtn.classList.remove("hidden")
@@ -1196,8 +1192,8 @@ function addEmptyTab() {
 }
 
 addNewTabBtn.addEventListener("click", () => {
-	animateIcon("addNewTab", "fa-fade", 600);
-	setTimeout(addEmptyTab, 500);
+	animateIcon("addNewTab", "fa-fade", 500);
+	setTimeout(addEmptyTab, 400);
 });
 
 function updateTabStyles() {
@@ -1305,6 +1301,7 @@ function confirmDeleteFile(index) {
 	Swal.fire({
 		html: `Are you sure you want to delete <span class="font-bold text-neutral-500 hover:underline">${tabFileName.length > 15 ? `${tabFileName.slice(0,7)}...${tabFileName.slice(-3)}` : tabFileName}</span> tab?`,
 		icon: "question",
+		allowOutsideClick: false,
 		showCancelButton: true,
 		confirmButtonColor: "#3085d6",
 		confirmButtonText: "Yes",
@@ -1430,6 +1427,7 @@ function editTabNameOut() {
 
 function addTabOut() {
 	disableTyping();
+	saveEditorContent(true);
 	var newFileIndexOut = sourcesOut.length;
 	var newSourceId = `#PyFile-out-${newFileIndexOut + 1}`;
 	var newTab = document.createElement('li');

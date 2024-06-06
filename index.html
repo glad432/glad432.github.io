@@ -184,48 +184,6 @@
           <i class="fa-solid fa-circle-plus fa-xl text-gray-700"></i>
         </button>
       </div>
-      <textarea id="source" class="hidden" autocomplete="off">class Person:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-    def greet(self):
-        print(f"Hello, my name is {self.name} and I'm {self.age} years old.")
-
-def fibonacci(n):
-    if n <= 0:
-        return 0
-    elif n == 1:
-        return 1
-    else:
-        return fibonacci(n - 1) + fibonacci(n - 2)
-
-# Lambda function to calculate the square of a number
-square = lambda x: x * x
-
-# Main program
-if __name__ == "__main__":
-    print("Welcome to the Python Minifier!")
-
-    person = Person("Glad", 18)
-    person.greet()
-
-    num_terms = 10
-
-    try:
-        if num_terms <= 0:
-            raise ValueError("Number of terms must be positive.")
-        
-        print("Fibonacci sequence:")
-        for i in range(num_terms):
-            fib_value = fibonacci(i)
-            print(f"Term {i}: {fib_value}")
-    except ValueError as e:
-        print(f"Error: {e}")
-
-    # Using the square lambda function
-    number = 5
-    print(f"The square of {number} is {square(number)}")</textarea>
       <div id="editor" class="w-auto h-[300px] mt-[2px] rounded overflow-hidden border-[1px] border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]">
         <div id="type-overlay" class="md:select-none md:cursor-default md:absolute md:h-[300px] md:z-10 md:left-[10vh] md:right-[10vh] md:bg-transparent"></div>
       </div>
