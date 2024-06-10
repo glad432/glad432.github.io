@@ -44,7 +44,7 @@ var sourcesOut = ['#PyFile-out-1'];
 var currentTabIndex = 0;
 var currentTabIndexOut = 0;
 let startIndex = 0;
-const maxFileSizeInBytes = 1 * 1024 * 1024;
+const maxFileSizeInBytes = 1 * 400 * 1024;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
 const code_file = '<i class="fa-solid fa-file-code text-blue-600 pr-2"></i>';
@@ -313,7 +313,7 @@ window.addEventListener('load', () => {
 				column: sourceEditor.getModel().getLineMaxColumn(totalLines)
 			});
 			sourceEditor.revealLineInCenter(Math.max(totalLines - 5, 1));
-			handleErrorMessage(`${exctri} Maximum Size limit (1MB) reached!`);
+			handleErrorMessage(`${exctri} Maximum Size limit (400kB) reached!`);
 		}
 	});
 
@@ -396,7 +396,7 @@ function setupFileInput() {
 			};
 			reader.readAsText(file);
 		} else {
-			handleErrorMessage(`${exctri} File size exceeds 1MB. Please select a smaller file.`);
+			handleErrorMessage(`${exctri} File size exceeds 400kb. Please select a smaller file.`);
 			fileInput.value = '';
 		}
 	}
@@ -681,7 +681,6 @@ async function zipPyFiles() {
 		handleTabsOverlay(true);
 		zipFileBtn.disabled = true;
 		shareButton.disabled = true;
-
 		const filteredSortedKeys = selectedIndices.map(index => sortedKeys[index]);
 
 		await zipFiles(selectedIndices, filteredSortedKeys, Math.min(20, maxLength), new JSZip());
@@ -692,12 +691,21 @@ zipFileBtn.addEventListener('click', zipPyFiles);
 
 function initializeMinifier() {
 	function build_query() {
-		let query = options.map(option => `${option}=${document.getElementById(option).checked}`).join('&');
-		if (preserve_globals) {
-			query += `&preserve_globals=${encodeURIComponent(preserve_globals)}`;
+		var query = options.map(option => {
+			var checkbox = document.getElementById(option);
+			if (checkbox && checkbox.checked) {
+				return `${option}=true`;
+			} else {
+				return `${option}=false`;
+			}
+		}).join('&');
+		const preserveGlobals = preserve_globals ? preserve_globals.value.split(',').map(str => str.trim()) : [];
+		if (preserveGlobals.length > 0) {
+			query += '&preserve_globals=' + encodeURIComponent(JSON.stringify(preserveGlobals));
 		}
-		if (preserve_locals) {
-			query += `&preserve_locals=${encodeURIComponent(preserve_locals)}`;
+		const preserveLocals = preserve_locals ? preserve_locals.value.split(',').map(str => str.trim()) : [];
+		if (preserveLocals.length > 0) {
+			query += '&preserve_locals=' + encodeURIComponent(JSON.stringify(preserveLocals));
 		}
 		return query;
 	}
@@ -741,7 +749,7 @@ function initializeMinifier() {
 		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
 		if (sourceEditor.getModel().getValue() !== '' && minifiedEditor.getModel().getValue() === '') {
 			try {
-				const response = await fetch(`https://api.python-minifier.com/minify?${build_query()}`, {
+				const response = await fetch(`https://python-minify.vercel.app/minify?${build_query()}`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'text/plain'
@@ -749,8 +757,8 @@ function initializeMinifier() {
 					body: sourceEditor.getModel().getValue()
 				});
 				if (response.ok) {
-					const minified = await response.text();
-					minifiedEditor.getModel().setValue(minified);
+					const minified = await response.json();
+					minifiedEditor.getModel().setValue(minified.minified_code);
 					saveEditorContent(true);
 					minifiedEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 					disableDwSrCpBtn(false);
@@ -945,7 +953,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const fileName = fileNameMatch ? fileNameMatch[1] : fileUrl.split('/').pop();
 			const contentLength = response.headers.get("content-length");
 			if (contentLength && parseInt(contentLength, 10) > maxFileSizeInBytes) {
-				throw new Error(`File size exceeds 1MB limit`);
+				throw new Error(`File size exceeds 400kb limit`);
 			}
 			if (sourceEditor.getModel().getValue().trim() !== '') {
 				addEmptyTab();

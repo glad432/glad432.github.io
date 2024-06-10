@@ -2,7 +2,7 @@
 
 # Python Minifier - Glad432
 
-Welcome to my Python Minifier - Glad432. This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes, Monaco Editor for code editing, CryptoJS for cryptographic tasks, and SweetAlert2 for beautiful popup boxes. Additionally, it utilizes the python-minifier.com API to minify Python files, file.io for file sharing, and zipjs for zipping the python file.
+Welcome to my Python Minifier - Glad432. This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes, Monaco Editor for code editing, CryptoJS for cryptographic tasks, and SweetAlert2 for beautiful popup boxes. Additionally, it utilizes the API to minify the python files, file.io for file sharing, and zipjs for zipping the python file.
 
 ![python minifier - glad432](https://gladw-in.github.io/projects/images/python%20minifier.webp)
 
@@ -11,7 +11,7 @@ Welcome to my Python Minifier - Glad432. This repository showcases my work using
 - HTML
 - CSS (including Tailwind CSS)
 - JavaScript (including Monaco Editor)
-- [python-minifier.com API](https://www.python-minifier.com/)
+- [Python Minify API](https://github.com/glad432/python-minifier-flask)
 - [file.io](https://www.file.io/) for file sharing
 - [Font Awesome](https://fontawesome.com/) for scalable vector icons
 - [QRCode.js](https://davidshimjs.github.io/qrcodejs/) for generating QR codes
@@ -35,9 +35,9 @@ This project takes advantage of the [Tailwind CSS](https://tailwindcss.com/) fra
 
 [Monaco Editor](https://microsoft.github.io/monaco-editor/) is used for code editing in this project. Developed by Microsoft, Monaco Editor provides a fast and feature-rich code editing experience. It supports a wide range of programming languages and offers advanced editing features.
 
-## Minifying Python Files with python-minifier.com API
+## Minifying Python Files using API
 
-The [python-minifier.com API](https://www.python-minifier.com/) allows you to programmatically minify your Python files. This can be especially useful when preparing production-ready code, optimizing for web services, or sharing code snippets.
+The [Python Minify API](https://github.com/glad432/python-minifier-flask) allows you to programmatically minify your Python files. Building a Flask-based web API for minifying Python code. Enabling easy submission and minification of Python code. 
 
 ## File Sharing with file.io
 
@@ -67,7 +67,7 @@ The [python-minifier.com API](https://www.python-minifier.com/) allows you to pr
 
 - [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework for rapid UI development.
 - [Monaco Editor](https://microsoft.github.io/monaco-editor/) - A fast and feature-rich code editor by Microsoft.
-- [python-minifier.com](https://www.python-minifier.com/) - API for minifying Python files.
+- [Python Minify API](https://github.com/glad432/python-minifier-flask) - API for minifying Python files.
 - [file.io](https://www.file.io/) - Simple and secure file sharing.
 - [Font Awesome](https://fontawesome.com/) - Scalable vector icons.
 - [QRCode.js](https://davidshimjs.github.io/qrcodejs/) - Library for generating QR codes.
