@@ -34,7 +34,7 @@
     <link href="https://glad432.github.io/css/style.min.css" rel="stylesheet">
     <script src="https://glad432.github.io/js/qrcode.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.1/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/typewriter-effect@2.21.0/dist/core.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
@@ -146,7 +146,7 @@
       <div id="inputContainer" class="hidden mt-4 transition-all duration-500 ease-in-out">
         <div class="flex flex-col items-center">
           <div class="flex items-center">
-            <input type="text" id="fileLinkInput" placeholder="Enter .py link (1 MB max)" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 py-2 px-4">
+            <input type="text" id="fileLinkInput" placeholder="Enter .py link (400kb) max" class="select-none cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 py-2 px-4">
             <button id="load_File" title="Or click Enter button to load" class="select-none text-base ml-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform">Load <i id="fade-3" class="fa-solid fa-cloud-arrow-down"></i>
             </button>
           </div>
@@ -154,7 +154,7 @@
             <div class="help-container relative top-[1.5px] right-0 mr-2" oncontextmenu="return false">
               <i class="fas fa-question-circle fa-sm text-sm text-blue-500"></i>
               <div class="help-content absolute cursor-default">
-                <p class="select-none text-sm text-gray-700">Only Raw Github URLs (1MB) are recommended.</p>
+                <p class="select-none text-sm text-gray-700">Only Raw Github URLs (400kb) are recommended.</p>
               </div>
             </div>
             <span id="sample_link" class="text-blue-600 hover:underline">Try sample URL <i id="fade-6" class="fa-solid fa-circle-arrow-up fa-sm"></i>
@@ -220,7 +220,7 @@
           </div>
           <div class="mb-4">
             <label for="preserve_locals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Locals:</label>
-            <input type="text" id="preserve_locals" placeholder="Preserved Locals" name="Preserved Locals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+            <input type="text" id="preserve_locals" placeholder="Preserved Locals (use , between the words)" name="Preserved Locals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
           </div>
           <div class="mb-4">
             <input type="checkbox" id="rename_globals" name="Rename Globals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
@@ -228,7 +228,7 @@
           </div>
           <div class="mb-4">
             <label for="preserve_globals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Globals:</label>
-            <input type="text" id="preserve_globals" placeholder="Preserved Globals" name="Preserved Globals" value="handler" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+            <input type="text" id="preserve_globals" placeholder="Preserved Globals (use , between the words)" name="Preserved Globals" value="handler" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
           </div>
           <div class="mb-4">
             <input type="checkbox" id="convert_posargs_to_args" name="Convert Positional-Only Arguments to Normal Arguments" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
