@@ -647,6 +647,10 @@ video {
   position: absolute;
 }
 
+.\!relative {
+  position: relative !important;
+}
+
 .relative {
   position: relative;
 }
@@ -657,6 +661,10 @@ video {
 
 .-inset-1 {
   inset: -0.25rem;
+}
+
+.\!top-\[1\.5px\] {
+  top: 1.5px !important;
 }
 
 .bottom-0 {
@@ -697,10 +705,6 @@ video {
 
 .top-1\/2 {
   top: 50%;
-}
-
-.top-\[1\.5px\] {
-  top: 1.5px;
 }
 
 .top-\[8px\] {
