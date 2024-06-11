@@ -41,7 +41,7 @@ The [Python Minify API](https://github.com/glad432/python-minifier-flask) allows
 
 ## File Sharing with file.io
 
-[file.io](https://www.file.io/) is used for easy and secure file sharing. It provides a simple and temporary solution for sharing Python files with others.
+[file.io](https://www.file.io/) is used for easy and secure file sharing. It provides a simple and temporary solution for sharing Python or Zip files with others.
 
 ## Font Awesome
 
