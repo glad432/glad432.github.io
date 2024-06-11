@@ -108,6 +108,14 @@ input:checked + .slide:before {
     height: 250px !important;
   }
 }
+.before\:content-\[\'\F05A\'\]::before {
+  --tw-content: "";
+  content: var(--tw-content);
+}
+.before\:content-\[\'\F219\'\]::before {
+  --tw-content: "";
+  content: var(--tw-content);
+}
 .dark .file-tab-out.active,
 .dark .file-tab.active {
   background-color: #404040ca;
