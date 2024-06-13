@@ -3551,6 +3551,14 @@ video {
 }
 
 @media (min-width: 640px) {
+  .sm\:ml-\[4rem\] {
+    margin-left: 4rem;
+  }
+
+  .sm\:mr-\[4rem\] {
+    margin-right: 4rem;
+  }
+
   .sm\:px-4 {
     padding-left: 1rem;
     padding-right: 1rem;
