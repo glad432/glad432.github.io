@@ -107,6 +107,10 @@ input:checked + .slide:before {
   #minified {
     height: 250px !important;
   }
+  #qrCode {
+    margin-left: 4rem !important;
+    margin-right: 4rem !important;
+  }
 }
 .dark .file-tab-out.active,
 .dark .file-tab.active {
