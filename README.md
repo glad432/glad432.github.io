@@ -2,7 +2,7 @@
 
 # Python Minifier - Glad432
 
-Welcome to my Python Minifier - Glad432. This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode.js for generating QR codes, Monaco Editor for code editing, CryptoJS for cryptographic tasks, and SweetAlert2 for beautiful popup boxes. Additionally, it utilizes the API to minify the python files, file.io for file sharing, and zipjs for zipping the python file.
+Welcome to my Python Minifier - Glad432. This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode for generating QR codes, Monaco Editor for code editing, CryptoJS for cryptographic tasks, and SweetAlert2 for beautiful popup boxes. Additionally, it utilizes the API to minify the python files, file.io for file sharing, and zipjs for zipping the python file.
 
 ![python minifier - glad432](https://gladw-in.github.io/projects/images/python%20minifier.webp)
 
@@ -14,7 +14,7 @@ Welcome to my Python Minifier - Glad432. This repository showcases my work using
 - [Python Minify API](https://github.com/glad432/python-minifier-flask)
 - [file.io](https://www.file.io/) for file sharing
 - [Font Awesome](https://fontawesome.com/) for scalable vector icons
-- [QRCode.js](https://davidshimjs.github.io/qrcodejs/) for generating QR codes
+- [QRCode](https://kazuhikoarase.github.io/qrcode-generator/) for generating QR codes
 - [JSZip](https://stuk.github.io/jszip/) for client-side zip file operations
 - [CryptoJS](https://github.com/brix/crypto-js) for cryptographic tasks
 - [SweetAlert2](https://sweetalert2.github.io/) for beautiful popup boxes
@@ -47,9 +47,9 @@ The [Python Minify API](https://github.com/glad432/python-minifier-flask) allows
 
 [Font Awesome](https://fontawesome.com/) is utilized for scalable vector icons, adding a visually appealing and customizable element.
 
-## QRCode.js
+## QRCode
 
-[QRCode.js](https://davidshimjs.github.io/qrcodejs/) is employed for generating QR codes dynamically in the project. It enhances user experience and facilitates easy sharing of information.
+[QRCode](https://kazuhikoarase.github.io/qrcode-generator/) is employed for generating QR codes dynamically in the project. It enhances user experience and facilitates easy sharing of information.
 
 ## JSZip
 
@@ -70,7 +70,7 @@ The [Python Minify API](https://github.com/glad432/python-minifier-flask) allows
 - [Python Minify API](https://github.com/glad432/python-minifier-flask) - API for minifying Python files.
 - [file.io](https://www.file.io/) - Simple and secure file sharing.
 - [Font Awesome](https://fontawesome.com/) - Scalable vector icons.
-- [QRCode.js](https://davidshimjs.github.io/qrcodejs/) - Library for generating QR codes.
+- [QRCode](https://kazuhikoarase.github.io/qrcode-generator/) - Library for generating QR codes.
 - [JSZip](https://stuk.github.io/jszip/) -  JavaScript library for client-side zip file operations.
 - [CryptoJS](https://github.com/brix/crypto-js) - JavaScript library for cryptographic tasks..
 - [SweetAlert2](https://sweetalert2.github.io/) - Replacement for JavaScript's popup boxes with beautiful designs.
