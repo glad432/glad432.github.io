@@ -49,7 +49,7 @@ const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
 const code_file = '<i class="fa-solid fa-file-code text-blue-600 pr-2"></i>';
 const editFileNameIcon = '<i class="fa-solid fa-pen-to-square"></i>';
-const classlst = ['select-none', 'font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4', 'transition', 'opacity-100'];
+const classlst = ['font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4', 'transition', 'opacity-100'];
 
 const sentences = [
 	"A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks.",
@@ -459,13 +459,10 @@ function shareLink(content, filename, isZip) {
 				link_newtab.title = 'Open in new tab';
 				orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
 				downloadLinkUrl.classList.remove('hidden');
-				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="select-none text-sm text-center text-gray-700">${isZip ? 'Zip File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
-				orscan.classList.add('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
+				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="text-sm text-center text-gray-700">${isZip ? 'Zip File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
+				orscan.classList.add('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
-				qrCode.style.textAlign = '-moz-center';
-				qrCode.style.textAlign = '-webkit-center';
-				qrCode.style.background = 'rgb(255, 255, 255)';
-				qrCode.classList.add('ml-12', 'p-2', 'mr-12', 'mt-2');
+				qrCode.classList.add('!bg-white', 'w-36', 'ml-12', 'p-3', 'mr-12', 'mt-2');
 				file_Link.classList.remove('hidden');
 				fileLink_load.innerHTML = '';
 				displayQRCode(fileLink);
@@ -526,11 +523,11 @@ function createFormData(content, fileName) {
 }
 
 function displayQRCode(fileLink) {
-	const qr = new QRCode(qrCode, {
-		text: fileLink,
-		width: 128,
-		height: 128
-	});
+	var qr = qrcode(10, 'M');
+	qr.addData(fileLink.trim());
+	qr.make();
+	var imgTag = qr.createImgTag(6, 0);
+	qrCode.innerHTML = imgTag;
 }
 
 function closePopup() {
@@ -538,11 +535,9 @@ function closePopup() {
 	setTimeout(() => {
 		shareButton.disabled = false;
 		zipFileBtn.disabled = false;
-		qrCode.classList.remove('ml-12', 'p-2', 'mr-12', 'mt-2');
-		orscan.classList.remove('select-none', 'block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
+		qrCode.classList.remove('!bg-white', 'w-36', 'ml-12', 'p-3', 'mr-12', 'mt-2');
+		orscan.classList.remove('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 		link_newtab.classList.remove('text-white', 'bg-blue-600', 'hover:bg-blue-700', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5');
-		qrCode.style.textAlign = '';
-		qrCode.style.background = '';
 		close_Popup.classList.add('hidden');
 		overlay.classList.add("hidden");
 		downloadLinkUrl.classList.add('hidden');
@@ -626,7 +621,6 @@ async function zipFiles(selectedIndices, sortedKeys, maxLength, zip) {
 				zip.file(fileName, decryptedCode);
 				fileNamesList += `${nonEmptyFilesCount + 1}. ${fileName}\n`;
 				nonEmptyFilesCount++;
-
 				let totalZipProgress = ((nonEmptyFilesCount / maxLength) * 100);
 				zipProgressBar.value = totalZipProgress;
 				zipProgressStatus.innerText = `Zipping... ${totalZipProgress.toFixed(2)}%`;
@@ -1030,9 +1024,36 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-	const response = await fetch("https://glad432.github.io/article/blog.json");
+	const response = await fetch("https://glad432.github.io/article/blog.min.json");
 	const articleData = await response.json();
-	document.getElementById('article').innerHTML = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h1 class="sm:text-xl lg:text-3xl before:font-['Font_Awesome_6_Free'] before:content-['&#xf05a'] before:text-blue-500 before:pr-2 text-gray-600 text-left font-bold mb-4">${articleData?.article?.title}</h1>${articleData?.article?.sections.map(section => `<div class="mb-4"><h2 class="text-[15px] text-gray-500 before:font-['Font_Awesome_6_Free'] before:content-['&#xf219'] before:text-cyan-900 before:pr-2 lg:text-xl font-bold py-4">${section?.section_title}</h2><p class="text-[13px] lg:text-[15px]">${section?.section_content}</p></div>`).join('')}</div>`;
+	let content = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h1 class="sm:text-xl lg:text-3xl text-gray-600 text-left font-bold mb-4"><i class="fa-solid fa-circle-info text-blue-500 pr-2"></i>${articleData.article.title}</h1>`;
+
+	articleData.article.sections.forEach((section) => {
+		if (section.section_title !== "FAQs") {
+			content += `<div class="mb-4"><h2 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4"><i class="fa-solid fa-diamond text-cyan-900 pr-2"></i>${section.section_title}</h2>`;
+			if (section.section_content) {
+				content += `<p class="text-[13px] lg:text-[15px]">${section.section_content}</p>`;
+			}
+			if (section.sub_sections && section.sub_sections.length > 0) {
+				content += `<div class="ml-4 mb-2">`;
+				section.sub_sections.forEach((subsection) => {
+					content += `<div class="ml-4 mb-2"><h4 class="text-[14px] text-gray-500 lg:text-lg font-bold py-2"><i class="fa-solid fa-square-caret-right text-cyan-900 pr-2"></i>${subsection.subsubsection_title}</h4><p class="text-[13px] lg:text-[15px]">${subsection.subsubsection_content}</p></div>`;
+				});
+				content += `</div>`;
+			}
+			content += `</div>`;
+		}
+	});
+
+	content += `<h2 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4"><i class="fa-solid fa-circle-question text-blue-700 pr-2"></i>FAQs</h2><ul class="list-none list-inside">`;
+	const faqPairs = articleData.article.sections.find(section => section.section_title === "FAQs").section_content.split('\n\n');
+	faqPairs.forEach(pair => {
+		const [question, answer] = pair.split('\nA:');
+		content += `<li class="text-[13px] lg:text-[15px]"><strong>${question}</strong><br/>${answer}</li>`;
+	});
+	content += `</ul></div>`;
+
+	document.getElementById('article').innerHTML = content;
 });
 
 function handleTabsOverlay(enable) {
@@ -1188,7 +1209,7 @@ function addEmptyTab() {
 	var newFileIndex = sources.length;
 	var newSourceId = `#PyFile-${newFileIndex + 1}`;
 	var newTab = document.createElement('li');
-	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] select-none transition-opacity';
+	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] transition-opacity';
 	newTab.innerHTML = `${code_file}File ${newFileIndex + 1}.py`;
 	newTab.id = `file-${newFileIndex + 1}`;
 	newTab.onclick = () => {
@@ -1445,7 +1466,7 @@ function addTabOut() {
 	var newFileIndexOut = sourcesOut.length;
 	var newSourceId = `#PyFile-out-${newFileIndexOut + 1}`;
 	var newTab = document.createElement('li');
-	newTab.className = 'file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] select-none transition-opacity';
+	newTab.className = 'file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] transition-opacity';
 	newTab.innerHTML = `${code_file}File ${newFileIndexOut + 1}.py`;
 	newTab.id = `file-out-${newFileIndexOut + 1}`;
 	newTab.onclick = () => {

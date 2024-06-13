@@ -856,6 +856,10 @@ video {
   margin-left: 0.5rem;
 }
 
+.ml-4 {
+  margin-left: 1rem;
+}
+
 .ml-\[3px\] {
   margin-left: 3px;
 }
@@ -1061,6 +1065,10 @@ video {
 
 .max-h-\[100\%\] {
   max-height: 100%;
+}
+
+.w-36 {
+  width: 9rem;
 }
 
 .w-4 {
@@ -2198,6 +2206,11 @@ video {
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
 }
 
+.\!bg-white {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity)) !important;
+}
+
 .bg-\[\#f0f0f0\] {
   --tw-bg-opacity: 1;
   background-color: rgb(240 240 240 / var(--tw-bg-opacity));
@@ -2406,6 +2419,10 @@ video {
 
 .p-2\.5 {
   padding: 0.625rem;
+}
+
+.p-3 {
+  padding: 0.75rem;
 }
 
 .p-4 {
@@ -2620,6 +2637,10 @@ video {
   font-size: 13px;
 }
 
+.text-\[14px\] {
+  font-size: 14px;
+}
+
 .text-\[15px\] {
   font-size: 15px;
 }
@@ -2757,6 +2778,11 @@ video {
 .text-blue-700 {
   --tw-text-opacity: 1;
   color: rgb(29 78 216 / var(--tw-text-opacity));
+}
+
+.text-cyan-900 {
+  --tw-text-opacity: 1;
+  color: rgb(22 78 99 / var(--tw-text-opacity));
 }
 
 .text-gray-500 {
@@ -3351,11 +3377,6 @@ video {
   top: 3.5px;
 }
 
-.before\:pr-2::before {
-  content: var(--tw-content);
-  padding-right: 0.5rem;
-}
-
 .before\:font-\[\'Font_Awesome_6_Free\'\]::before {
   content: var(--tw-content);
   font-family: 'Font Awesome 6 Free';
@@ -3372,32 +3393,10 @@ video {
   font-weight: 900;
 }
 
-.before\:text-blue-500::before {
-  content: var(--tw-content);
-  --tw-text-opacity: 1;
-  color: rgb(59 130 246 / var(--tw-text-opacity));
-}
-
-.before\:text-cyan-900::before {
-  content: var(--tw-content);
-  --tw-text-opacity: 1;
-  color: rgb(22 78 99 / var(--tw-text-opacity));
-}
-
 .before\:text-white::before {
   content: var(--tw-content);
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.before\:content-\[\'\&\#xf05a\'\]::before {
-  --tw-content: '&#xf05a';
-  content: var(--tw-content);
-}
-
-.before\:content-\[\'\&\#xf219\'\]::before {
-  --tw-content: '&#xf219';
-  content: var(--tw-content);
 }
 
 .before\:content-\[\'\\f185\'\]::before {
@@ -3617,14 +3616,10 @@ video {
     max-width: 42rem;
   }
 
-  .md\:cursor-default {
-    cursor: default;
-  }
-
-  .md\:select-none {
-    -webkit-user-select: none;
-       -moz-user-select: none;
-            user-select: none;
+  @media (min-width: 768px) {
+    .md\:md\:cursor-default {
+      cursor: default;
+    }
   }
 
   .md\:flex-row {
@@ -3681,6 +3676,11 @@ video {
 
   .lg\:text-\[15px\] {
     font-size: 15px;
+  }
+
+  .lg\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   }
 
   .lg\:text-xl {
