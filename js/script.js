@@ -1037,7 +1037,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			if (section.sub_sections && section.sub_sections.length > 0) {
 				content += `<div class="ml-4 mb-2">`;
 				section.sub_sections.forEach((subsection) => {
-					content += `<div class="ml-4 mb-2"><h4 class="text-[14px] text-gray-500 lg:text-lg font-bold py-2"><i class="fa-solid fa-square-caret-right text-cyan-900 pr-2"></i>${subsection.subsubsection_title}</h4><p class="text-[13px] lg:text-[15px]">${subsection.subsubsection_content}</p></div>`;
+					content += `<h4 class="text-[14px] text-gray-500 lg:text-lg font-bold py-2"><i class="fa-solid fa-square-caret-right text-cyan-900 pr-2"></i>${subsection.subsubsection_title}</h4><p class="text-[13px] lg:text-[15px]">${subsection.subsubsection_content}</p>`;
 				});
 				content += `</div>`;
 			}
@@ -1049,7 +1049,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const faqPairs = articleData.article.sections.find(section => section.section_title === "FAQs").section_content.split('\n\n');
 	faqPairs.forEach(pair => {
 		const [question, answer] = pair.split('\nA:');
-		content += `<li class="text-[13px] lg:text-[15px]"><strong>${question}</strong><br/>${answer}</li>`;
+		content += `<li class="text-[13px] lg:text-[15px]"><strong>${question}</strong><br/>A: ${answer}</li>`;
 	});
 	content += `</ul></div>`;
 
