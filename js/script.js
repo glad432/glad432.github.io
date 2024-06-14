@@ -438,7 +438,7 @@ async function createShareLink(file, filename) {
 
 function shareLink(content, filename, isZip) {
 	handleTabsOverlay(false);
-	fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin-pulse"></i></span>`;
+	fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin"></i></span>`;
 
 	createShareLink(content, filename).then(result => {
 		if (result.success) {
@@ -462,7 +462,8 @@ function shareLink(content, filename, isZip) {
 				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="text-sm text-center text-gray-700">${isZip ? 'Zip File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
 				orscan.classList.add('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
-				qrCode.classList.add('!bg-white', 'w-36', 'ml-12', 'p-3', 'mr-12', 'mt-2');
+				qrCode.title = "Double Click to zoom-in and zoom-out";
+				qrCode.classList.add('!bg-white', 'rounded-lg', 'border-2', 'border-dashed', 'border-black', 'w-36', 'ml-12', 'p-3', 'mr-12', 'mt-2');
 				file_Link.classList.remove('hidden');
 				fileLink_load.innerHTML = '';
 				displayQRCode(fileLink);
@@ -500,6 +501,14 @@ function shareLink(content, filename, isZip) {
 	});
 }
 
+qrCode.addEventListener('dblclick', () => {
+	animateIcon("qrCode", "fa-fade", 300);
+	setTimeout(() => {
+		qrCode.classList.remove('w-39');
+		qrCode.classList.toggle('w-60');
+	}, 400)
+});
+
 shareButton.addEventListener('click', () => {
 	if (minifiedEditor.getModel().getValue() !== "") {
 		animateIcon("fade-2", "fa-fade", 3000);
@@ -535,7 +544,7 @@ function closePopup() {
 	setTimeout(() => {
 		shareButton.disabled = false;
 		zipFileBtn.disabled = false;
-		qrCode.classList.remove('!bg-white', 'w-36', 'ml-12', 'p-3', 'mr-12', 'mt-2');
+		qrCode.classList.remove('!bg-white', 'rounded-lg', 'border-2', 'border-dashed', 'border-black', 'w-36', 'ml-12', 'p-3', 'mr-12', 'mt-2');
 		orscan.classList.remove('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 		link_newtab.classList.remove('text-white', 'bg-blue-600', 'hover:bg-blue-700', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5');
 		close_Popup.classList.add('hidden');
