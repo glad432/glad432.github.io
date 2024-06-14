@@ -140,6 +140,7 @@
       </div>
       <p class="hidden">A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks. Its primary purpose is to enhance the loading speed of Python scripts, particularly beneficial for web applications. By reducing the overall size of the code, the minifier contributes to faster script loading times, optimizing web performance. The process of minification streamlines code readability without affecting its functionality or logic. Minified code is more efficiently transmitted and executed across various platforms, aiding developers in delivering smoother user experiences. Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment.</p>
       <h2 class="relative text-2xl font-bold mt-8 mb-5 text-white bg-black block rounded py-6 pl-[15px] [box-shadow:0_0_2px_rgb(0_0_0/30%)] [border-left:5px_solid_#3b82f6]">Original Code</h2>
+      <div id="tabs-overlay" class="hidden cursor-default absolute h-[340px] z-10 left-[1vh] right-[1vh] bg-transparent"></div>
       <button id="from_url" class="text-base font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform">Load from URL <i id="fade-4" class="fa-solid fa-link"></i>
       </button>
       <div id="inputContainer" class="hidden mt-4 transition-all duration-500 ease-in-out">
@@ -173,7 +174,6 @@
       </div>
       <p id="errmsg"></p>
       <div class="flex items-center">
-        <div id="tabs-overlay" class="hidden cursor-default absolute h-[80px] z-10 left-[1vh] right-[1vh] bg-transparent"></div>
         <ul id="file-tabs" class="flex list-none [transition:all_1s_ease] pr-[1px] mr-[4px] [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto">
           <li class="file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] transition-opacity active" id="file-1">
             <i class="fa-solid fa-file-code text-blue-600 pr-2"></i>File 1.py
