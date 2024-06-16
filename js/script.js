@@ -483,6 +483,7 @@ function shareLink(content, filename, isZip) {
 						document.body.appendChild(a);
 						a.click();
 						window.URL.revokeObjectURL(url);
+						document.body.removeChild(a);
 					};
 					downloadLinkUrl.classList.remove('hidden');
 				} else {
@@ -687,7 +688,7 @@ async function zipPyFiles() {
 		const filteredSortedKeys = selectedIndices.map(index => sortedKeys[index]);
 
 		await zipFiles(selectedIndices, filteredSortedKeys, Math.min(20, maxLength), new JSZip());
-	} else {
+	} else if (maxLength <= 2) {
 		Swal.fire({
 			text: "At least 2 minified files needed for the zip.",
 			icon: "info",
@@ -810,7 +811,6 @@ function initializeMinifier() {
 		}
 	});
 	minifyButton.disabled = false;
-
 	let isProcessing = false;
 
 	minifyAllBtn.addEventListener('click', async () => {
