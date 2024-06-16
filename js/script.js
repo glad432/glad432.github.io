@@ -688,7 +688,7 @@ async function zipPyFiles() {
 		const filteredSortedKeys = selectedIndices.map(index => sortedKeys[index]);
 
 		await zipFiles(selectedIndices, filteredSortedKeys, Math.min(20, maxLength), new JSZip());
-	} else if (maxLength <= 2) {
+	} else if (maxLength < 1) {
 		Swal.fire({
 			text: "At least 2 minified files needed for the zip.",
 			icon: "info",
