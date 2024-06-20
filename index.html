@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Python Minifier - GLAD432</title>
     <meta name="robots" content="index, follow">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
     <meta http-equiv="x-ua-compatible" content="IE=edge">
     <meta name="description" content="Python minifier online is a tool that reduces the size of Python code by removing unnecessary characters, such as white spaces, comments, and line breaks. This can help to reduce the size of Python scripts and make them load faster, especially in web applications." />
     <meta name="keywords" content="Python, minifier, Python code optimization, online tool, script compression, code minification, web development, optimize Python code, improve script performance, reduce code size, web application optimization, code efficiency, code speed, streamline Python scripts">
@@ -189,67 +188,73 @@
       <button id="rm" class="text-2xl mt-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
       </button>
       <div class="text-left w-[500px] my-10 p-4 rounded border-t-[5px] border-solid border-blue-500 blue_big_box md:mx-auto md:p-8">
-        <div id="toggleContent1">
-          <p class="cursor-pointer underline underline-offset-3 decoration-8 decoration-blue-400 decoration-blue-600 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
-        </div>
-        <div class="max-h-[0] overflow-hidden [transition:max-height_0.6s_ease-in-out] content-ll pt-4">
-          <div class="mb-4">
-            <input type="checkbox" id="combine_imports" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="combine_imports" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Combine Import statements</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="remove_pass" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="remove_pass" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove Pass statements</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="remove_literal_statements" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="remove_literal_statements" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove literal statements (docstrings)</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="remove_annotations" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="remove_annotations" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove Annotations</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="hoist_literals" name="Hoist Literals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="hoist_literals" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Hoist Literals</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="rename_locals" name="Rename Locals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="rename_locals" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Rename Locals</label>
-          </div>
-          <div class="mb-4">
-            <label for="preserve_locals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Locals:</label>
-            <input type="text" id="preserve_locals" placeholder="Preserved Locals (use , between the words)" name="Preserved Locals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="rename_globals" name="Rename Globals" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="rename_globals" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Rename Globals</label>
-          </div>
-          <div class="mb-4">
-            <label for="preserve_globals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Globals:</label>
-            <input type="text" id="preserve_globals" placeholder="Preserved Globals (use , between the words)" name="Preserved Globals" value="handler" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="convert_posargs_to_args" name="Convert Positional-Only Arguments to Normal Arguments" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="convert_posargs_to_args" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Convert Positional-Only Arguments to Normal Arguments</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="preserve_shebang" name="Preserve any shebang line" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="preserve_shebang" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Preserve any shebang line</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="remove_asserts" name="Remove assert statements" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="remove_asserts" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove assert statements</label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="remove_debug" name="Remove if statements conditional on __debug__ being True" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="remove_debug" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove if statements conditional on <span class="font-bold">__debug__</span> being True </label>
-          </div>
-          <div class="mb-4">
-            <input type="checkbox" id="remove_explicit_return_none" name="Remove return statements that are not required" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-            <label for="remove_explicit_return_none" class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium">Remove return statements that are not required</label>
-          </div>
-          <a class="text-blue-500 text-base hover:underline hover:text-blue-600" href="https://dflook.github.io/python-minifier/transforms" target="_blank">Learn More <i class="fa-solid fa-arrow-up-right-from-square fa-sm"></i>
+        <p id="toggleContent1" class="cursor-pointer underline underline-offset-3 decoration-8 decoration-blue-400 decoration-blue-600 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
+        <div class="max-h-[0] overflow-hidden relative [transition:max-height_0.6s_ease-in-out] content-ll pt-4">
+          <label for="combine_imports" class="flex items-center mb-5 cursor-pointer pl-2">
+            <input type="checkbox" id="combine_imports" class="sr-only peer">
+            <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+            <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Combine Import statements</span>
+          </label>
+          <label for="remove_pass" class="flex items-center mb-5 cursor-pointer pl-2">
+            <input type="checkbox" id="remove_pass" class="sr-only peer">
+            <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+            <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove Pass statements</span>
+          </label>
+          <label for="remove_literal_statements" class="flex items-center mb-5 cursor-pointer pl-2">
+            <input type="checkbox" id="remove_literal_statements" class="sr-only peer">
+            <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+            <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove literal statements (docstrings)</span>
+          </label>
+          <label for="remove_annotations" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+            <input type="checkbox" id="remove_annotations" class="sr-only peer">
+            <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+            <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove Annotations</span>
+          </label>
+          <label for="hoist_literals" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+            <input type="checkbox" id="hoist_literals" class="sr-only peer">
+            <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+            <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Hoist Literals</span>
+          </label>
+          <label for="rename_locals" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+            <input type="checkbox" id="rename_locals" class="sr-only peer">
+            <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+            <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Rename Locals</span>
+          </label>
+          <label for="rename_globals" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+            <input type="checkbox" id="rename_globals" class="sr-only peer">
+            <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+            <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Rename Globals</span>
+          </label>
+          <label for="convert_posargs_to_args" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+            <input type="checkbox" id="convert_posargs_to_args" class="sr-only peer">
+            <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+            <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Convert Positional-Only to Normal Args</span>
+          </label>
+          <label for="preserve_shebang" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+            <input type="checkbox" id="preserve_shebang" class="sr-only peer">
+            <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+            <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Preserve any shebang line</span>
+          </label>
+          <label for="remove_asserts" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+            <input type="checkbox" id="remove_asserts" class="sr-only peer">
+            <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+            <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove assert statements</span>
+          </label>
+          <label for="remove_debug" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+            <input type="checkbox" id="remove_debug" class="sr-only peer">
+            <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+            <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove if <span class="font-bold">__debug__</span> being True </span>
+          </label>
+          <label for="remove_explicit_return_none" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+            <input type="checkbox" id="remove_explicit_return_none" class="sr-only peer">
+            <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+            <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove unnecessary returns.</span>
+          </label>
+          <label for="preserve_locals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Locals:</label>
+          <input type="text" id="preserve_locals" placeholder="Preserved Locals (use , between the words)" name="Preserved Locals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4">
+          <label for="preserve_globals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Globals:</label>
+          <input type="text" id="preserve_globals" placeholder="Preserved Globals (use , between the words)" name="Preserved Globals" value="handler" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4">
+          <a class="text-blue-500 text-base hover:underline hover:text-blue-600" href="https://dflook.github.io/python-minifier/transforms" target="_blank">Learn More <i class="fa-solid fa-arrow-up-right-from-square pl-1 fa-sm"></i>
           </a>
           <div class="mt-4 space-x-2 text-center">
             <button id="selectall" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Select all</button>
