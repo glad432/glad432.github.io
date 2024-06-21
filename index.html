@@ -133,19 +133,19 @@
           <span class="cursor-default text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-blue-400 to-blue-400">Python Minifier</span>
         </h1>
         <div class="mb-2 md:mb-4">
-          <div class="mb-3 text-gray-700 text-[13px] lg:text-[15px] font-['Source_Code_Pro']">Optimizing Python Code for <span id="anitext" class="font-bold pl-1"></span>
+          <div class="mb-3 text-gray-700 text-[13px] lg:text-[15px] font-['Source_Code_Pro']">Optimizing Python Code for <span id="anitext" class="font-bold"></span>
           </div>
         </div>
       </div>
       <h2 class="relative text-2xl font-bold mt-8 mb-5 text-white bg-black block rounded py-6 pl-[15px] [box-shadow:0_0_2px_rgb(0_0_0/30%)] [border-left:5px_solid_#3b82f6]">Original Code</h2>
       <div id="tabs-overlay" class="hidden cursor-default absolute h-[340px] z-10 left-[1vh] right-[1vh] bg-transparent"></div>
-      <button id="from_url" class="text-base font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform">Load from URL <i id="fade-4" class="fa-solid fa-link pl-1"></i>
+      <button id="from_url" class="text-base font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform">Load from URL <i id="fade-4" class="fa-solid fa-link"></i>
       </button>
       <div id="inputContainer" class="hidden mt-4 transition-all duration-500 ease-in-out">
         <div class="flex flex-col items-center">
           <div class="flex items-center">
             <input type="text" id="fileLinkInput" placeholder="Enter .py link (400kb) max" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 py-2 px-4">
-            <button id="load_File" title="Or click Enter button to load" class="text-base ml-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform">Load <i id="fade-3" class="fa-solid fa-cloud-arrow-down pl-1"></i>
+            <button id="load_File" title="Or click Enter button to load" class="text-base ml-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform">Load <i id="fade-3" class="fa-solid fa-cloud-arrow-down"></i>
             </button>
           </div>
           <div class="flex mr-auto text-sm cursor-pointer mt-1 ml-1 space-x-2 font-semibold">
@@ -155,15 +155,15 @@
                 <p class="text-sm text-gray-700">Only Raw Github URLs (400kb) are recommended</p>
               </div>
             </div>
-            <span id="sample_link" class="text-blue-600 hover:underline">Try sample URL <i id="fade-6" class="fa-solid fa-circle-arrow-up fa-sm pl-1"></i>
+            <span id="sample_link" class="text-blue-600 hover:underline">Try sample URL <i id="fade-6" class="fa-solid fa-circle-arrow-up fa-sm"></i>
             </span>
-            <span id="clear_link" class="text-red-500 hover:underline">Clear <i id="fade-7" class="fa-solid fa-trash-can fa-sm pl-1"></i>
+            <span id="clear_link" class="text-red-500 hover:underline">Clear <i id="fade-7" class="fa-solid fa-trash-can fa-sm"></i>
             </span>
           </div>
         </div>
       </div>
       <input class="hidden" type="file" id="fileInput" accept=".py" multiple />
-      <div id="dropArea" class="cursor-pointer rounded-xl border-dashed border-4 border-gray-300 text-center bg-white p-8 m-5 transition-all duration-0 ease-in-out">Drag and drop a <span class="font-bold pr-1 pl-1">.py file</span>here or click to <span class="text-blue-600 font-bold hover:underline pl-1">browse <i class="fa-solid fa-file-arrow-up pl-1"></i>
+      <div id="dropArea" class="cursor-pointer rounded-xl border-dashed border-4 border-gray-300 text-center bg-white p-8 m-5 transition-all duration-0 ease-in-out">Drag and drop a <span class="font-bold pr-1">.py file</span>here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
         </span>
       </div>
       <div class="text-left">
@@ -184,7 +184,7 @@
       <div id="editor" class="w-auto h-[300px] mt-[2px] rounded overflow-hidden border-[1px] border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]">
         <div id="type-overlay" class="md:md:cursor-default md:absolute md:h-[300px] md:z-10 md:left-[10vh] md:right-[10vh] md:bg-transparent"></div>
       </div>
-      <button id="rm" class="text-2xl mt-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs pl-1"></i>
+      <button id="rm" class="text-2xl mt-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
       </button>
       <div class="text-left w-[500px] my-10 p-4 rounded border-t-[5px] border-solid border-blue-500 blue_big_box md:mx-auto md:p-8">
         <p id="toggleContent1" class="cursor-pointer underline underline-offset-3 decoration-8 decoration-blue-400 decoration-blue-600 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
@@ -253,7 +253,7 @@
           <input type="text" id="preserve_locals" placeholder="Preserved Locals (use , between the words)" name="Preserved Locals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4">
           <label for="preserve_globals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Globals:</label>
           <input type="text" id="preserve_globals" placeholder="Preserved Globals (use , between the words)" name="Preserved Globals" value="handler" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4">
-          <a class="text-blue-500 text-base hover:underline hover:text-blue-600" href="https://dflook.github.io/python-minifier/transforms" target="_blank">Learn More <i class="fa-solid fa-arrow-up-right-from-square fa-sm pl-1"></i>
+          <a class="text-blue-500 text-base hover:underline hover:text-blue-600" href="https://dflook.github.io/python-minifier/transforms" target="_blank">Learn More <i class="fa-solid fa-arrow-up-right-from-square fa-sm"></i>
           </a>
           <div class="mt-4 space-x-2 text-center">
             <button id="selectall" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Select all</button>
@@ -264,7 +264,7 @@
       <div class="mb-2 md:mb-4 text-center">
         <span id="minify" class="relative rounded cursor-pointer pt-5 p-4 overflow-hidden group bg-blue-500 relative hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-blue-400 transition-all ease-out duration-300">
           <span class="absolute right-0 w-8 h-40 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
-          <span class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm pl-1"></i>
+          <span class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i>
           </span>
         </span>
         <button id="minifyAll" disabled class="hidden px-3 py-2 ml-2 font-bold cursor-pointer bg-blue-500 rounded-full text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">
@@ -284,7 +284,7 @@
           <span id="scantocopy"></span>
           <div id="qrCode" oncontextmenu="return false;"></div>
           <div class="flex flex-col">
-            <button id="downloadLinkurl" download class="hidden self-center w-fit inline-block px-4 py-2 mt-2 font-bold bg-green-500 rounded-lg text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download Zip <i class="fa-solid fa-file-zipper pl-1"></i>
+            <button id="downloadLinkurl" download class="hidden self-center w-fit inline-block px-4 py-2 mt-2 font-bold bg-green-500 rounded-lg text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download Zip <i class="fa-solid fa-file-zipper"></i>
             </button>
             <button id="closePopup" class="hidden px-4 py-2 self-center mt-5 font-bold bg-red-500 rounded-full w-fit text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Close</button>
           </div>
@@ -305,13 +305,13 @@
       </div>
       <div id="minified" class="w-auto h-[300px] mt-[2px] rounded overflow-hidden border-[1px] border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]"></div>
       <div class="mb-2 md:mb-4">
-        <button id="dw" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download <i id="fade-1" class="fa-solid fa-download pl-1"></i>
+        <button id="dw" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download <i id="fade-1" class="fa-solid fa-download"></i>
         </button>
-        <button id="copy" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Copy <i class="fa-solid fa-clipboard pl-1"></i>
+        <button id="copy" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Copy <i class="fa-solid fa-clipboard"></i>
         </button>
-        <button id="share" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Share <i id="fade-2" class="fa-solid fa-share-from-square pl-1"></i>
+        <button id="share" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Share <i id="fade-2" class="fa-solid fa-share-from-square"></i>
         </button>
-        <button id="zipFile" disabled class="hidden px-4 py-2 mt-2 font-bold cursor-pointer bg-orange-500 rounded text-white hover:bg-orange-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Zip <i id="fade-8" class="fa-solid fa-file-zipper pl-1"></i>
+        <button id="zipFile" disabled class="hidden px-4 py-2 mt-2 font-bold cursor-pointer bg-orange-500 rounded text-white hover:bg-orange-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Zip <i id="fade-8" class="fa-solid fa-file-zipper"></i>
         </button>
         <div id="zipProgress" class="hidden">
           <progress id="zipProgressBar" max="100" value="0" class="w-full h-2 mt-4"></progress>
@@ -344,7 +344,7 @@
       </div>
     </div>
     <div class="grid place-items-center">
-      <span id="show-btn" class="relative cursor-pointer text-center text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 font-bold text-center">Learn More <i id="rot-1" class="fa-solid fa-caret-down pl-1"></i>
+      <span id="show-btn" class="relative cursor-pointer text-center text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 font-bold text-center">Learn More <i id="rot-1" class="fa-solid fa-caret-down"></i>
       </span>
     </div>
     <article id="article" class="font-['Source_Code_Pro'] select-text mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 mt-8 mb-8 transition-all duration-100 ease-in-out"></article>
@@ -362,7 +362,7 @@
           </a>
         </div>
       </div>
-      <div class="bg-neutral-300 p-4 text-center bg-neutral-700 text-neutral-200">&copy; GLAD432 <span id="year" class="text-neutral-400 pl-1"></span>
+      <div class="bg-neutral-300 p-4 text-center bg-neutral-700 text-neutral-200">&copy; GLAD432 <span id="year" class="text-neutral-400"></span>
         <span class="text-neutral-400">All Rights Reserved</span>
       </div>
     </footer>
