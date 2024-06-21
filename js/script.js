@@ -625,7 +625,7 @@ async function zipFiles(selectedIndices, sortedKeys, maxLength, zip) {
 		const fileName = finalFileNames[i];
 
 		if (fileName) {
-			const decryptedCode = CryptoJS.AES.decrypt(sessionStorage.getItem(fileKey), '4#>5p[:/v,o2q/(\*=:6').toString(CryptoJS.enc.Utf8);
+			const decryptedCode = CryptoJS.AES.decrypt(sessionStorage.getItem(fileKey), newKey).toString(CryptoJS.enc.Utf8);
 
 			if (decryptedCode.trim() !== '') {
 				zip.file(fileName, decryptedCode);
@@ -668,7 +668,7 @@ async function zipPyFiles() {
 		.sort((a, b) => parseInt(a.split("-")[2]) - parseInt(b.split("-")[2]));
 
 	const maxLength = sortedKeys.filter(key => {
-		return CryptoJS.AES.decrypt(sessionStorage.getItem(key), '4#>5p[:/v,o2q/(\*=:6').toString(CryptoJS.enc.Utf8).trim() !== "";
+		return CryptoJS.AES.decrypt(sessionStorage.getItem(key), newKey).toString(CryptoJS.enc.Utf8).trim() !== "";
 	}).length;
 
 	const tabContents = Array.from(fileTabsOut.children)
@@ -1091,11 +1091,22 @@ function handleAutoScroll(fromhandleAutoScrollOut = false) {
 	}
 }
 
+function randomKey(length) {
+	let password = "";
+	for (let i = 0; i < length; i++) {
+		const randomIndex = Math.floor(CryptoJS.lib.WordArray.random(1).words[0] / (0xffffffff + 1) * 95) + 32;
+		password += String.fromCharCode(randomIndex);
+	}
+	return password;
+}
+
+const newKey = randomKey(50);
+
 function saveEditorContent(isOut = false) {
 	if (!isOut) {
-		sessionStorage.setItem(sources[currentTabIndex], CryptoJS.AES.encrypt(sourceEditor.getModel().getValue(), '4#>5p[:/v,o2q/(\*=:6').toString());
+		sessionStorage.setItem(sources[currentTabIndex], CryptoJS.AES.encrypt(sourceEditor.getModel().getValue(), newKey).toString());
 	} else {
-		sessionStorage.setItem(sourcesOut[currentTabIndexOut], CryptoJS.AES.encrypt(minifiedEditor.getModel().getValue(), '4#>5p[:/v,o2q/(\*=:6').toString());
+		sessionStorage.setItem(sourcesOut[currentTabIndexOut], CryptoJS.AES.encrypt(minifiedEditor.getModel().getValue(), newKey).toString());
 	}
 }
 
@@ -1104,12 +1115,12 @@ function updateEditorContent(isOut = false) {
 	if (!isOut) {
 		encryptedSource = sessionStorage.getItem(sources[currentTabIndex]);
 		if (encryptedSource && sourceEditor) {
-			sourceEditor.getModel().setValue(CryptoJS.AES.decrypt(encryptedSource, '4#>5p[:/v,o2q/(\*=:6').toString(CryptoJS.enc.Utf8));
+			sourceEditor.getModel().setValue(CryptoJS.AES.decrypt(encryptedSource, newKey).toString(CryptoJS.enc.Utf8));
 		}
 	} else {
 		encryptedSource = sessionStorage.getItem(sourcesOut[currentTabIndexOut]);
 		if (encryptedSource && minifiedEditor) {
-			minifiedEditor.getModel().setValue(CryptoJS.AES.decrypt(encryptedSource, '4#>5p[:/v,o2q/(\*=:6').toString(CryptoJS.enc.Utf8));
+			minifiedEditor.getModel().setValue(CryptoJS.AES.decrypt(encryptedSource, newKey).toString(CryptoJS.enc.Utf8));
 		}
 	}
 }
