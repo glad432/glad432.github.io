@@ -499,6 +499,8 @@ function shareLink(content, filename, isZip) {
 			icon: "error",
 			confirmButtonColor: "#179fff"
 		});
+		shareButton.disabled = false;
+		zipFileBtn.disabled = false;
 	});
 }
 
@@ -749,7 +751,6 @@ function initializeMinifier() {
 		options.push("preserve_locals", "preserve_globals");
 		options.forEach(option => {
 			const checkbox = document.getElementById(option);
-			checkbox.classList.add("cursor-not-allowed");
 			checkbox.disabled = true;
 		});
 		selectallopt.classList.add("cursor-not-allowed");
@@ -789,7 +790,6 @@ function initializeMinifier() {
 		unselectallopt.disabled = false;
 		options.forEach(option => {
 			const checkbox = document.getElementById(option);
-			checkbox.classList.remove("cursor-not-allowed");
 			checkbox.disabled = false;
 		});
 		selectallopt.classList.remove("cursor-not-allowed");
@@ -1092,12 +1092,12 @@ function handleAutoScroll(fromhandleAutoScrollOut = false) {
 }
 
 function randomKey(length) {
-	let password = "";
+	let key = "";
 	for (let i = 0; i < length; i++) {
 		const randomIndex = Math.floor(CryptoJS.lib.WordArray.random(1).words[0] / (0xffffffff + 1) * 95) + 32;
-		password += String.fromCharCode(randomIndex);
+		key += String.fromCharCode(randomIndex);
 	}
-	return password;
+	return key;
 }
 
 const newKey = randomKey(50);
