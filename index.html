@@ -30,13 +30,13 @@
     <meta name="twitter:image:src" content="https://glad432.github.io/favicon.ico">
     <meta name="twitter:image:alt" content="Python Minifier - GLAD432">
     <link href="https://glad432.github.io/css/style.min.css" rel="stylesheet">
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.1/dist/sweetalert2.all.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/typewriter-effect@2.21.0/dist/core.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs/loader.js"></script>
     <link rel="icon" type="image/png" href="https://glad432.github.io/favicon.ico" />
     <link rel="shortcut icon" href="https://glad432.github.io/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon-precomposed" href="https://glad432.github.io/favicon.ico" />
@@ -163,7 +163,7 @@
         </div>
       </div>
       <input class="hidden" type="file" id="fileInput" accept=".py" multiple />
-      <div id="dropArea" class="cursor-pointer rounded-xl border-dashed border-4 border-gray-300 text-center bg-white p-8 m-5 transition-all duration-0 ease-in-out">Drag and drop a <span class="font-bold pr-1">.py file</span>here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
+      <div id="dropArea" class="cursor-pointer rounded-xl border-dashed border-4 border-gray-300 text-center bg-white p-4 md:p-8 m-5 transition-all duration-0 ease-in-out">Drag and drop a <span class="font-bold pr-1">.py file</span>here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
         </span>
       </div>
       <div class="text-left">
@@ -250,14 +250,14 @@
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove unnecessary returns</span>
           </label>
           <label for="preserve_locals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Locals:</label>
-          <input type="text" id="preserve_locals" placeholder="Preserved Locals (use , between the words)" name="Preserved Locals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4">
+          <input type="text" id="preserve_locals" placeholder="Preserved Locals (use , between the words):" name="Preserved Locals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4">
           <label for="preserve_globals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Globals:</label>
-          <input type="text" id="preserve_globals" placeholder="Preserved Globals (use , between the words)" name="Preserved Globals" value="handler" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4">
+          <input type="text" id="preserve_globals" placeholder="Preserved Globals (use , between the words):" name="Preserved Globals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4">
           <a class="text-blue-500 text-base hover:underline hover:text-blue-600" href="https://dflook.github.io/python-minifier/transforms" target="_blank">Learn More <i class="fa-solid fa-arrow-up-right-from-square fa-sm"></i>
           </a>
           <div class="mt-4 space-x-2 text-center">
             <button id="selectall" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Select all</button>
-            <button id="Unselectall" class="text-2xl font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Unselect all</button>
+            <button id="Unselectall" class="text-2xl font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Reset</button>
           </div>
         </div>
       </div>
