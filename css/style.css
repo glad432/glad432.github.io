@@ -49,6 +49,9 @@ input:checked + .slide:before {
 .file-tab-out.error {
   border-bottom: 3px solid #b61616 !important;
 }
+.sticky-line-number {
+  background: rgb(69 69 69 / 7%) !important;
+}
 .margin-view-overlays {
   -webkit-user-select: none;
   -moz-user-select: none;
