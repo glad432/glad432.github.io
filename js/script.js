@@ -158,7 +158,7 @@ document.getElementById("year").textContent = new Date().getFullYear().toString(
 
 require.config({
 	paths: {
-		'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46.0/min/vs'
+		'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs'
 	}
 });
 
@@ -923,7 +923,6 @@ function tickAllAndSetGlobals() {
 	checkboxes.forEach((checkbox) => {
 		checkbox.checked = true;
 	});
-	preserve_globals.value = 'handler';
 }
 
 selectallopt.addEventListener('click', tickAllAndSetGlobals);
@@ -933,10 +932,8 @@ function resetOptions() {
 	checkboxes.forEach((checkbox) => {
 		checkbox.checked = false;
 	});
-	preserve_globals.value = 'handler';
-	document.querySelectorAll('input[type="text"]:not(#preserve_globals)').forEach((textField) => {
-		textField.value = '';
-	});
+	preserve_locals.value = ''
+	preserve_globals.value = '';
 }
 
 unselectallopt.addEventListener('click', resetOptions);
