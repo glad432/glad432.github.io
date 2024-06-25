@@ -1068,8 +1068,8 @@ function handleTabsOverlay(enable) {
 	fileTabsOverlayOut.classList.toggle("hidden", !enable)
 }
 
-function handleAutoScroll(fromhandleAutoScrollOut = false) {
-	if (!fromhandleAutoScrollOut) {
+function handleAutoScroll(isout = false) {
+	if (!isout) {
 		handleAutoScrollOut();
 	}
 	var activeTab = fileTabs.children[currentTabIndex];
@@ -1288,6 +1288,7 @@ function updateTabStyles() {
 					deleteBtn.title = 'Delete this tab';
 					deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
 					deleteBtn.onclick = () => {
+						addNewTabBtn.disabled = true;
 						animateIcon(`delbtn-${currentTabIndex + 1}`, "fa-bounce", 800);
 						setTimeout(() => {
 							confirmDeleteFile(currentTabIndex);
@@ -1349,6 +1350,7 @@ function confirmDeleteFile(index) {
 			html: `${exctri} You can't delete this tab`,
 			confirmButtonColor: "#179fff"
 		});
+		addNewTabBtn.disabled = false;
 		return;
 	}
 	Swal.fire({
@@ -1365,6 +1367,7 @@ function confirmDeleteFile(index) {
 			deleteFile(index);
 			deleteFile(index, true);
 		}
+		addNewTabBtn.disabled = false;
 	});
 }
 
@@ -1535,6 +1538,7 @@ function updateTabStylesOut() {
 					deleteBtn.title = 'Delete this tab';
 					deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
 					deleteBtn.onclick = () => {
+						addNewTabBtn.disabled = true;
 						animateIcon(`delbtnout-${currentTabIndexOut + 1}`, "fa-bounce", 800);
 						setTimeout(() => {
 							confirmDeleteFile(currentTabIndexOut);
