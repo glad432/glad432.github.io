@@ -1387,10 +1387,12 @@ function deleteAllTabs() {
 	}
 }
 
-function clearSessionStorage() {
+window.addEventListener('beforeunload', (e) => {
+	e.preventDefault();
+	e.returnValue = '';
 	sessionStorage.clear();
-}
-window.addEventListener('beforeunload', clearSessionStorage);
+	return '';
+});
 
 function switchTab(index, fromSwitchTabOut = false) {
 	if (!fromSwitchTabOut) {
