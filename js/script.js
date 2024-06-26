@@ -32,9 +32,10 @@ const fileTabsOut = document.getElementById('file-tabs-out');
 const fileTabsOverlay = document.getElementById("tabs-overlay");
 const fileTabsOverlayOut = document.getElementById("tabs-overlay-out");
 const addNewTabBtn = document.getElementById("addNewTab");
-const zipFileBtn = document.getElementById('zipFile');
-const zipProgressBar = document.getElementById('zipProgressBar');
-const zipProgressStatus = document.getElementById('zipProgressStatus');
+const compressFileBtn = document.getElementById('CompressFile');
+const compressProgress = document.getElementById('comProgress')
+const compressProgressBar = document.getElementById('comProgressBar');
+const compressProgressStatus = document.getElementById('comProgressStatus');
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, typingTimeout, sourceEditor, minifiedEditor;
@@ -436,7 +437,7 @@ async function createShareLink(file, filename) {
 	}
 }
 
-function shareLink(content, filename, isZip) {
+function shareLink(content, filename, isCompressed, fileFormat) {
 	handleTabsOverlay(false);
 	fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin"></i></span>`;
 
@@ -459,7 +460,7 @@ function shareLink(content, filename, isZip) {
 				link_newtab.title = 'Open in new tab';
 				orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
 				downloadLinkUrl.classList.remove('hidden');
-				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="text-sm text-center text-gray-700">${isZip ? 'Zip File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
+				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="text-sm text-center text-gray-700">${isCompressed ? fileFormat.trim().toUpperCase() +' File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
 				orscan.classList.add('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
 				qrCode.title = "Double Click to zoom-in and zoom-out";
@@ -470,10 +471,21 @@ function shareLink(content, filename, isZip) {
 				qrCode.classList.remove('inline');
 				file_Link.href = fileLink;
 				file_Link.value = fileLink;
-				if (isZip) {
+				if (isCompressed) {
 					downloadLinkUrl.onclick = () => {
+						let mimeType;
+						const fileType = fileFormat.trim().toLowerCase();
+
+						if (fileType === 'zip') {
+							mimeType = 'application/zip';
+						} else if (fileType === 'rar') {
+							mimeType = 'application/vnd.rar';
+						} else if (fileType === '7z') {
+							mimeType = 'application/x-7z-compressed';
+						}
+
 						const blob = new Blob([content], {
-							type: 'application/zip'
+							type: mimeType
 						});
 						const url = URL.createObjectURL(blob);
 						const a = document.createElement('a');
@@ -500,7 +512,7 @@ function shareLink(content, filename, isZip) {
 			confirmButtonColor: "#179fff"
 		});
 		shareButton.disabled = false;
-		zipFileBtn.disabled = false;
+		compressFileBtn.disabled = false;
 	});
 }
 
@@ -518,8 +530,8 @@ shareButton.addEventListener('click', () => {
 		const content = minifiedEditor.getModel().getValue();
 		const filename = `${(fileTabs.children[currentTabIndex].textContent || fileTabsOut.children[currentTabIndexOut].textContent || "default.py").trim()}`;
 		shareButton.disabled = true;
-		zipFileBtn.disabled = true;
-		shareLink(content, filename, false);
+		compressFileBtn.disabled = true;
+		shareLink(content, filename, false, 'python');
 	}
 });
 
@@ -546,7 +558,7 @@ function closePopup() {
 	animateIcon("closePopup", "fa-fade", 700);
 	setTimeout(() => {
 		shareButton.disabled = false;
-		zipFileBtn.disabled = false;
+		compressFileBtn.disabled = false;
 		qrCode.classList.remove('!bg-white', 'rounded-lg', 'border-2', 'border-dashed', 'border-black', 'w-36', 'ml-12', 'p-3', 'mr-12', 'mt-2');
 		orscan.classList.remove('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 		link_newtab.classList.remove('text-white', 'bg-blue-600', 'hover:bg-blue-700', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5');
@@ -585,7 +597,8 @@ async function copyfilelink() {
 
 file_Link.addEventListener('click', copyfilelink);
 
-async function zipFiles(selectedIndices, sortedKeys, maxLength, zip) {
+async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, fileFormat, addReadme) {
+	let comPress = new JSZip();
 	let nonEmptyFilesCount = 0;
 	let fileOccurrences = {};
 	let fileNamesList = 'The list of the python files minified:\n\n';
@@ -630,41 +643,125 @@ async function zipFiles(selectedIndices, sortedKeys, maxLength, zip) {
 			const decryptedCode = CryptoJS.AES.decrypt(sessionStorage.getItem(fileKey), newKey).toString(CryptoJS.enc.Utf8);
 
 			if (decryptedCode.trim() !== '') {
-				zip.file(fileName, decryptedCode);
+				comPress.file(fileName, decryptedCode);
 				fileNamesList += `${nonEmptyFilesCount + 1}. ${fileName}\n`;
 				nonEmptyFilesCount++;
-				let totalZipProgress = ((nonEmptyFilesCount / maxLength) * 100);
-				zipProgressBar.value = totalZipProgress;
-				zipProgressStatus.innerText = `Zipping... ${totalZipProgress.toFixed(2)}%`;
-				zipProgress.classList.remove('hidden');
+				let totalCompressProgress = ((nonEmptyFilesCount / maxLength) * 100);
+				compressProgressBar.value = totalCompressProgress;
+				compressProgressStatus.innerText = `Compressing... ${totalCompressProgress.toFixed(2)}%`;
+				compressProgress.classList.remove('hidden');
 
 				await delay(nonEmptyFilesCount > 10 ? 300 : 600);
 			}
 		}
 	}
 
-	if (nonEmptyFilesCount > 0) {
+	if (nonEmptyFilesCount > 0 && addReadme) {
 		fileNamesList += `\nMinified on: ${new Date().toLocaleString()}\nhttps://glad432.github.io`;
-		zip.file('readme.txt', fileNamesList);
-		zipProgressBar.value = 100;
-		zipProgressStatus.innerText = `Zip File Created`;
-		setTimeout(() => {
-			zipProgress.classList.add('hidden');
-		}, 500);
-
-		const zipBlob = await zip.generateAsync({
-			type: 'blob',
-			compression: 'DEFLATE'
-		});
-
-		setTimeout(() => {
-			shareLink(zipBlob, 'minified_files.zip', true);
-			disableDwSrCpBtn(false);
-		}, 600);
+		comPress.file('readme.txt', fileNamesList);
 	}
+
+	compressProgressBar.value = 100;
+	compressProgressStatus.innerText = `${fileFormat.trim().toUpperCase()} File Created`;
+	setTimeout(() => {
+		compressProgress.classList.add('hidden');
+	}, 500);
+
+	const compressedBlob = await comPress.generateAsync({
+		type: 'blob',
+		compression: 'DEFLATE'
+	});
+
+	setTimeout(() => {
+		shareLink(compressedBlob, `${fileName.trim()}.${fileFormat.trim().toLowerCase()}`, true, fileFormat);
+		disableDwSrCpBtn(false);
+	}, 600);
 }
 
-async function zipPyFiles() {
+function compressOptions() {
+	const fragment = document.createDocumentFragment();
+	const p = document.createElement('p');
+	p.className = 'mb-5 text-2xl font-bold';
+	p.id = 'swal2-title';
+	p.textContent = 'Select file format';
+	fragment.appendChild(p);
+
+	const div1 = document.createElement('div');
+	div1.className = 'justify-center flex flex-row mb-5';
+	['ZIP', 'RAR', '7z'].forEach(labelText => {
+		const div = document.createElement('div');
+		if (labelText !== "7z") {
+			div.className = "mr-5";
+		}
+		const input = document.createElement('input');
+		input.className = "mr-1"
+		input.type = 'radio';
+		input.id = `format-${labelText.toLowerCase()}`;
+		input.name = 'file-format';
+		input.value = labelText.toLowerCase();
+		if (labelText === 'ZIP') {
+			input.checked = true;
+		}
+		if (input.checked) {
+			input.setAttribute('checked', '');
+		}
+		const label = document.createElement('label');
+		label.setAttribute('for', `format-${labelText.toLowerCase()}`);
+		label.textContent = labelText;
+		div.appendChild(input);
+		div.appendChild(label);
+		div1.appendChild(div);
+	});
+	fragment.appendChild(div1);
+
+	const div2 = document.createElement('div');
+	div2.className = 'flex justify-center flex-row items-center mb-5';
+	const input2 = document.createElement('input');
+	input2.type = 'text';
+	input2.id = 'file-name-input';
+	input2.name = 'file-name';
+	input2.className = 'cursor-text border p-2 ml-1 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500';
+	input2.placeholder = 'File name: (Optional)';
+	div2.appendChild(input2);
+	fragment.appendChild(div2);
+
+	const label2 = document.createElement('label');
+	label2.setAttribute('for', 'add-readme');
+	label2.className = 'flex justify-center flex-row items-center mb-5 cursor-pointer pl-2 mb-4';
+	const checkbox2 = document.createElement('input');
+	checkbox2.type = 'checkbox';
+	checkbox2.id = 'add-readme';
+	checkbox2.name = 'add-readme';
+	checkbox2.className = 'sr-only peer';
+	checkbox2.checked = true;
+	checkbox2.setAttribute('checked', '');
+
+	const div3 = document.createElement('div');
+	div3.className = 'relative w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600';
+	label2.appendChild(checkbox2);
+	label2.appendChild(div3);
+	const span2 = document.createElement('span');
+	span2.className = 'cursor-pointer ml-2 text-neutral-500 text-lg font-medium';
+	span2.textContent = 'Add ';
+	const innerSpan2 = document.createElement('span');
+	innerSpan2.className = 'hover:underline text-blue-500';
+	innerSpan2.title = 'It will have the list of\n minified Python Files';
+	const i2 = document.createElement('i');
+	i2.className = 'fa-solid fa-file-lines fa-sm pr-1';
+	innerSpan2.appendChild(i2);
+	innerSpan2.textContent = 'readme.txt';
+	span2.appendChild(innerSpan2);
+	span2.innerHTML += ' file';
+	label2.appendChild(span2);
+	fragment.appendChild(label2);
+
+	const tempDiv = document.createElement('div');
+	tempDiv.appendChild(fragment);
+
+	return tempDiv.innerHTML;
+}
+
+async function compressPyFiles() {
 	const sortedKeys = Object.keys(sessionStorage)
 		.filter(key => key.startsWith("#PyFile-out-"))
 		.sort((a, b) => parseInt(a.split("-")[2]) - parseInt(b.split("-")[2]));
@@ -682,24 +779,67 @@ async function zipPyFiles() {
 	const relevantTabs = tabContents.filter(tab => tab.content !== '');
 	const selectedIndices = relevantTabs.map(tab => tab.index);
 
-	if (selectedIndices.length > 1 && maxLength > 1) {
-		animateIcon("fade-8", "fa-fade", 700);
-		handleTabsOverlay(true);
-		zipFileBtn.disabled = true;
-		shareButton.disabled = true;
-		const filteredSortedKeys = selectedIndices.map(index => sortedKeys[index]);
-
-		await zipFiles(selectedIndices, filteredSortedKeys, Math.min(20, maxLength), new JSZip());
-	} else if (maxLength < 2) {
+	if (selectedIndices.length < 2 || maxLength < 2) {
 		Swal.fire({
-			text: "At least 2 minified files needed for the zip.",
+			text: "Switch to a Minifed tab. Need at least 2 minified files for compression.",
 			icon: "info",
 			confirmButtonColor: "#179fff"
 		});
+		return;
 	}
+
+	animateIcon("fade-8", "fa-fade", 700);
+	handleTabsOverlay(true);
+	compressFileBtn.disabled = true;
+	shareButton.disabled = true;
+
+	const {
+		value,
+		dismiss
+	} = await Swal.fire({
+		html: compressOptions(),
+		inputValidator: (value) => {
+			if (!value.fileFormat) {
+				return "You need to choose one file format!";
+			}
+		},
+		allowOutsideClick: false,
+		confirmButtonColor: "#179fff",
+		showCancelButton: true,
+		cancelButtonText: 'Cancel',
+		cancelButtonColor: "#d33",
+
+		preConfirm: () => {
+			const enteredFileName = document.getElementById('file-name-input').value.trim().slice(0, 256);
+			return {
+				fileFormat: document.querySelector('input[name="file-format"]:checked').value,
+				fileName: enteredFileName.replace(/[^a-zA-Z0-9,\s.()]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_") || 'minified_files',
+				addReadme: document.getElementById('add-readme').checked
+			};
+		}
+	});
+
+	if (dismiss === Swal.DismissReason.cancel) {
+		compressFileBtn.disabled = false;
+		shareButton.disabled = false;
+		handleTabsOverlay(false);
+		return;
+	}
+
+	const {
+		fileFormat,
+		fileName,
+		addReadme
+	} = value;
+
+	await compressFiles(selectedIndices, sortedKeys, Math.min(20, maxLength), fileName, fileFormat, addReadme);
+
+	compressFileBtn.disabled = false;
+	shareButton.disabled = false;
+	handleTabsOverlay(false);
 }
 
-zipFileBtn.addEventListener('click', zipPyFiles);
+compressFileBtn.addEventListener('click', compressPyFiles);
 
 function initializeMinifier() {
 	function build_query() {
@@ -1173,7 +1313,7 @@ function updateTabName(tabQueryInput, fileTabs, currentTabIndex) {
 	var newName = tabNameInput.value.trim();
 	var cleanedStrnopy = newName.replace(/\.py$/, '');
 	if (!(/^\s+$/.test(cleanedStrnopy)) && (cleanedStrnopy.length >= 1 && cleanedStrnopy.length <= 256)) {
-		var cleanedString = cleanedStrnopy.replace(/[^a-zA-Z0-9,\s.]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_");
+		var cleanedString = cleanedStrnopy.replace(/[^a-zA-Z0-9,\s.()]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_");
 		if (!cleanedString.endsWith('.py')) {
 			cleanedString += '.py';
 		}
@@ -1256,8 +1396,8 @@ function updateTabStyles() {
 		minifyAllBtn.classList.add("hidden");
 	}
 	var tabs = document.querySelectorAll('.file-tab');
-	zipFileBtn.classList.toggle('hidden', tabs.length <= 1);
-	zipFileBtn.disabled = tabs.length <= 1;
+	compressFileBtn.classList.toggle('hidden', tabs.length <= 1);
+	compressFileBtn.disabled = tabs.length <= 1;
 	if (currentTabIndex < tabs.length && currentTabIndex >= 0) {
 		tabs.forEach((tab, index) => {
 			var icon = tab.querySelector('.fa-file-code');
@@ -1366,6 +1506,7 @@ function confirmDeleteFile(index) {
 		if (result.isConfirmed) {
 			deleteFile(index);
 			deleteFile(index, true);
+			fileLinkInput.value = '';
 		}
 		addNewTabBtn.disabled = false;
 	});
