@@ -81,6 +81,10 @@ input:checked + .slide:before {
   --vscode-scrollbarSlider-activeBackground: rgba(28, 88, 145, 0.65);
   border-radius: 3px;
 }
+div:where(.swal2-container) .swal2-checkbox,
+div:where(.swal2-container) .swal2-radio {
+  background: 0 0 !important;
+}
 @media only screen and (max-width: 768px) {
   #errmsg,
   #line-count,
@@ -92,14 +96,14 @@ input:checked + .slide:before {
   .blue_big_box {
     width: auto !important;
   }
+  #CompressFile,
   #Unselectall,
   #copy,
   #dw,
   #load_File,
   #rm,
   #selectall,
-  #share,
-  #zipFile {
+  #share {
     font-size: 10px;
   }
   .file-tab,
