@@ -24,7 +24,7 @@ const inputContainer = document.getElementById("inputContainer");
 const fileLinkInput = document.getElementById("fileLinkInput");
 const darkModeToggle = document.getElementById("darkModeToggle");
 const selectallopt = document.getElementById('selectall');
-const unselectallopt = document.getElementById('Unselectall');
+const resetOpt = document.getElementById('resetOpt');
 const preserve_globals = document.getElementById('preserve_globals');
 const preserve_locals = document.getElementById('preserve_locals');
 const fileTabs = document.getElementById('file-tabs');
@@ -460,7 +460,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 				link_newtab.title = 'Open in new tab';
 				orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
 				downloadLinkUrl.classList.remove('hidden');
-				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="text-sm text-center text-gray-700">${isCompressed ? fileFormat.trim().toUpperCase() +' File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
+				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="text-sm text-center text-gray-700">${isCompressed ? (fileFormat.trim() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim()) +' File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
 				orscan.classList.add('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
 				qrCode.title = "Double Click to zoom-in and zoom-out";
@@ -471,6 +471,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 				qrCode.classList.remove('inline');
 				file_Link.href = fileLink;
 				file_Link.value = fileLink;
+				downloadLinkUrl.innerHTML = `Download ${fileFormat.trim().toLowerCase() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim()} <i class="fa-solid fa-file-zipper"></i>`
 				if (isCompressed) {
 					downloadLinkUrl.onclick = () => {
 						let mimeType;
@@ -490,7 +491,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 						const url = URL.createObjectURL(blob);
 						const a = document.createElement('a');
 						a.href = url;
-						a.download = filename;
+						a.download = filename.trim();
 						a.classList.add("hidden");
 						document.body.appendChild(a);
 						a.click();
@@ -578,6 +579,7 @@ function closePopup() {
 		link_newtab.innerHTML = '';
 		link_newtab.href = '';
 		link_newtab.target = '';
+		downloadLinkUrl.innerHTML = '';
 	}, 800);
 }
 
@@ -662,7 +664,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 	}
 
 	compressProgressBar.value = 100;
-	compressProgressStatus.innerText = `${fileFormat.trim().toUpperCase()} File Created`;
+	compressProgressStatus.textContent = `${fileFormat.trim().toLowerCase() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim()} File Created`;
 	setTimeout(() => {
 		compressProgress.classList.add('hidden');
 	}, 500);
@@ -680,14 +682,8 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 
 function compressOptions() {
 	const fragment = document.createDocumentFragment();
-	const p = document.createElement('p');
-	p.className = 'mb-5 text-2xl font-bold';
-	p.id = 'swal2-title';
-	p.textContent = 'Select file format';
-	fragment.appendChild(p);
-
 	const div1 = document.createElement('div');
-	div1.className = 'justify-center flex flex-row mb-5';
+	div1.className = 'justify-center flex flex-row my-5';
 	['ZIP', 'RAR', '7z'].forEach(labelText => {
 		const div = document.createElement('div');
 		if (labelText !== "7z") {
@@ -706,6 +702,7 @@ function compressOptions() {
 			input.setAttribute('checked', '');
 		}
 		const label = document.createElement('label');
+		label.className = 'active:font-bold focus:font-bold';
 		label.setAttribute('for', `format-${labelText.toLowerCase()}`);
 		label.textContent = labelText;
 		div.appendChild(input);
@@ -714,20 +711,27 @@ function compressOptions() {
 	});
 	fragment.appendChild(div1);
 
+	const divCenter = document.createElement('div');
+	divCenter.className = 'justify-center flex mb-5';
 	const div2 = document.createElement('div');
-	div2.className = 'flex justify-center flex-row items-center mb-5';
+	div2.className = 'relative';
 	const input2 = document.createElement('input');
 	input2.type = 'text';
 	input2.id = 'file-name-input';
-	input2.name = 'file-name';
-	input2.className = 'cursor-text border p-2 ml-1 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500';
-	input2.placeholder = 'File name: (Optional)';
+	input2.className = 'block rounded-lg px-2.5 pb-2.5 pt-5 text-sm text-gray-900 w-64 border border-solid border-gray-400 appearance-none focus:outline-none focus:ring-0 peer';
+	input2.placeholder = ' ';
+	const label1 = document.createElement('label');
+	label1.setAttribute('for', 'file-name-input');
+	label1.textContent = 'Enter File Name: (Optional)';
+	label1.className = 'absolute cursor-text text-bold text-gray-500 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto';
 	div2.appendChild(input2);
-	fragment.appendChild(div2);
+	div2.appendChild(label1);
+	divCenter.appendChild(div2)
+	fragment.appendChild(divCenter);
 
 	const label2 = document.createElement('label');
 	label2.setAttribute('for', 'add-readme');
-	label2.className = 'flex justify-center flex-row items-center mb-5 cursor-pointer pl-2 mb-4';
+	label2.className = 'flex justify-center flex-row items-center mb-5 cursor-pointer pl-2';
 	const checkbox2 = document.createElement('input');
 	checkbox2.type = 'checkbox';
 	checkbox2.id = 'add-readme';
@@ -839,7 +843,10 @@ async function compressPyFiles() {
 	handleTabsOverlay(false);
 }
 
-compressFileBtn.addEventListener('click', compressPyFiles);
+compressFileBtn.addEventListener('click', () => {
+	animateIcon("CompressFile", "fa-fade", 700);
+	setTimeout(compressPyFiles, 700);
+});
 
 function initializeMinifier() {
 	function build_query() {
@@ -887,14 +894,14 @@ function initializeMinifier() {
 		fileTabsOverlay.classList.remove("hidden");
 		disableDwSrCpBtn(true);
 		selectallopt.disabled = true;
-		unselectallopt.disabled = true;
+		resetOpt.disabled = true;
 		options.push("preserve_locals", "preserve_globals");
 		options.forEach(option => {
 			const checkbox = document.getElementById(option);
 			checkbox.disabled = true;
 		});
 		selectallopt.classList.add("cursor-not-allowed");
-		unselectallopt.classList.add("cursor-not-allowed");
+		resetOpt.classList.add("cursor-not-allowed");
 		minifiedEditor.getModel().setValue('');
 		animateIcon("fade-0", "fa-fade", 1500);
 		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
@@ -927,17 +934,17 @@ function initializeMinifier() {
 		fileTabsOverlayOut.classList.add("hidden");
 		fileTabsOverlay.classList.add("hidden");
 		selectallopt.disabled = false;
-		unselectallopt.disabled = false;
+		resetOpt.disabled = false;
 		options.forEach(option => {
 			const checkbox = document.getElementById(option);
 			checkbox.disabled = false;
 		});
 		selectallopt.classList.remove("cursor-not-allowed");
-		unselectallopt.classList.remove("cursor-not-allowed");
+		resetOpt.classList.remove("cursor-not-allowed");
 		minifyButton.disabled = false;
 		if (minifiedEditor.getModel().getValue().trim() === "" && sourceEditor.getModel().getValue() !== "") {
 			fileTabsOut.children[currentTabIndexOut].classList.add("error");
-			document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = "Minification failed , Re-check the Orginal code";
+			document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = "Minification failed!\nRe-check the Orginal code";
 		} else {
 			fileTabsOut.children[currentTabIndexOut].classList.remove("error");
 			document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = '';
@@ -998,7 +1005,7 @@ function clearSource() {
 	minifiedSizeSpan.textContent = '0.000 kB';
 }
 
-document.getElementById('rm').addEventListener('click', clearSource);
+document.getElementById('clearAll').addEventListener('click', clearSource);
 
 function disableDwSrCpBtn(disable) {
 	copyButton.disabled = disable;
@@ -1058,17 +1065,17 @@ function toggleContent1() {
 
 document.getElementById('toggleContent1').addEventListener('click', toggleContent1);
 
-function tickAllAndSetGlobals() {
+function tickAllOptions() {
 	animateIcon("selectall", "fa-fade", 800);
 	checkboxes.forEach((checkbox) => {
 		checkbox.checked = true;
 	});
 }
 
-selectallopt.addEventListener('click', tickAllAndSetGlobals);
+selectallopt.addEventListener('click', tickAllOptions);
 
 function resetOptions() {
-	animateIcon("Unselectall", "fa-fade", 800);
+	animateIcon("resetOpt", "fa-fade", 800);
 	checkboxes.forEach((checkbox) => {
 		checkbox.checked = false;
 	});
@@ -1076,7 +1083,7 @@ function resetOptions() {
 	preserve_globals.value = '';
 }
 
-unselectallopt.addEventListener('click', resetOptions);
+resetOpt.addEventListener('click', resetOptions);
 
 function input_from_url() {
 	animateIcon("fade-4", "fa-fade", 1000);

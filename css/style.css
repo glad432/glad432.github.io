@@ -97,11 +97,11 @@ div:where(.swal2-container) .swal2-radio {
     width: auto !important;
   }
   #CompressFile,
-  #Unselectall,
+  #clearAll,
   #copy,
   #dw,
   #load_File,
-  #rm,
+  #resetOpt,
   #selectall,
   #share {
     font-size: 10px;
