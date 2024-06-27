@@ -184,7 +184,7 @@
       <div id="editor" class="w-auto h-[300px] mt-[2px] rounded overflow-hidden border-[1px] border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]">
         <div id="type-overlay" class="md:md:cursor-default md:absolute md:h-[300px] md:z-10 md:left-[10vh] md:right-[10vh] md:bg-transparent"></div>
       </div>
-      <button id="rm" class="text-2xl mt-2 font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
+      <button id="clearAll" class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
       </button>
       <div class="text-left w-[500px] my-10 p-4 rounded border-t-[5px] border-solid border-blue-500 blue_big_box md:mx-auto md:p-8">
         <p id="toggleContent1" class="cursor-pointer underline underline-offset-3 decoration-8 decoration-blue-400 decoration-blue-600 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
@@ -249,15 +249,22 @@
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove unnecessary returns</span>
           </label>
-          <label for="preserve_locals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Locals:</label>
-          <input type="text" id="preserve_locals" placeholder="Preserved Locals (use , between the words):" name="Preserved Locals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4">
-          <label for="preserve_globals" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium">Preserved Globals:</label>
-          <input type="text" id="preserve_globals" placeholder="Preserved Globals (use , between the words):" name="Preserved Globals" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4">
+          <div class="relative mb-3">
+            <input type="text" id="preserve_locals" class="block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " spellcheck="false" />
+            <label for="preserve_locals" class="absolute cursor-text text-bold text-gray-500 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Preserved Locals:</label>
+          </div>
+          <div class="relative mb-2">
+            <input type="text" id="preserve_globals" class="block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " spellcheck="false" />
+            <label for="preserve_globals" class="absolute cursor-text text-bold text-gray-500 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Preserved Globals:</label>
+          </div>
+          <p class="text-sm mb-2 text-neutral-500">
+            <span class="text-red-500 font-bold">*</span> Delimiter is comma
+          </p>
           <a class="text-blue-500 text-base hover:underline hover:text-blue-600" href="https://dflook.github.io/python-minifier/transforms" target="_blank">Learn More <i class="fa-solid fa-arrow-up-right-from-square fa-sm"></i>
           </a>
           <div class="mt-4 space-x-2 text-center">
-            <button id="selectall" class="text-2xl font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Select all</button>
-            <button id="Unselectall" class="text-2xl font-bold bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Reset</button>
+            <button id="selectall" class="px-4 py-2 mt-2 font-bold cursor-pointer bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Select all</button>
+            <button id="resetOpt" class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Reset</button>
           </div>
         </div>
       </div>
@@ -284,8 +291,7 @@
           <span id="scantocopy"></span>
           <div id="qrCode" oncontextmenu="return false;"></div>
           <div class="flex flex-col">
-            <button id="downloadLinkurl" download class="hidden self-center w-fit inline-block px-4 py-2 mt-2 font-bold bg-green-500 rounded-lg text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download <i class="fa-solid fa-file-zipper"></i>
-            </button>
+            <button id="downloadLinkurl" download class="hidden self-center w-fit inline-block px-4 py-2 mt-2 font-bold bg-green-500 rounded-lg text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100"></button>
             <button id="closePopup" class="hidden px-4 py-2 self-center mt-5 font-bold bg-red-500 rounded-full w-fit text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Close</button>
           </div>
         </div>
