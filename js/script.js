@@ -827,6 +827,7 @@ async function compressPyFiles() {
 	if (dismiss === Swal.DismissReason.cancel) {
 		compressFileBtn.disabled = false;
 		disableDwSrCpBtn(false);
+		handleTabsOverlay(false);
 		return;
 	}
 
