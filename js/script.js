@@ -646,7 +646,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 
 			if (decryptedCode.trim() !== '') {
 				comPress.file(fileName, decryptedCode);
-				fileNamesList += `${nonEmptyFilesCount + 1}. ${fileName}\n`;
+				addReadme && (fileNamesList += `${nonEmptyFilesCount + 1}. ${fileName}\n`);
 				nonEmptyFilesCount++;
 				let totalCompressProgress = ((nonEmptyFilesCount / maxLength) * 100);
 				compressProgressBar.value = totalCompressProgress;
@@ -676,6 +676,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 
 	setTimeout(() => {
 		shareLink(compressedBlob, `${fileName.trim()}.${fileFormat.trim().toLowerCase()}`, true, fileFormat);
+		compressFileBtn.disabled = false;
 		disableDwSrCpBtn(false);
 	}, 600);
 }
@@ -825,8 +826,7 @@ async function compressPyFiles() {
 
 	if (dismiss === Swal.DismissReason.cancel) {
 		compressFileBtn.disabled = false;
-		shareButton.disabled = false;
-		handleTabsOverlay(false);
+		disableDwSrCpBtn(false);
 		return;
 	}
 
@@ -838,12 +838,11 @@ async function compressPyFiles() {
 
 	await compressFiles(selectedIndices, sortedKeys, Math.min(20, maxLength), fileName, fileFormat, addReadme);
 
-	compressFileBtn.disabled = false;
-	shareButton.disabled = false;
-	handleTabsOverlay(false);
 }
 
 compressFileBtn.addEventListener('click', () => {
+	compressFileBtn.disabled = true;
+	disableDwSrCpBtn(true);
 	animateIcon("CompressFile", "fa-fade", 700);
 	setTimeout(compressPyFiles, 700);
 });
