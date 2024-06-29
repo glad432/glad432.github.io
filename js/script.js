@@ -1541,8 +1541,11 @@ function deleteAllTabs() {
 window.addEventListener('beforeunload', (e) => {
 	e.preventDefault();
 	e.returnValue = '';
-	sessionStorage.clear();
 	return '';
+});
+
+window.addEventListener('load', () => {
+	sessionStorage.clear();
 });
 
 function switchTab(index, fromSwitchTabOut = false) {
