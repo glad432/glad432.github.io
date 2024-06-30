@@ -81,9 +81,13 @@ input:checked + .slide:before {
   --vscode-scrollbarSlider-activeBackground: rgba(28, 88, 145, 0.65);
   border-radius: 3px;
 }
+.apexcharts-svg,
 div:where(.swal2-container) .swal2-checkbox,
 div:where(.swal2-container) .swal2-radio {
   background: 0 0 !important;
+}
+.apexcharts-menu-item:hover {
+  border-radius: 5px;
 }
 @media only screen and (max-width: 768px) {
   #errmsg,
@@ -100,6 +104,8 @@ div:where(.swal2-container) .swal2-radio {
   #clearAll,
   #copy,
   #dw,
+  #graphkbsize,
+  #graphlines,
   #load_File,
   #resetOpt,
   #selectall,
@@ -118,6 +124,16 @@ div:where(.swal2-container) .swal2-radio {
     margin-left: 4rem !important;
     margin-right: 4rem !important;
   }
+}
+.dark .apexcharts-menu {
+  background: #404040 !important;
+}
+.dark .apexcharts-legend-text,
+.dark .apexcharts-menu-item {
+  color: #ddd !important;
+}
+.dark .apexcharts-menu-item:hover {
+  background: #70707080 !important;
 }
 .dark .file-tab-out.active,
 .dark .file-tab.active {
@@ -144,8 +160,7 @@ div:where(.swal2-container) .swal2-radio {
   background-color: #181a1b !important;
   color-scheme: dark !important;
 }
-.dark body,
-.dark html {
+.dark .colorhandle {
   color-scheme: dark;
   border-color: #736b5e;
   color: #e8e6e3;
