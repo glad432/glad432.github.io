@@ -36,15 +36,20 @@ const compressFileBtn = document.getElementById('CompressFile');
 const compressProgress = document.getElementById('comProgress')
 const compressProgressBar = document.getElementById('comProgressBar');
 const compressProgressStatus = document.getElementById('comProgressStatus');
+const graphContainer = document.getElementById("graph-container");
+const graphKbSize = document.getElementById("graphkbsize");
+const graphLines = document.getElementById("graphlines");
 var content = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, typingTimeout, sourceEditor, minifiedEditor;
+let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, typingTimeout, sourceEditor, minifiedEditor, darkModeEnabled;
 let typingInProgress = false;
 var sources = ['#PyFile-1'];
 var sourcesOut = ['#PyFile-out-1'];
 var currentTabIndex = 0;
 var currentTabIndexOut = 0;
 let startIndex = 0;
+let KbsizeOrLine = false;
+let graph = null;
 const maxFileSizeInBytes = 1 * 400 * 1024;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
@@ -252,20 +257,54 @@ function disableTyping() {
 	type_overlay.classList.add('!hidden');
 }
 
-function setTheme() {
-	if (typeof darkModeToggle !== 'undefined' && 'checked' in darkModeToggle) {
-		const theme = darkModeToggle.checked ? 'vs-dark' : 'vs';
-		sourceEditor.updateOptions({
-			theme: theme
-		});
-		minifiedEditor.updateOptions({
-			theme: theme
+function setGraphTheme() {
+	if (graph) {
+		graph.updateOptions({
+			theme: {
+				mode: darkModeEnabled ? 'dark' : 'light'
+			}
 		});
 	}
 }
 
-darkModeToggle.addEventListener("change", setTheme)
-window.addEventListener("load", setTheme)
+function setTheme() {
+	if (typeof darkModeToggle !== 'undefined' && 'checked' in darkModeToggle) {
+		darkModeEnabled = darkModeToggle.checked;
+	} else {
+		return;
+	}
+
+	const localStorageDarkMode = localStorage.getItem("darkMode");
+	if (localStorageDarkMode !== 'light') {
+		darkModeEnabled = localStorageDarkMode === 'true';
+	}
+	if (localStorageDarkMode === 'dark') {
+		darkModeEnabled = localStorageDarkMode === 'true';
+	}
+
+	const vsTheme = darkModeEnabled ? 'vs-dark' : 'vs';
+	if (sourceEditor && minifiedEditor) {
+		sourceEditor.updateOptions({
+			theme: vsTheme
+		});
+		minifiedEditor.updateOptions({
+			theme: vsTheme
+		});
+		setGraphTheme();
+	}
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+	setTheme();
+	darkModeToggle.addEventListener("change", setTheme);
+	window.addEventListener("storage", (event) => {
+		if (event.key === "darkMode") {
+			setTheme();
+		}
+	});
+});
+
+window.addEventListener("load", setTheme);
 
 function getFontSize() {
 	const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -713,7 +752,7 @@ function compressOptions() {
 	fragment.appendChild(div1);
 
 	const divCenter = document.createElement('div');
-	divCenter.className = 'justify-center flex mb-5';
+	divCenter.className = 'justify-center flex mb-5 colorhandle';
 	const div2 = document.createElement('div');
 	div2.className = 'relative';
 	const input2 = document.createElement('input');
@@ -849,7 +888,7 @@ compressFileBtn.addEventListener('click', () => {
 });
 
 function initializeMinifier() {
-	function build_query() {
+	function buildQuery() {
 		var query = options.map(option => {
 			var checkbox = document.getElementById(option);
 			if (checkbox && checkbox.checked) {
@@ -907,7 +946,7 @@ function initializeMinifier() {
 		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
 		if (sourceEditor.getModel().getValue() !== '' && minifiedEditor.getModel().getValue() === '') {
 			try {
-				const response = await fetch(`https://python-minify.vercel.app/minify?${build_query()}`, {
+				const response = await fetch(`https://python-minify.vercel.app/minify?${buildQuery()}`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'text/plain'
@@ -920,6 +959,8 @@ function initializeMinifier() {
 					saveEditorContent(true);
 					minifiedEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 					disableDwSrCpBtn(false);
+					graphContainer.classList.remove("hidden");
+					updateGraph();
 				} else {
 					disableDwSrCpBtn(true);
 					minifiedSizeSpan.innerHTML = `${excir} Error`;
@@ -970,7 +1011,7 @@ function initializeMinifier() {
 		let endIndex = Math.min(startIndex + 5, maxIndex);
 		for (let i = startIndex; i < endIndex; i++) {
 			switchTabOut(i);
-			await minifyClick();
+			await minifyClick(true);
 			updateEditorContent(true);
 			await delay(100);
 		}
@@ -1003,6 +1044,7 @@ function clearSource() {
 	sourceEditor.getModel().setValue('');
 	fileLinkInput.value = '';
 	minifiedSizeSpan.textContent = '0.000 kB';
+	updateGraph();
 }
 
 document.getElementById('clearAll').addEventListener('click', clearSource);
@@ -1180,11 +1222,11 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', async () => {
 	const response = await fetch("https://glad432.github.io/article/blog.min.json");
 	const articleData = await response.json();
-	let content = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h1 class="sm:text-xl lg:text-3xl text-gray-600 text-left font-bold mb-4"><i class="fa-solid fa-circle-info text-blue-500 pr-2"></i>${articleData.article.title}</h1>`;
+	let content = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h2 class="sm:text-xl lg:text-3xl text-gray-600 text-left font-bold mb-4"><i class="fa-solid fa-circle-info text-blue-500 pr-2"></i>${articleData.article.title}</h2>`;
 
 	articleData.article.sections.forEach((section) => {
 		if (section.section_title !== "FAQs") {
-			content += `<div class="mb-4"><h2 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4"><i class="fa-solid fa-diamond text-cyan-900 pr-2"></i>${section.section_title}</h2>`;
+			content += `<div class="mb-4"><h3 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4"><i class="fa-solid fa-diamond text-cyan-900 pr-2"></i>${section.section_title}</h3>`;
 			if (section.section_content) {
 				content += `<p class="text-[13px] lg:text-[15px]">${section.section_content}</p>`;
 			}
@@ -1199,7 +1241,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		}
 	});
 
-	content += `<h2 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4"><i class="fa-solid fa-circle-question text-blue-700 pr-2"></i>FAQs</h2><ul class="list-none list-inside">`;
+	content += `<h3 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4"><i class="fa-solid fa-circle-question text-blue-700 pr-2"></i>FAQs</h3><ul class="list-none list-inside">`;
 	const faqPairs = articleData.article.sections.find(section => section.section_title === "FAQs").section_content.split('\n\n');
 	faqPairs.forEach(pair => {
 		const [question, answer] = pair.split('\nA:');
@@ -1208,6 +1250,216 @@ document.addEventListener('DOMContentLoaded', async () => {
 	content += `</ul></div>`;
 
 	document.getElementById('article').innerHTML = content;
+});
+
+function graphConfig(originalData, minifiedData, tabFileNames) {
+	return new ApexCharts(document.getElementById("line-graph"), {
+		chart: {
+			height: "250vh",
+			maxWidth: "100%",
+			type: "area",
+			fontFamily: "Source Code Pro",
+			zoom: {
+				enabled: false,
+			},
+			animations: {
+				enabled: true,
+				easing: 'linear',
+				speed: 800,
+				animateGradually: {
+					enabled: true,
+					delay: 150
+				},
+				dynamicAnimation: {
+					enabled: true,
+					speed: 350
+				}
+			}
+		},
+		grid: {
+			show: false,
+		},
+		tooltip: {
+			enabled: true,
+			x: {
+				show: false,
+			},
+		},
+		dataLabels: {
+			enabled: false,
+		},
+		series: [{
+				name: "Original Code",
+				data: originalData,
+				color: "#1A56DB",
+			},
+			{
+				name: "Minified Code",
+				data: minifiedData,
+				color: "#EF4444",
+			},
+		],
+		legend: {
+			show: true,
+		},
+		stroke: {
+			curve: 'smooth',
+		},
+		fill: {
+			type: "gradient",
+			gradient: {
+				opacityFrom: 0.6,
+				opacityTo: 0,
+				shade: "#1C64F2",
+				gradientToColors: ["#1C64F2"],
+			},
+		},
+		xaxis: {
+			categories: tabFileNames,
+			labels: {
+				show: false,
+			},
+			axisBorder: {
+				show: false,
+			},
+			axisTicks: {
+				show: true,
+			},
+		},
+		yaxis: {
+			show: true,
+			min: 0,
+			labels: {
+				show: false,
+			},
+		},
+	});
+}
+
+async function decryptAndPush(list, dataArray, KbsizeOrLine) {
+	for (let key of list) {
+		const decryptedKey = CryptoJS.AES.decrypt(sessionStorage.getItem(key), newKey).toString(CryptoJS.enc.Utf8);
+		if (KbsizeOrLine) {
+			dataArray.push((decryptedKey.split("\n").length));
+		} else {
+			dataArray.push((decryptedKey.length / 1024).toFixed(3));
+		}
+	}
+};
+
+async function updateGraph() {
+	const pycodeOutList = [];
+	const pycodeList = [];
+	const originalData = [];
+	const minifiedData = [];
+	const tabFileNames = [];
+	const minifiedDataFiltered = [];
+	const originalDataFiltered = [];
+	const tabFileNamesFiltered = [];
+	const percentageSavings = [];
+
+	Object.keys(sessionStorage).forEach(key => {
+		if (key.startsWith("#PyFile-out")) {
+			pycodeOutList.push(key);
+		} else if (key.startsWith("#PyFile")) {
+			pycodeList.push(key);
+		}
+	});
+
+	const numericalSort = (a, b) => parseInt(a.match(/\d+/)[0]) - parseInt(b.match(/\d+/)[0]);
+	pycodeList.sort(numericalSort);
+	pycodeOutList.sort(numericalSort);
+
+	await decryptAndPush(pycodeOutList, minifiedData, KbsizeOrLine);
+	await decryptAndPush(pycodeList, originalData, KbsizeOrLine);
+
+	if (fileTabsOut) {
+		Array.from(fileTabsOut.children).forEach((child) => {
+			tabFileNames.push(child.textContent.trim());
+		});
+	}
+
+	for (let i = 0; i < tabFileNames.length; i++) {
+		if (!KbsizeOrLine) {
+			minifiedDataFiltered.push(minifiedData[i]);
+			originalDataFiltered.push(originalData[i]);
+			tabFileNamesFiltered.push(tabFileNames[i]);
+		} else if (KbsizeOrLine) {
+			minifiedDataFiltered.push(minifiedData[i]);
+			originalDataFiltered.push(originalData[i]);
+			tabFileNamesFiltered.push(tabFileNames[i]);
+		}
+	}
+
+	if (minifiedDataFiltered.length > 1) {
+		minifiedData.splice(0, minifiedData.length, ...minifiedDataFiltered);
+		originalData.splice(0, originalData.length, ...originalDataFiltered);
+		tabFileNames.splice(0, tabFileNames.length, ...tabFileNamesFiltered);
+
+		if (!KbsizeOrLine) {
+			for (let i = 0; i < originalData.length; i++) {
+				const original = originalData[i];
+				const minified = minifiedData[i];
+				if (original === 0) {
+					percentageSavings.push("N/A");
+				} else {
+					const savingsPercentage = ((original - minified) / original) * 100;
+					if (savingsPercentage === 0) {
+						percentageSavings.push("0% Saved");
+					} else if (savingsPercentage === 100) {
+						percentageSavings.push("Not minified");
+					} else {
+						percentageSavings.push(`${savingsPercentage.toFixed(2)}% Saved`);
+					}
+				}
+			}
+		}
+
+		if (graph) {
+			graph.updateSeries([{
+					name: "Original Code",
+					data: originalData
+				},
+				{
+					name: "Minified Code",
+					data: minifiedData
+				}
+			], true);
+			graph.updateOptions({
+				xaxis: {
+					categories: tabFileNames.map((name, index) => !KbsizeOrLine ? `${name} (${percentageSavings[index]})` : `${name}`)
+				}
+			}, true);
+		} else {
+			graph = graphConfig(originalData, minifiedData, tabFileNames);
+			graph.render();
+			setGraphTheme();
+		}
+
+		graphContainer.classList.remove("hidden");
+	} else {
+		graphContainer.classList.add("hidden");
+	}
+}
+
+document.addEventListener("load", () => {
+	updateGraph();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+	if (graphKbSize) {
+		graphKbSize.addEventListener("click", () => {
+			KbsizeOrLine = false;
+			updateGraph();
+		});
+	}
+
+	if (graphLines) {
+		graphLines.addEventListener("click", () => {
+			KbsizeOrLine = true;
+			updateGraph();
+		});
+	}
 });
 
 function handleTabsOverlay(enable) {
@@ -1282,11 +1534,13 @@ function editTabName() {
 	tabNameInput.addEventListener('keypress', (event) => {
 		if (event.key === 'Enter') {
 			updateTabName('.tab-name-input', fileTabs, currentTabIndex);
+			updateGraph();
 			handleAutoScroll();
 		}
 	});
 	tabNameInput.addEventListener('blur', () => {
 		updateTabName('.tab-name-input', fileTabs, currentTabIndex);
+		updateGraph();
 	});
 
 	var saveIcon = document.createElement('button');
@@ -1513,6 +1767,7 @@ function confirmDeleteFile(index) {
 		if (result.isConfirmed) {
 			deleteFile(index);
 			deleteFile(index, true);
+			updateGraph();
 			fileLinkInput.value = '';
 		}
 		addNewTabBtn.disabled = false;
@@ -1601,11 +1856,13 @@ function editTabNameOut() {
 	tabNameInput.addEventListener('keypress', (event) => {
 		if (event.key === 'Enter') {
 			updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut);
+			updateGraph();
 			handleAutoScrollOut();
 		}
 	});
 	tabNameInput.addEventListener('blur', () => {
 		updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut);
+		updateGraph();
 	});
 
 	var saveIcon = document.createElement('button');
