@@ -1,8 +1,6 @@
-![Lines of code](https://sloc.xyz/github/glad432/glad432.github.io)
-
 # Python Minifier - Glad432
 
-Welcome to my Python Minifier - Glad432. This repository showcases my work using HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode for generating QR codes, Monaco Editor for code editing, CryptoJS for cryptographic tasks, and SweetAlert2 for beautiful popup boxes. Additionally, it utilizes the API to minify the python files, file.io for file sharing, and zipjs for zipping the python file.
+Welcome to my Python Minifier - Glad432. This repository showcases my work using Python, HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode for generating QR codes, Monaco Editor for code editing, CryptoJS for cryptographic tasks, and SweetAlert2 for beautiful popup boxes. Additionally, it utilizes the API to minify the python files, file.io for file sharing, zipjs for compressing the python file, and ApexCharts for interactive data visualization charts.
 
 ![python minifier - glad432](https://gladw-in.github.io/projects/images/python%20minifier.webp)
 
@@ -15,7 +13,8 @@ Welcome to my Python Minifier - Glad432. This repository showcases my work using
 - [file.io](https://www.file.io/) for file sharing
 - [Font Awesome](https://fontawesome.com/) for scalable vector icons
 - [QRCode](https://kazuhikoarase.github.io/qrcode-generator/) for generating QR codes
-- [JSZip](https://stuk.github.io/jszip/) for client-side zip file operations
+- [JSZip](https://stuk.github.io/jszip/) for client-side file compression
+- [ApexCharts](https://apexcharts.com/) f0r Interactive JavaScript charts
 - [CryptoJS](https://github.com/brix/crypto-js) for cryptographic tasks
 - [SweetAlert2](https://sweetalert2.github.io/) for beautiful popup boxes
 
@@ -53,7 +52,12 @@ The [Python Minify API](https://github.com/glad432/python-minifier-flask) allows
 
 ## JSZip
 
-[ZipJS](https://stuk.github.io/jszip/) is a JavaScript library that allows you to work with zip files directly in your web browser, making it easy to create, extract, and manipulate zip archives without needing server-side processing.
+[ZipJS](https://stuk.github.io/jszip/) is a JavaScript library that allows you to work with compress files directly in your web browser, making it easy to create, extract, and manipulate archives without needing server-side processing.
+
+## ApexCharts
+
+[ApexCharts](https://apexcharts.com/) is a modern JavaScript charting library that enables interactive, responsive, and customizable data visualization through a wide range of chart types and options.
+
 
 ## CryptoJS
 
@@ -71,7 +75,8 @@ The [Python Minify API](https://github.com/glad432/python-minifier-flask) allows
 - [file.io](https://www.file.io/) - Simple and secure file sharing.
 - [Font Awesome](https://fontawesome.com/) - Scalable vector icons.
 - [QRCode](https://kazuhikoarase.github.io/qrcode-generator/) - Library for generating QR codes.
-- [JSZip](https://stuk.github.io/jszip/) -  JavaScript library for client-side zip file operations.
+- [JSZip](https://stuk.github.io/jszip/) -  JavaScript library for client-side compressing file.
+- [ApexCharts](https://apexcharts.com/) - Interactive JavaScript charts for data visualization.
 - [CryptoJS](https://github.com/brix/crypto-js) - JavaScript library for cryptographic tasks..
 - [SweetAlert2](https://sweetalert2.github.io/) - Replacement for JavaScript's popup boxes with beautiful designs.
 ---
