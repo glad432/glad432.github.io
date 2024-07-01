@@ -48,8 +48,9 @@ var sourcesOut = ['#PyFile-out-1'];
 var currentTabIndex = 0;
 var currentTabIndexOut = 0;
 let startIndex = 0;
-let KbsizeOrLine = false;
+let isGetLines = false;
 let graph = null;
+const defaultFilename = 'default.py';
 const maxFileSizeInBytes = 1 * 400 * 1024;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
@@ -189,6 +190,7 @@ require(['vs/editor/editor.main'], () => {
 		cursorBlinking: 'smooth',
 		cursorSmoothCaretAnimation: true,
 		cursorStyle: 'line',
+		automaticLayout: true
 	});
 	minifiedEditor = monaco.editor.create(document.getElementById('minified'), {
 		language: 'python',
@@ -210,6 +212,7 @@ require(['vs/editor/editor.main'], () => {
 		cursorSmoothCaretAnimation: true,
 		cursorStyle: 'line',
 		readOnly: true,
+		automaticLayout: true
 	});
 	sourceEditor.onDidChangeModelContent(() => {
 		saveEditorContent();
@@ -262,8 +265,14 @@ function setGraphTheme() {
 		graph.updateOptions({
 			theme: {
 				mode: darkModeEnabled ? 'dark' : 'light'
+			},
+			xaxis: {
+				axisTicks: {
+					color: darkModeEnabled ? '#737373' : '#242424',
+				}
 			}
 		});
+		updateGraph();
 	}
 }
 
@@ -322,7 +331,7 @@ function isMobile() {
 	return width <= 600;
 }
 
-window.addEventListener('load', () => {
+function updateEditorOptions() {
 	sourceEditor.updateOptions({
 		fontSize: getFontSize()
 	});
@@ -357,7 +366,10 @@ window.addEventListener('load', () => {
 		}
 	});
 
-});
+};
+
+window.addEventListener('load', updateEditorOptions);
+window.addEventListener('resize', updateEditorOptions);
 
 async function truncateCode(content) {
 	var pyblob = new Blob([content]);
@@ -452,7 +464,7 @@ function downloadPyFile() {
 	var dataUri = URL.createObjectURL(blob);
 	var downloadLink = document.createElement("a");
 	downloadLink.href = dataUri;
-	downloadLink.download = `${(fileTabs.children[currentTabIndex].textContent || fileTabsOut.children[currentTabIndexOut].textContent || "default.py").trim()}`;
+	downloadLink.download = `${(fileTabs.children[currentTabIndex].textContent || fileTabsOut.children[currentTabIndexOut].textContent || defaultFilename).trim()}`;
 	downloadLink.click();
 	URL.revokeObjectURL(dataUri);
 }
@@ -568,7 +580,7 @@ shareButton.addEventListener('click', () => {
 	if (minifiedEditor.getModel().getValue() !== "") {
 		animateIcon("fade-2", "fa-fade", 3000);
 		const content = minifiedEditor.getModel().getValue();
-		const filename = `${(fileTabs.children[currentTabIndex].textContent || fileTabsOut.children[currentTabIndexOut].textContent || "default.py").trim()}`;
+		const filename = `${(fileTabs.children[currentTabIndex].textContent || fileTabsOut.children[currentTabIndexOut].textContent || defaultFilename).trim()}`;
 		shareButton.disabled = true;
 		compressFileBtn.disabled = true;
 		shareLink(content, filename, false, 'python');
@@ -661,7 +673,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 		let finalFileName = fileNameOut || fileNameIn;
 
 		if (!finalFileName) {
-			finalFileName = 'default.py';
+			finalFileName = defaultFilename;
 		}
 
 		const occurrence = (fileOccurrences[finalFileName] || 0) + 1;
@@ -960,7 +972,6 @@ function initializeMinifier() {
 					minifiedEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 					disableDwSrCpBtn(false);
 					graphContainer.classList.remove("hidden");
-					updateGraph();
 				} else {
 					disableDwSrCpBtn(true);
 					minifiedSizeSpan.innerHTML = `${excir} Error`;
@@ -969,6 +980,7 @@ function initializeMinifier() {
 				disableDwSrCpBtn(true);
 				minifiedSizeSpan.innerHTML = `${excir} Something went wrong!!`;
 			}
+			updateGraph();
 		} else {
 			minifiedSizeSpan.textContent = "Enter Code";
 		}
@@ -1336,10 +1348,10 @@ function graphConfig(originalData, minifiedData, tabFileNames) {
 	});
 }
 
-async function decryptAndPush(list, dataArray, KbsizeOrLine) {
+async function decryptAndPush(list, dataArray, isGetLines) {
 	for (let key of list) {
 		const decryptedKey = CryptoJS.AES.decrypt(sessionStorage.getItem(key), newKey).toString(CryptoJS.enc.Utf8);
-		if (KbsizeOrLine) {
+		if (isGetLines) {
 			dataArray.push((decryptedKey.split("\n").length));
 		} else {
 			dataArray.push((decryptedKey.length / 1024).toFixed(3));
@@ -1357,6 +1369,8 @@ async function updateGraph() {
 	const originalDataFiltered = [];
 	const tabFileNamesFiltered = [];
 	const percentageSavings = [];
+	const fileTabsArray = [];
+	const fileTabsOutArray = [];
 
 	Object.keys(sessionStorage).forEach(key => {
 		if (key.startsWith("#PyFile-out")) {
@@ -1370,21 +1384,34 @@ async function updateGraph() {
 	pycodeList.sort(numericalSort);
 	pycodeOutList.sort(numericalSort);
 
-	await decryptAndPush(pycodeOutList, minifiedData, KbsizeOrLine);
-	await decryptAndPush(pycodeList, originalData, KbsizeOrLine);
+	await decryptAndPush(pycodeOutList, minifiedData, isGetLines);
+	await decryptAndPush(pycodeList, originalData, isGetLines);
 
-	if (fileTabsOut) {
-		Array.from(fileTabsOut.children).forEach((child) => {
-			tabFileNames.push(child.textContent.trim());
+	if (fileTabs) {
+		Array.from(fileTabs.children).forEach(child => {
+			fileTabsArray.push(child.textContent.trim());
 		});
 	}
 
+	if (fileTabsOut) {
+		Array.from(fileTabsOut.children).forEach(child => {
+			fileTabsOutArray.push(child.textContent.trim());
+		});
+	}
+
+	for (let i = 0; i < Math.max(fileTabsArray.length, fileTabsOutArray.length); i++) {
+		let tabNameA = fileTabsArray[i] || '';
+		let tabNameB = fileTabsOutArray[i] || '';
+		let chosenName = tabNameA || tabNameB || defaultFilename;
+		tabFileNames.push(chosenName.trim());
+	}
+
 	for (let i = 0; i < tabFileNames.length; i++) {
-		if (!KbsizeOrLine) {
+		if (!isGetLines) {
 			minifiedDataFiltered.push(minifiedData[i]);
 			originalDataFiltered.push(originalData[i]);
 			tabFileNamesFiltered.push(tabFileNames[i]);
-		} else if (KbsizeOrLine) {
+		} else if (isGetLines) {
 			minifiedDataFiltered.push(minifiedData[i]);
 			originalDataFiltered.push(originalData[i]);
 			tabFileNamesFiltered.push(tabFileNames[i]);
@@ -1396,11 +1423,11 @@ async function updateGraph() {
 		originalData.splice(0, originalData.length, ...originalDataFiltered);
 		tabFileNames.splice(0, tabFileNames.length, ...tabFileNamesFiltered);
 
-		if (!KbsizeOrLine) {
+		if (!isGetLines) {
 			for (let i = 0; i < originalData.length; i++) {
 				const original = originalData[i];
 				const minified = minifiedData[i];
-				if (original === 0) {
+				if (original === 0 || minified === 0) {
 					percentageSavings.push("N/A");
 				} else {
 					const savingsPercentage = ((original - minified) / original) * 100;
@@ -1427,7 +1454,7 @@ async function updateGraph() {
 			], true);
 			graph.updateOptions({
 				xaxis: {
-					categories: tabFileNames.map((name, index) => !KbsizeOrLine ? `${name} (${percentageSavings[index]})` : `${name}`)
+					categories: tabFileNames.map((name, index) => !isGetLines ? `${name} (${percentageSavings[index]})` : `${name}`)
 				}
 			}, true);
 		} else {
@@ -1449,14 +1476,14 @@ document.addEventListener("load", () => {
 document.addEventListener('DOMContentLoaded', () => {
 	if (graphKbSize) {
 		graphKbSize.addEventListener("click", () => {
-			KbsizeOrLine = false;
+			isGetLines = false;
 			updateGraph();
 		});
 	}
 
 	if (graphLines) {
 		graphLines.addEventListener("click", () => {
-			KbsizeOrLine = true;
+			isGetLines = true;
 			updateGraph();
 		});
 	}
