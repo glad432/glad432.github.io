@@ -14,7 +14,7 @@ Welcome to my Python Minifier - Glad432. This repository showcases my work using
 - [Font Awesome](https://fontawesome.com/) for scalable vector icons
 - [QRCode](https://kazuhikoarase.github.io/qrcode-generator/) for generating QR codes
 - [JSZip](https://stuk.github.io/jszip/) for client-side file compression
-- [ApexCharts](https://apexcharts.com/) f0r Interactive JavaScript charts
+- [ApexCharts](https://apexcharts.com/) for Interactive JavaScript charts
 - [CryptoJS](https://github.com/brix/crypto-js) for cryptographic tasks
 - [SweetAlert2](https://sweetalert2.github.io/) for beautiful popup boxes
 
