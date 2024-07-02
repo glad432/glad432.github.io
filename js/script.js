@@ -801,7 +801,7 @@ function compressOptions() {
 	span2.textContent = 'Add ';
 	const innerSpan2 = document.createElement('span');
 	innerSpan2.className = 'hover:underline text-blue-500';
-	innerSpan2.title = 'It will have the list of\n minified Python Files';
+	innerSpan2.title = 'It will have the list of\nminified Python Files';
 	const i2 = document.createElement('i');
 	i2.className = 'fa-solid fa-file-lines fa-sm pr-1';
 	innerSpan2.appendChild(i2);
@@ -1350,11 +1350,11 @@ function graphConfig(originalData, minifiedData, tabFileNames) {
 
 async function decryptAndPush(list, dataArray, isGetLines) {
 	for (let key of list) {
-		const decryptedKey = CryptoJS.AES.decrypt(sessionStorage.getItem(key), newKey).toString(CryptoJS.enc.Utf8);
+		const decryptedVal = CryptoJS.AES.decrypt(sessionStorage.getItem(key), newKey).toString(CryptoJS.enc.Utf8);
 		if (isGetLines) {
-			dataArray.push((decryptedKey.split("\n").length));
+			dataArray.push((decryptedVal.split("\n").length));
 		} else {
-			dataArray.push((decryptedKey.length / 1024).toFixed(3));
+			dataArray.push((decryptedVal.length / 1024).toFixed(3));
 		}
 	}
 };
@@ -1444,11 +1444,11 @@ async function updateGraph() {
 
 		if (graph) {
 			graph.updateSeries([{
-					name: "Original Code",
+					name: `Original ${!isGetLines ? 'Size' : 'Lines'}`,
 					data: originalData
 				},
 				{
-					name: "Minified Code",
+					name: `Minified ${!isGetLines ? 'Size' : 'Lines'}`,
 					data: minifiedData
 				}
 			], true);
