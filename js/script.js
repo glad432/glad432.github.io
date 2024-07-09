@@ -1713,7 +1713,7 @@ function addEmptyTab() {
 	var newFileIndex = sources.length;
 	var newSourceId = `#PyFile-${newFileIndex + 1}`;
 	var newTab = document.createElement('li');
-	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] transition-opacity';
+	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] transition-opacity';
 	newTab.innerHTML = `${code_file}File ${newFileIndex + 1}.py`;
 	newTab.id = `file-${newFileIndex + 1}`;
 	newTab.title = `${newFileIndex + 1}${(n => ["th", "st", "nd", "rd"][n % 100 >> 3 ^ 1 && n % 10] || "th")(newFileIndex + 1)} Tab`;
@@ -1982,7 +1982,7 @@ function addTabOut() {
 	var newFileIndexOut = sourcesOut.length;
 	var newSourceId = `#PyFile-out-${newFileIndexOut + 1}`;
 	var newTab = document.createElement('li');
-	newTab.className = 'file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] transition-opacity';
+	newTab.className = 'file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] transition-opacity';
 	newTab.innerHTML = `${code_file}File ${newFileIndexOut + 1}.py`;
 	newTab.id = `file-out-${newFileIndexOut + 1}`;
 	newTab.onclick = () => {
