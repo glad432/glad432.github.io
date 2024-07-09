@@ -39,7 +39,7 @@ const compressProgressStatus = document.getElementById('comProgressStatus');
 const graphContainer = document.getElementById("graph-container");
 const graphKbSize = document.getElementById("graphkbsize");
 const graphLines = document.getElementById("graphlines");
-var content = document.querySelector('.content-ll');
+var showOptionsContent = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, typingTimeout, sourceEditor, minifiedEditor, darkModeEnabled;
 let typingInProgress = false;
@@ -175,7 +175,7 @@ require(['vs/editor/editor.main'], () => {
 		minimap: {
 			enabled: false
 		},
-		theme: 'vs',
+		theme: darkModeEnabled ? 'vs-dark' : 'vs',
 		matchBrackets: 'always',
 		fontFamily: 'Source Code Pro',
 		renderValidationDecorations: 'on',
@@ -197,7 +197,7 @@ require(['vs/editor/editor.main'], () => {
 		minimap: {
 			enabled: false
 		},
-		theme: 'vs',
+		theme: darkModeEnabled ? 'vs-dark' : 'vs',
 		matchBrackets: 'always',
 		fontFamily: 'Source Code Pro',
 		renderValidationDecorations: 'on',
@@ -248,6 +248,7 @@ require(['vs/editor/editor.main'], () => {
 			type();
 			typingInProgress = true;
 		} else {
+			type_overlay.classList.add('!hidden');
 			sourceEditor.getModel().setValue(typingPYcode);
 		}
 	}
@@ -385,17 +386,50 @@ async function truncateCode(content) {
 	return Promise.resolve(content);
 }
 
+function validateFiles(files) {
+	const validFiles = [];
+	const invalidFiles = [];
+
+	for (let i = 0; i < files.length; i++) {
+		const file = files[i];
+		if (file.name.toLowerCase().trim().endsWith('.py')) {
+			validFiles.push(file);
+		} else {
+			invalidFiles.push(file);
+		}
+		fileInput.value = '';
+	}
+
+	if (invalidFiles.length > 0) {
+		handleErrorMessage(`${exctri} Invalid file format. Please select only .py file(s).`);
+	}
+
+	return validFiles;
+}
+
+function fileContent(e) {
+	const fileContent = e.target.result;
+	if (fileContent.length === 0) {
+		return '#Empty Python file, Enter code to minify';
+	} else {
+		return fileContent;
+	}
+}
+
 function setupFileInput() {
 	function dragpy(event) {
 		disableTyping();
-		const files = event.dataTransfer.files;
-		handleFiles(files);
+		handleFiles(validateFiles(event.dataTransfer.files));
 	}
 
 	fileInput.addEventListener('change', (event) => {
 		disableTyping();
-		const files = event.target.files;
-		handleFiles(files);
+		const pyFiles = [...event.target.files].filter(file => file.name.trim().toLowerCase().endsWith('.py'));
+		if (pyFiles.length !== event.target.files.length) {
+			handleErrorMessage(`${exctri} Invalid file format. Please select only .py file(s).`);
+		} else {
+			handleFiles(pyFiles);
+		}
 		fileInput.value = '';
 	});
 
@@ -418,16 +452,13 @@ function setupFileInput() {
 	});
 
 	function handleFiles(files) {
-		const nonPyFiles = Array.from(files).filter((file) => !file.name.toLowerCase().endsWith('.py'));
-		if (nonPyFiles.length > 0) {
-			handleErrorMessage(`${exctri} Invalid file format. Please select only .py file(s).`);
-			return;
-		}
+		var fileCount = 0;
 
 		Array.from(files).forEach((file) => {
-			if (file.name.toLowerCase().endsWith('.py')) {
+			if (fileCount < (isMobile() ? 12 : 22)) {
 				handleErrorMessage();
 				handleFile(file);
+				fileCount++;
 			}
 		});
 	}
@@ -440,10 +471,10 @@ function setupFileInput() {
 					addEmptyTab();
 				}
 
-				sourceEditor.getModel().setValue(e.target.result);
+				sourceEditor.getModel().setValue(fileContent(e));
 				sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 				handleErrorMessage();
-				updateNametoTab(file.name);
+				updateNametoTab(file.name.trim());
 				handleAutoScroll();
 			};
 			reader.readAsText(file);
@@ -511,7 +542,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 				link_newtab.title = 'Open in new tab';
 				orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
 				downloadLinkUrl.classList.remove('hidden');
-				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content"><p class="text-sm text-center text-gray-700">${isCompressed ? (fileFormat.trim() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim()) +' File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
+				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content rounded-lg"><p class="text-sm text-center text-gray-700">${isCompressed ? (fileFormat.trim() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim()) +' File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
 				orscan.classList.add('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				close_Popup.classList.remove('hidden');
 				qrCode.title = "Double Click to zoom-in and zoom-out";
@@ -655,6 +686,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 	let nonEmptyFilesCount = 0;
 	let fileOccurrences = {};
 	let fileNamesList = 'The list of the python files minified:\n\n';
+	const fileFormatFinal = fileFormat.trim().toLowerCase() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim();
 
 	function delay(time) {
 		return new Promise((resolve) => {
@@ -704,18 +736,18 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 				compressProgressStatus.innerText = `Compressing... ${totalCompressProgress.toFixed(2)}%`;
 				compressProgress.classList.remove('hidden');
 
-				await delay(nonEmptyFilesCount > 10 ? 300 : 600);
+				await delay(nonEmptyFilesCount > 10 ? 100 : 300);
 			}
 		}
 	}
 
 	if (nonEmptyFilesCount > 0 && addReadme) {
-		fileNamesList += `\nMinified on: ${new Date().toLocaleString()}\nhttps://glad432.github.io`;
+		fileNamesList += `\n${fileFormatFinal} File Created on: ${new Date().toLocaleString()}\nhttps://glad432.github.io`;
 		comPress.file('readme.txt', fileNamesList);
 	}
 
 	compressProgressBar.value = 100;
-	compressProgressStatus.textContent = `${fileFormat.trim().toLowerCase() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim()} File Created`;
+	compressProgressStatus.textContent = `${fileFormatFinal} File Created`;
 	setTimeout(() => {
 		compressProgress.classList.add('hidden');
 	}, 500);
@@ -1045,7 +1077,6 @@ function initializeMinifier() {
 window.addEventListener("DOMContentLoaded", initializeMinifier);
 
 function clearSource() {
-	animateIcon("fade-5", "fa-fade", 1500);
 	deleteAllTabs();
 	updateNametoTab("File 1.py");
 	disableTyping();
@@ -1059,7 +1090,36 @@ function clearSource() {
 	updateGraph();
 }
 
-document.getElementById('clearAll').addEventListener('click', clearSource);
+document.getElementById('clearAll').addEventListener('click', () => {
+	if (sources.length === 1 && sourcesOut.length === 1) {
+		animateIcon("fade-5", "fa-fade", 1500);
+		clearSource();
+	} else if (sources.length > 1 && sourcesOut.length > 1) {
+		animateIcon("fade-5", "fa-fade", 500);
+		setTimeout(() => {
+			Swal.fire({
+				title: "Are you sure?",
+				text: "You won't be able to revert this!",
+				icon: "warning",
+				showCancelButton: true,
+				allowOutsideClick: false,
+				confirmButtonColor: "#179fff",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Clear it!"
+			}).then((result) => {
+				if (result.isConfirmed) {
+					clearSource();
+					Swal.fire({
+						title: "Cleared!",
+						text: "Your file has been Cleared.",
+						icon: "success",
+						confirmButtonColor: "#179fff",
+					});
+				}
+			});
+		}, 200)
+	}
+});
 
 function disableDwSrCpBtn(disable) {
 	copyButton.disabled = disable;
@@ -1108,16 +1168,16 @@ function handleErrorMessage(text) {
 	}
 }
 
-function toggleContent1() {
-	animateIcon("toggleContent1", "fa-fade", 1000);
-	if (content.style.maxHeight) {
-		content.style.maxHeight = null;
+function showMinifyOptions() {
+	animateIcon("showOptions", "fa-fade", 1000);
+	if (showOptionsContent.style.maxHeight) {
+		showOptionsContent.style.maxHeight = null;
 	} else {
-		content.style.maxHeight = `${content.scrollHeight}px`;
+		showOptionsContent.style.maxHeight = `${showOptionsContent.scrollHeight}px`;
 	}
 }
 
-document.getElementById('toggleContent1').addEventListener('click', toggleContent1);
+document.getElementById('showOptions').addEventListener('click', showMinifyOptions);
 
 function tickAllOptions() {
 	animateIcon("selectall", "fa-fade", 800);
@@ -1301,12 +1361,10 @@ function graphConfig(originalData, minifiedData, tabFileNames) {
 			enabled: false,
 		},
 		series: [{
-				name: "Original Code",
 				data: originalData,
 				color: "#1A56DB",
 			},
 			{
-				name: "Minified Code",
 				data: minifiedData,
 				color: "#EF4444",
 			},
@@ -1786,7 +1844,7 @@ function confirmDeleteFile(index) {
 		icon: "question",
 		allowOutsideClick: false,
 		showCancelButton: true,
-		confirmButtonColor: "#3085d6",
+		confirmButtonColor: "#179fff",
 		confirmButtonText: "Yes",
 		cancelButtonText: "No",
 		cancelButtonColor: "#d33",
@@ -1816,7 +1874,6 @@ function deleteAllTabs() {
 	}
 	if (numTabs === 0) {
 		addEmptyTab();
-		addTabOut();
 	}
 }
 
