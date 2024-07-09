@@ -1111,7 +1111,7 @@ document.getElementById('clearAll').addEventListener('click', () => {
 					clearSource();
 					Swal.fire({
 						title: "Cleared!",
-						text: "Your file has been Cleared.",
+						text: "File(s) has been Cleared.",
 						icon: "success",
 						confirmButtonColor: "#179fff",
 					});
