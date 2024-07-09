@@ -455,7 +455,7 @@ function setupFileInput() {
 		var fileCount = 0;
 
 		Array.from(files).forEach((file) => {
-			if (fileCount < (isMobile() ? 12 : 22)) {
+			if (fileCount < (isMobile() ? 10 : 20)) {
 				handleErrorMessage();
 				handleFile(file);
 				fileCount++;
@@ -1716,6 +1716,7 @@ function addEmptyTab() {
 	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] transition-opacity';
 	newTab.innerHTML = `${code_file}File ${newFileIndex + 1}.py`;
 	newTab.id = `file-${newFileIndex + 1}`;
+	newTab.title = `${newFileIndex + 1}${(n => ["th", "st", "nd", "rd"][n % 100 >> 3 ^ 1 && n % 10] || "th")(newFileIndex + 1)} Tab`;
 	newTab.onclick = () => {
 		switchTab(newFileIndex);
 	};
