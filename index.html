@@ -31,12 +31,12 @@
     <meta name="twitter:image:alt" content="Python Minifier - GLAD432">
     <link href="https://glad432.github.io/css/style.min.css" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.1/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.2/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/typewriter-effect@2.21.0/dist/core.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.49.2/dist/apexcharts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.50.0/dist/apexcharts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs/loader.js"></script>
     <link rel="icon" type="image/png" href="https://glad432.github.io/favicon.ico" />
     <link rel="shortcut icon" href="https://glad432.github.io/favicon.ico" type="image/x-icon">
@@ -128,8 +128,8 @@
         </div>
       </div>
     </header>
-    <section class="mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow transition-all duration-100 ease-in-out">
-      <div class="rounded p-5 mb-5 border-2 text-center border-[2px] border-solid simp_border">
+    <section class="mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow">
+      <div class="rounded p-5 mb-5 border-2 text-center border-solid simp_border">
         <h1 class="mb-4 text-3xl font-extrabold text-white md:text-5xl lg:text-6xl">
           <span class="cursor-default text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-blue-400 to-blue-400">Python Minifier</span>
         </h1>
@@ -142,7 +142,7 @@
       <div id="tabs-overlay" class="hidden cursor-default absolute h-[340px] z-10 left-[1vh] right-[1vh] bg-transparent"></div>
       <button id="from_url" class="text-base font-bold bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 ease-out overflow-hidden transform">Load from URL <i id="fade-4" class="fa-solid fa-link"></i>
       </button>
-      <div id="inputContainer" class="hidden mt-4 transition-all duration-500 ease-in-out colorhandle">
+      <div id="inputContainer" class="hidden mt-4 colorhandle">
         <div class="flex flex-col items-center">
           <div class="flex items-center">
             <input type="text" id="fileLinkInput" placeholder="Enter .py link (400kb) max" class="cursor-text border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 py-2 px-4">
@@ -152,7 +152,7 @@
           <div class="flex mr-auto text-sm cursor-pointer mt-1 ml-1 space-x-2 font-semibold">
             <div class="help-container !relative !top-[1.5px] right-0 mr-2" oncontextmenu="return false">
               <i class="fas fa-question-circle fa-sm text-sm text-blue-500"></i>
-              <div class="help-content absolute cursor-default">
+              <div class="help-content absolute cursor-default rounded-lg">
                 <p class="text-sm text-gray-700">Only Raw Github URLs (400kb) are recommended</p>
               </div>
             </div>
@@ -164,7 +164,7 @@
         </div>
       </div>
       <input class="hidden" type="file" id="fileInput" accept=".py" multiple />
-      <div id="dropArea" class="cursor-pointer rounded-xl border-dashed border-4 border-gray-300 colorhandle text-center bg-white p-4 md:p-8 m-5 transition-all duration-0 ease-in-out">Drag and drop a <span class="font-bold pr-1">.py file</span>here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
+      <div id="dropArea" class="cursor-pointer rounded-xl border-dashed border-4 border-gray-300 colorhandle text-center bg-white p-4 md:p-8 m-5">Drag and drop a <span class="font-bold pr-1">.py file(s)</span>here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
         </span>
       </div>
       <div class="text-left">
@@ -173,8 +173,8 @@
       </div>
       <p id="errmsg"></p>
       <div class="flex items-center">
-        <ul id="file-tabs" class="flex list-none [transition:all_1s_ease] pr-[1px] mr-[4px] [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto colorhandle">
-          <li class="file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] transition-opacity active" id="file-1">
+        <ul id="file-tabs" class="list-none pr-[1px] mr-[4px] [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto colorhandle">
+          <li class="file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] transition-opacity active" id="file-1">
             <i class="fa-solid fa-file-code text-blue-600 pr-2"></i>File 1.py
           </li>
         </ul>
@@ -188,7 +188,7 @@
       <button id="clearAll" class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
       </button>
       <div class="text-left w-[500px] my-10 p-4 rounded border-t-[5px] border-solid border-blue-500 blue_big_box md:mx-auto md:p-8">
-        <p id="toggleContent1" class="cursor-pointer underline underline-offset-3 decoration-8 decoration-blue-400 decoration-blue-600 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
+        <p id="showOptions" class="cursor-pointer underline underline-offset-3 decoration-8 decoration-blue-600 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
         <div class="max-h-[0] overflow-hidden relative [transition:max-height_0.6s_ease-in-out] content-ll pt-4">
           <label for="combine_imports" class="flex items-center mb-5 cursor-pointer pl-2">
             <input type="checkbox" id="combine_imports" class="sr-only peer">
@@ -205,47 +205,47 @@
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove literal statements (docstrings)</span>
           </label>
-          <label for="remove_annotations" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+          <label for="remove_annotations" class="flex items-center mb-5 cursor-pointer pl-2">
             <input type="checkbox" id="remove_annotations" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove Annotations</span>
           </label>
-          <label for="hoist_literals" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+          <label for="hoist_literals" class="flex items-center mb-5 cursor-pointer pl-2">
             <input type="checkbox" id="hoist_literals" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Hoist Literals</span>
           </label>
-          <label for="rename_locals" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+          <label for="rename_locals" class="flex items-center mb-5 cursor-pointer pl-2">
             <input type="checkbox" id="rename_locals" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Rename Locals</span>
           </label>
-          <label for="rename_globals" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+          <label for="rename_globals" class="flex items-center mb-5 cursor-pointer pl-2">
             <input type="checkbox" id="rename_globals" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Rename Globals</span>
           </label>
-          <label for="convert_posargs_to_args" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+          <label for="convert_posargs_to_args" class="flex items-center mb-5 cursor-pointer pl-2">
             <input type="checkbox" id="convert_posargs_to_args" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Convert Positional-Only to Normal Args</span>
           </label>
-          <label for="preserve_shebang" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+          <label for="preserve_shebang" class="flex items-center mb-5 cursor-pointer pl-2">
             <input type="checkbox" id="preserve_shebang" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Preserve any shebang line</span>
           </label>
-          <label for="remove_asserts" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+          <label for="remove_asserts" class="flex items-center mb-5 cursor-pointer pl-2">
             <input type="checkbox" id="remove_asserts" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove assert statements</span>
           </label>
-          <label for="remove_debug" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+          <label for="remove_debug" class="flex items-center mb-5 cursor-pointer pl-2">
             <input type="checkbox" id="remove_debug" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove if <span class="font-bold pr-1 pl-1">__debug__</span>being True </span>
           </label>
-          <label for="remove_explicit_return_none" class="flex items-center mb-5 cursor-pointer pl-2 mb-4">
+          <label for="remove_explicit_return_none" class="flex items-center mb-5 cursor-pointer pl-2">
             <input type="checkbox" id="remove_explicit_return_none" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove unnecessary returns</span>
@@ -270,7 +270,7 @@
         </div>
       </div>
       <div class="mb-2 md:mb-4 text-center">
-        <span id="minify" class="relative rounded cursor-pointer pt-5 p-4 overflow-hidden group bg-blue-500 relative hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-blue-400 transition-all ease-out duration-300 z-0">
+        <span id="minify" class="relative rounded cursor-pointer pt-5 p-4 overflow-hidden group bg-blue-500 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-blue-400 transition-all ease-out duration-300 z-0">
           <span class="absolute right-0 w-8 h-40 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
           <span class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i>
           </span>
@@ -292,7 +292,7 @@
           <span id="scantocopy"></span>
           <div id="qrCode" oncontextmenu="return false;"></div>
           <div class="flex flex-col">
-            <button id="downloadLinkurl" download class="hidden self-center w-fit inline-block px-4 py-2 mt-2 font-bold bg-green-500 rounded-lg text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100"></button>
+            <button id="downloadLinkurl" download class="hidden self-center w-fit px-4 py-2 mt-2 font-bold bg-green-500 rounded-lg text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100"></button>
             <button id="closePopup" class="hidden px-4 py-2 self-center mt-5 font-bold bg-red-500 rounded-full w-fit text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Close</button>
           </div>
         </div>
@@ -304,8 +304,8 @@
       </div>
       <div class="flex items-center">
         <div id="tabs-overlay-out" class="hidden cursor-default absolute h-[80px] z-10 left-[1vh] right-[1vh] bg-transparent"></div>
-        <ul id="file-tabs-out" class="flex list-none [transition:all_1s_ease] pr-[1px] mr-[4px] [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto colorhandle">
-          <li class="file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] [transition:background-color_0.3s_ease] transition-opacity active" id="file-out-1">
+        <ul id="file-tabs-out" class="list-none pr-[1px] mr-[4px] [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto colorhandle">
+          <li class="file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] transition-opacity active" id="file-out-1">
             <i class="fa-solid fa-file-code text-blue-600 pr-2"></i>File 1.py
           </li>
         </ul>
@@ -364,11 +364,11 @@
       </div>
     </div>
     <div class="grid place-items-center">
-      <span id="show-btn" class="relative cursor-pointer text-center text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 font-bold text-center">Learn More <i id="rot-1" class="fa-solid fa-caret-down"></i>
+      <span id="show-btn" class="relative cursor-pointer text-center text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5">Learn More <i id="rot-1" class="fa-solid fa-caret-down"></i>
       </span>
     </div>
     <article id="article" class="font-['Source_Code_Pro'] colorhandle select-text mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 mt-8 mb-8 transition-all duration-100 ease-in-out"></article>
-    <footer class="bg-black text-xs md:text-sm bg-black text-center text-white">
+    <footer class="bg-black text-xs md:text-sm text-center text-white">
       <div class="pt-9">
         <div class="mb-9 flex justify-center">
           <a href="https://gladw-in.github.io/" target="_blank" rel="noopener noreferrer" class="mr-9 text-neutral-200 hover:text-blue-700">
@@ -382,7 +382,7 @@
           </a>
         </div>
       </div>
-      <div class="bg-neutral-300 p-4 text-center bg-neutral-700 text-neutral-200">&copy; GLAD432 <span id="year" class="text-neutral-400"></span>
+      <div class="p-4 text-center bg-neutral-700 text-neutral-200">&copy; GLAD432 <span id="year" class="text-neutral-400"></span>
         <span class="text-neutral-400">All Rights Reserved</span>
       </div>
     </footer>
