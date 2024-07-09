@@ -51,6 +51,7 @@ let startIndex = 0;
 let isGetLines = false;
 let graph = null;
 const defaultFilename = 'default.py';
+const defaultContent = "#Empty Python file, Enter code to minify";
 const maxFileSizeInBytes = 1 * 400 * 1024;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
@@ -410,7 +411,7 @@ function validateFiles(files) {
 function fileContent(e) {
 	const fileContent = e.target.result;
 	if (fileContent.length === 0) {
-		return '#Empty Python file, Enter code to minify';
+		return defaultContent;
 	} else {
 		return fileContent;
 	}
@@ -1006,11 +1007,11 @@ function initializeMinifier() {
 					graphContainer.classList.remove("hidden");
 				} else {
 					disableDwSrCpBtn(true);
-					minifiedSizeSpan.innerHTML = `${excir} Error`;
+					minifiedSizeSpan.innerHTML = `${excir} Minification failed!!`;
 				}
 			} catch {
 				disableDwSrCpBtn(true);
-				minifiedSizeSpan.innerHTML = `${excir} Something went wrong!!`;
+				minifiedSizeSpan.innerHTML = `${excir} Minification failed!!`;
 			}
 			updateGraph();
 		} else {
@@ -1111,9 +1112,10 @@ document.getElementById('clearAll').addEventListener('click', () => {
 					clearSource();
 					Swal.fire({
 						title: "Cleared!",
-						text: "File(s) has been Cleared.",
+						text: "All the tabs are Cleared.",
 						icon: "success",
 						confirmButtonColor: "#179fff",
+						confirmButtonText: "Close"
 					});
 				}
 			});
@@ -1227,9 +1229,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				addEmptyTab();
 			}
 			const data = await response.text();
-			sourceEditor.getModel().setValue(data);
+			if (data.length === 0) {
+				sourceEditor.getModel().setValue(defaultContent);
+			} else {
+				sourceEditor.getModel().setValue(data);
+			}
 			sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
-			updateNametoTab(fileName);
+			updateNametoTab(fileName.trim());
 			handleAutoScroll();
 		} catch (error) {
 			handleErrorMessage(`${exctri} ${error.message}`);
