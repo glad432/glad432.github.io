@@ -1,32 +1,32 @@
 const minifyButton = document.getElementById('minify');
 const minifyAllBtn = document.getElementById('minifyAll');
 const copyButton = document.getElementById('copy');
-const anitext = document.getElementById("anitext");
+const aniText = document.getElementById("anitext");
 const errorMessage = document.getElementById('errmsg');
 const dwButton = document.getElementById('dw');
 const shareButton = document.getElementById("share");
 const dropArea = document.getElementById('dropArea');
 const fileInput = document.getElementById('fileInput');
-const minifiedSizeSpan = document.getElementById('minified-size');
-const fileLink_load = document.getElementById("fileLink-load");
+const minifiedSize = document.getElementById('minified-size');
+const fileLinkLoad = document.getElementById("fileLink-load");
 const qrCode = document.getElementById("qrCode");
-const copy_msg = document.getElementById('copy-msg');
-const file_Link = document.getElementById("fileLink");
-const close_Popup = document.getElementById('closePopup');
+const copyMsg = document.getElementById('copy-msg');
+const fileShareLink = document.getElementById("fileLink");
+const closePopupOverlay = document.getElementById('closePopup');
 const popup = document.getElementById("popup");
-const overlay = document.getElementById("overlay");
-const type_overlay = document.getElementById("type-overlay");
-const orscan = document.getElementById('scantocopy');
+const shareOverlay = document.getElementById("overlay");
+const typeOverlay = document.getElementById("type-overlay");
+const orScan = document.getElementById('scantocopy');
 const downloadLinkUrl = document.getElementById('downloadLinkurl');
-const help_msg = document.getElementById('help-msg');
-const link_newtab = document.getElementById("new_tab");
+const helpMsg = document.getElementById('help-msg');
+const linkNewtab = document.getElementById("new_tab");
 const inputContainer = document.getElementById("inputContainer");
 const fileLinkInput = document.getElementById("fileLinkInput");
 const darkModeToggle = document.getElementById("darkModeToggle");
 const selectallopt = document.getElementById('selectall');
 const resetOpt = document.getElementById('resetOpt');
-const preserve_globals = document.getElementById('preserve_globals');
-const preserve_locals = document.getElementById('preserve_locals');
+const preserveGlobals = document.getElementById('preserve_globals');
+const preserveLocals = document.getElementById('preserve_locals');
 const fileTabs = document.getElementById('file-tabs');
 const fileTabsOut = document.getElementById('file-tabs-out');
 const fileTabsOverlay = document.getElementById("tabs-overlay");
@@ -55,7 +55,7 @@ const defaultContent = "#Empty Python file, Enter code to minify";
 const maxFileSizeInBytes = 1 * 400 * 1024;
 const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
 const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
-const code_file = '<i class="fa-solid fa-file-code text-blue-600 pr-2"></i>';
+const codeFile = '<i class="fa-solid fa-file-code text-blue-600 pr-2"></i>';
 const editFileNameIcon = '<i class="fa-solid fa-pen-to-square"></i>';
 const classlst = ['font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4', 'transition', 'opacity-100'];
 
@@ -137,7 +137,7 @@ function shuffleArray(array) {
 
 shuffleArray(features);
 
-const typewriter = new Typewriter(anitext, {
+const typewriter = new Typewriter(aniText, {
 	loop: true,
 	delay: 50,
 });
@@ -224,14 +224,14 @@ require(['vs/editor/editor.main'], () => {
 	minifiedEditor.onDidChangeModelContent(() => {
 		saveEditorContent(true);
 		document.getElementById('line-count-out').textContent = `Lines: ${minifiedEditor.getModel().getLineCount()}`;
-		minifiedSizeSpan.textContent = `${(minifiedEditor.getModel().getValueLength() / 1024).toFixed(3)} Kb`;
+		minifiedSize.textContent = `${(minifiedEditor.getModel().getValueLength() / 1024).toFixed(3)} Kb`;
 	});
 
 	function typeInEditor() {
 		if (typingInProgress) return;
 		const typingPYcode = CryptoJS.AES.decrypt("U2FsdGVkX193pc0vAtJ5A6OWR/h1wgrCfeKfO/6qgjWA+pkCUbdIupXhCTFRoDR2n65EQf5blOu2I+RDW598wSH7M1e3zTH4XIA0Wcl8+qmoZKaiUJFKC3QaiT9gYtcEFOteoT/6uKl2b8kUNM+Dl2U+A5cezQFkURxj5xxIjCqgX1jcRLpLQY2LIOpV0IbA3GLbvaNuh1wDUUsvwnIx+vnNeYruSD2fOXKdz0Lfyn1bnYPA6BxSWrvRxbgoSXTBVAD4tlN19YxI14tUJdizCFsGAKkLvUtKecD9X72maj6ZzEhvoqVTwMwxGawFCzuUeAm8TyxTlfOrVWfVxPoQatCQ0dOsWqRUiVCY8HE+A/OiJ133mA0+l0W1wvkV9bHDqR1UzqP8VAyh8UPB2YMLYnHZVr+US3Bpgu+iczkl2vewGWtt2WJ991O+HsXGCj0tc6iWcwmPu2PaKfR8t0x1PLWYUfVo2lycMMgBCfjhQyIq61Bfhm9QHMisqlap6hE0k1QsBHZOoL9Q+yCslEM8Us0FkQP/KK07NBCKULM8H47aFac6sOBd1VxCw9k1nnA+L1gNeG8oDVu4leUf6bZjs6m0msJISL1plqZY5cCpjdhrcImSsdNGt1jqXV1p7QnwGgVMl9HuRK9AlzxLCA0YNLyXzGqQNJlbSVrzJYS2JgW0Xw0B9M6vL/0G7FygNn2FefvXfx/Pk1ImUqH1u5y6tiuEUYAnxATe7y2cGcHa1J+f4IEV7AeXTEc/zoSh3mhmze8Y6gQN23YEtD0Pxr+3+42FO1dS1zSy3Un9G4vbpgbAPdb29lP/fVUrHSVokEadqfmWDxbnNsg2kwbkb3SuCVhd95Ev+5k9b++oGzlJ4npthp7mczo0IuaYFAZv42t2dPvbI3B6noUaa1S5hXJz4AWvzXX/M5mNxTxmrTblhu1UfomDBgJPnV7Udz6f2yVsPlSsJwApJYykUiB2xPOwPaQl1Zu4j7JhsSgHo2oP2sJonUtVYV3ui1aHwdJIIDCJT0GxCajxjxlTpEVE/P5FEpWymIScnbZ6kEZiy41OagjHnDx+HsbrNn5z6hpGR6u3U8n1hIeE5mfWMBb6XXRurTGU6x1UYDWTTFviIhLCCK2u7ociPOpvYVuD499vA+MYzfKJy0Itjw4S6rd8Ftw0cGsaaY0VbETbchMMtAWN637HgCf6tssXZG0wnjcicVBHrelgKSp+v2rxjfvBtbkYRJTpKhNoT/M+lf8eMy3Ww9OP7G3W4iM71mv9PC9YCYSFehCWFCyUOaDbhslZHqnNrfCmGJSEELLFGb9nnx1EbCvuy5G5ewRtMYzFPRYk3Sf5BlF6AVbiOjgt70tExE8tToejh5gLHjaf4SAGIy24e0Q=", '4#>5p[:/v,o2q/(\\*=:6').toString(CryptoJS.enc.Utf8);
 		if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
-			type_overlay.classList.remove('!hidden');
+			typeOverlay.classList.remove('!hidden');
 			let index = 0;
 
 			function type() {
@@ -242,14 +242,14 @@ require(['vs/editor/editor.main'], () => {
 					index++;
 					typingTimeout = setTimeout(type, 1);
 				} else {
-					type_overlay.classList.add('!hidden');
+					typeOverlay.classList.add('!hidden');
 					typingInProgress = false;
 				}
 			};
 			type();
 			typingInProgress = true;
 		} else {
-			type_overlay.classList.add('!hidden');
+			typeOverlay.classList.add('!hidden');
 			sourceEditor.getModel().setValue(typingPYcode);
 		}
 	}
@@ -259,7 +259,7 @@ require(['vs/editor/editor.main'], () => {
 function disableTyping() {
 	clearTimeout(typingTimeout);
 	typingInProgress = false;
-	type_overlay.classList.add('!hidden');
+	typeOverlay.classList.add('!hidden');
 }
 
 function setGraphTheme() {
@@ -370,7 +370,11 @@ function updateEditorOptions() {
 
 };
 
-window.addEventListener('load', updateEditorOptions);
+window.addEventListener('load', () => {
+	if (sourceEditor && minifiedEditor) {
+		updateEditorOptions();
+	}
+});
 window.addEventListener('resize', updateEditorOptions);
 
 async function truncateCode(content) {
@@ -522,38 +526,38 @@ async function createShareLink(file, filename) {
 
 function shareLink(content, filename, isCompressed, fileFormat) {
 	handleTabsOverlay(false);
-	fileLink_load.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin"></i></span>`;
+	fileLinkLoad.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin"></i></span>`;
 
 	createShareLink(content, filename).then(result => {
 		if (result.success) {
 			const fileLink = result.link;
-			overlay.classList.remove("hidden");
+			shareOverlay.classList.remove("hidden");
 			popup.classList.remove("hidden");
 			document.body.classList.add("overflow-y-hidden");
 			document.body.classList.remove("overflow-y-scroll");
-			file_Link.classList.add('hidden');
-			copy_msg.textContent = '';
-			help_msg.innerHTML = '';
+			fileShareLink.classList.add('hidden');
+			copyMsg.textContent = '';
+			helpMsg.innerHTML = '';
 			setTimeout(() => {
-				copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
-				link_newtab.href = fileLink;
-				link_newtab.classList.add('text-white', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5', 'bg-blue-600', 'hover:bg-blue-700');
-				link_newtab.innerHTML = ` <i class="fa-solid fa-up-right-from-square"></i>`;
-				link_newtab.target = "_blank";
-				link_newtab.title = 'Open in new tab';
-				orscan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
+				copyMsg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
+				linkNewtab.href = fileLink;
+				linkNewtab.classList.add('text-white', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5', 'bg-blue-600', 'hover:bg-blue-700');
+				linkNewtab.innerHTML = ` <i class="fa-solid fa-up-right-from-square"></i>`;
+				linkNewtab.target = "_blank";
+				linkNewtab.title = 'Open in new tab';
+				orScan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
 				downloadLinkUrl.classList.remove('hidden');
-				help_msg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content rounded-lg"><p class="text-sm text-center text-gray-700">${isCompressed ? (fileFormat.trim() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim()) +' File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
-				orscan.classList.add('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
-				close_Popup.classList.remove('hidden');
+				helpMsg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content rounded-lg"><p class="text-sm text-center text-gray-700">${isCompressed ? (fileFormat.trim() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim()) +' File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
+				orScan.classList.add('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
+				closePopupOverlay.classList.remove('hidden');
 				qrCode.title = "Double Click to zoom-in and zoom-out";
 				qrCode.classList.add('!bg-white', 'rounded-lg', 'border-2', 'border-dashed', 'border-black', 'w-36', 'ml-12', 'p-3', 'mr-12', 'mt-2');
-				file_Link.classList.remove('hidden');
-				fileLink_load.innerHTML = '';
+				fileShareLink.classList.remove('hidden');
+				fileLinkLoad.innerHTML = '';
 				displayQRCode(fileLink);
 				qrCode.classList.remove('inline');
-				file_Link.href = fileLink;
-				file_Link.value = fileLink;
+				fileShareLink.href = fileLink;
+				fileShareLink.value = fileLink;
 				downloadLinkUrl.innerHTML = `Download ${fileFormat.trim().toLowerCase() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim()} <i class="fa-solid fa-file-zipper"></i>`
 				if (isCompressed) {
 					downloadLinkUrl.onclick = () => {
@@ -644,43 +648,43 @@ function closePopup() {
 		shareButton.disabled = false;
 		compressFileBtn.disabled = false;
 		qrCode.classList.remove('!bg-white', 'rounded-lg', 'border-2', 'border-dashed', 'border-black', 'w-36', 'ml-12', 'p-3', 'mr-12', 'mt-2');
-		orscan.classList.remove('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
-		link_newtab.classList.remove('text-white', 'bg-blue-600', 'hover:bg-blue-700', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5');
-		close_Popup.classList.add('hidden');
-		overlay.classList.add("hidden");
+		orScan.classList.remove('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
+		linkNewtab.classList.remove('text-white', 'bg-blue-600', 'hover:bg-blue-700', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5');
+		closePopupOverlay.classList.add('hidden');
+		shareOverlay.classList.add("hidden");
 		downloadLinkUrl.classList.add('hidden');
 		popup.classList.add("hidden");
 		document.body.classList.remove("overflow-y-hidden");
 		document.body.classList.add("overflow-y-scroll");
 		qrCode.innerHTML = '';
 		qrCode.title = '';
-		fileLink_load.innerHTML = '';
-		file_Link.value = '';
-		copy_msg.innerHTML = '';
-		orscan.innerHTML = '';
-		help_msg.innerHTML = '';
-		link_newtab.innerHTML = '';
-		link_newtab.href = '';
-		link_newtab.target = '';
+		fileLinkLoad.innerHTML = '';
+		fileShareLink.value = '';
+		copyMsg.innerHTML = '';
+		orScan.innerHTML = '';
+		helpMsg.innerHTML = '';
+		linkNewtab.innerHTML = '';
+		linkNewtab.href = '';
+		linkNewtab.target = '';
 		downloadLinkUrl.innerHTML = '';
 	}, 800);
 }
 
-close_Popup.addEventListener('click', closePopup);
+closePopupOverlay.addEventListener('click', closePopup);
 
 async function copyfilelink() {
-	await navigator.clipboard.writeText(file_Link.value);
+	await navigator.clipboard.writeText(fileShareLink.value);
 	if (cpyTimeout1) {
 		clearTimeout(cpyTimeout1);
 	}
-	copy_msg.innerHTML = 'Copied <i class="fa-solid fa-copy fa-fade"></i>';
+	copyMsg.innerHTML = 'Copied <i class="fa-solid fa-copy fa-fade"></i>';
 	cpyTimeout1 = setTimeout(() => {
-		copy_msg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
+		copyMsg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
 		cpyTimeout1 = null;
 	}, 3000);
 }
 
-file_Link.addEventListener('click', copyfilelink);
+fileShareLink.addEventListener('click', copyfilelink);
 
 async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, fileFormat, addReadme) {
 	let comPress = new JSZip();
@@ -928,8 +932,8 @@ async function compressPyFiles() {
 compressFileBtn.addEventListener('click', () => {
 	compressFileBtn.disabled = true;
 	disableDwSrCpBtn(true);
-	animateIcon("CompressFile", "fa-fade", 700);
-	setTimeout(compressPyFiles, 700);
+	animateIcon("CompressFile", "fa-fade", 400);
+	setTimeout(compressPyFiles, 500);
 });
 
 function initializeMinifier() {
@@ -942,13 +946,13 @@ function initializeMinifier() {
 				return `${option}=false`;
 			}
 		}).join('&');
-		const preserveGlobals = preserve_globals ? preserve_globals.value.split(',').map(str => str.trim()) : [];
-		if (preserveGlobals.length > 0) {
-			query += '&preserve_globals=' + encodeURIComponent(JSON.stringify(preserveGlobals));
+		const preserveGlobalsFinal = preserveGlobals ? preserveGlobals.value.split(',').map(str => str.trim()) : [];
+		if (preserveGlobalsFinal.length > 0) {
+			query += '&preserve_globals=' + encodeURIComponent(JSON.stringify(preserveGlobalsFinal));
 		}
-		const preserveLocals = preserve_locals ? preserve_locals.value.split(',').map(str => str.trim()) : [];
-		if (preserveLocals.length > 0) {
-			query += '&preserve_locals=' + encodeURIComponent(JSON.stringify(preserveLocals));
+		const preserveLocalsFinal = preserveLocals ? preserveLocals.value.split(',').map(str => str.trim()) : [];
+		if (preserveLocalsFinal.length > 0) {
+			query += '&preserve_locals=' + encodeURIComponent(JSON.stringify(preserveLocalsFinal));
 		}
 		return query;
 	}
@@ -979,8 +983,8 @@ function initializeMinifier() {
 		disableDwSrCpBtn(true);
 		selectallopt.disabled = true;
 		resetOpt.disabled = true;
-		options.push("preserve_locals", "preserve_globals");
-		options.forEach(option => {
+		const allOptions = [...options, "preserve_locals", "preserve_globals"];
+		allOptions.forEach(option => {
 			const checkbox = document.getElementById(option);
 			checkbox.disabled = true;
 		});
@@ -988,7 +992,7 @@ function initializeMinifier() {
 		resetOpt.classList.add("cursor-not-allowed");
 		minifiedEditor.getModel().setValue('');
 		animateIcon("fade-0", "fa-fade", 1500);
-		minifiedSizeSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
+		minifiedSize.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
 		if (sourceEditor.getModel().getValue() !== '' && minifiedEditor.getModel().getValue() === '') {
 			try {
 				const response = await fetch(`https://python-minify.vercel.app/minify?${buildQuery()}`, {
@@ -1007,21 +1011,21 @@ function initializeMinifier() {
 					graphContainer.classList.remove("hidden");
 				} else {
 					disableDwSrCpBtn(true);
-					minifiedSizeSpan.innerHTML = `${excir} Minification failed!!`;
+					minifiedSize.innerHTML = `${excir} Minification failed!!`;
 				}
 			} catch {
 				disableDwSrCpBtn(true);
-				minifiedSizeSpan.innerHTML = `${excir} Minification failed!!`;
+				minifiedSize.innerHTML = `${excir} Minification failed!!`;
 			}
 			updateGraph();
 		} else {
-			minifiedSizeSpan.textContent = "Enter Code";
+			minifiedSize.textContent = "Enter Code";
 		}
 		fileTabsOverlayOut.classList.add("hidden");
 		fileTabsOverlay.classList.add("hidden");
 		selectallopt.disabled = false;
 		resetOpt.disabled = false;
-		options.forEach(option => {
+		allOptions.forEach(option => {
 			const checkbox = document.getElementById(option);
 			checkbox.disabled = false;
 		});
@@ -1087,7 +1091,7 @@ function clearSource() {
 	minifiedEditor.getModel().setValue('');
 	sourceEditor.getModel().setValue('');
 	fileLinkInput.value = '';
-	minifiedSizeSpan.textContent = '0.000 kB';
+	minifiedSize.textContent = '0.000 kB';
 	updateGraph();
 }
 
@@ -1102,11 +1106,14 @@ document.getElementById('clearAll').addEventListener('click', () => {
 				title: "Are you sure?",
 				text: "You won't be able to revert this!",
 				icon: "warning",
+				showDenyButton: true,
 				showCancelButton: true,
 				allowOutsideClick: false,
 				confirmButtonColor: "#179fff",
 				cancelButtonColor: "#d33",
-				confirmButtonText: "Clear it!"
+				denyButtonColor: "#ffA500",
+				confirmButtonText: "Clear All",
+				denyButtonText: "Clear this tab"
 			}).then((result) => {
 				if (result.isConfirmed) {
 					clearSource();
@@ -1117,6 +1124,14 @@ document.getElementById('clearAll').addEventListener('click', () => {
 						confirmButtonColor: "#179fff",
 						confirmButtonText: "Close"
 					});
+				} else if (result.isDenied) {
+					minifiedEditor.getModel().setValue('');
+					sourceEditor.getModel().setValue('');
+					handleErrorMessage();
+					disableTyping();
+					updateNametoTab(`File ${currentTabIndex + 1}.py`);
+					minifiedSize.textContent = '0.000 kB';
+					updateGraph();
 				}
 			});
 		}, 200)
@@ -1129,17 +1144,17 @@ function disableDwSrCpBtn(disable) {
 	dwButton.disabled = disable;
 }
 
-function animateIcon(fade, fade_class, fade_dur) {
+function animateIcon(fade, fadeClass, fadeDur) {
 	let aniTimeout;
 	if (aniTimeout) {
 		clearTimeout(aniTimeout);
 	}
-	var ani_icon = document.getElementById(fade);
-	ani_icon.classList.add(fade_class);
+	var aniIcon = document.getElementById(fade);
+	aniIcon.classList.add(fadeClass);
 	aniTimeout = setTimeout(() => {
-		ani_icon.classList.remove(fade_class);
+		aniIcon.classList.remove(fadeClass);
 		aniTimeout = null;
-	}, fade_dur);
+	}, fadeDur);
 }
 
 function handleErrorMessage(text) {
@@ -1195,13 +1210,13 @@ function resetOptions() {
 	checkboxes.forEach((checkbox) => {
 		checkbox.checked = false;
 	});
-	preserve_locals.value = ''
-	preserve_globals.value = '';
+	preserveLocals.value = ''
+	preserveGlobals.value = '';
 }
 
 resetOpt.addEventListener('click', resetOptions);
 
-function input_from_url() {
+function inputFromUrl() {
 	animateIcon("fade-4", "fa-fade", 1000);
 	setTimeout(() => {
 		inputContainer.classList.toggle("hidden");
@@ -1242,7 +1257,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
-	function load_file() {
+	function loadFile() {
 		disableTyping();
 		var fileLink = fileLinkInput.value.trim();
 		if (fileLinkInput.value.trim() === '' || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
@@ -1258,18 +1273,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
-	document.getElementById("load_File").addEventListener("click", load_file);
+	document.getElementById("load_File").addEventListener("click", loadFile);
 	document.getElementById("sample_link").addEventListener("click", () => {
 		const githubrawlink = "https:\/\/gist.githubusercontent.com\/glad432\/4d1935413e012cd54130a1fc6f31b4bf\/raw\/5f3aaae4b9a360b64a1146e6540804af4a91b7b1\/sample.py";
 		if (fileLinkInput.value !== githubrawlink) {
 			animateIcon("fade-6", "fa-bounce", 1000);
 			fileLinkInput.value = githubrawlink;
-			load_file();
+			loadFile();
 		}
 	});
 	fileLinkInput.addEventListener("keyup", (event) => {
 		if (event.key === "Enter") {
-			load_file();
+			loadFile();
 		}
 	})
 
@@ -1281,20 +1296,20 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 });
 
-document.getElementById("from_url").addEventListener("click", input_from_url);
+document.getElementById("from_url").addEventListener("click", inputFromUrl);
 
-function show_article() {
+function showArticle() {
 	animateIcon("rot-1", "fa-fade", 1000);
-	const display_content = document.getElementById("display-content");
-	const rotate_1 = document.getElementById("rot-1");
-	display_content.classList.toggle("content");
-	rotate_1.classList.toggle("fa-caret-down");
-	display_content.classList.toggle("hidden");
-	rotate_1.classList.toggle("fa-caret-up");
+	const displayContent = document.getElementById("display-content");
+	const rotateOne = document.getElementById("rot-1");
+	displayContent.classList.toggle("content");
+	rotateOne.classList.toggle("fa-caret-down");
+	displayContent.classList.toggle("hidden");
+	rotateOne.classList.toggle("fa-caret-up");
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	document.getElementById("show-btn").addEventListener("click", show_article);
+	document.getElementById("show-btn").addEventListener("click", showArticle);
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1690,7 +1705,7 @@ function updateNametoTab(fileName, isOut = false) {
 	var fileTabsToUpdate = isOut ? fileTabsOut : fileTabs;
 	var tabToUpdate = fileTabsToUpdate.children[activeTabIndex];
 	if (tabToUpdate) {
-		tabToUpdate.innerHTML = `${code_file}${fileName}`;
+		tabToUpdate.innerHTML = `${codeFile}${fileName.trim()}`;
 	}
 }
 
@@ -1720,7 +1735,7 @@ function addEmptyTab() {
 	var newSourceId = `#PyFile-${newFileIndex + 1}`;
 	var newTab = document.createElement('li');
 	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] transition-opacity';
-	newTab.innerHTML = `${code_file}File ${newFileIndex + 1}.py`;
+	newTab.innerHTML = `${codeFile}File ${newFileIndex + 1}.py`;
 	newTab.id = `file-${newFileIndex + 1}`;
 	newTab.title = `${newFileIndex + 1}${(n => ["th", "st", "nd", "rd"][n % 100 >> 3 ^ 1 && n % 10] || "th")(newFileIndex + 1)} Tab`;
 	newTab.onclick = () => {
@@ -1841,7 +1856,8 @@ function confirmDeleteFile(index) {
 		Swal.fire({
 			icon: "error",
 			html: `${exctri} You can't delete this tab`,
-			confirmButtonColor: "#179fff"
+			confirmButtonColor: "#179fff",
+			confirmButtonText: "Close"
 		});
 		addNewTabBtn.disabled = false;
 		return;
@@ -1989,7 +2005,7 @@ function addTabOut() {
 	var newSourceId = `#PyFile-out-${newFileIndexOut + 1}`;
 	var newTab = document.createElement('li');
 	newTab.className = 'file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] transition-opacity';
-	newTab.innerHTML = `${code_file}File ${newFileIndexOut + 1}.py`;
+	newTab.innerHTML = `${codeFile}File ${newFileIndexOut + 1}.py`;
 	newTab.id = `file-out-${newFileIndexOut + 1}`;
 	newTab.onclick = () => {
 		switchTabOut(newFileIndexOut);
@@ -2000,7 +2016,6 @@ function addTabOut() {
 	switchTabOut(newFileIndexOut);
 	sessionStorage.setItem(newSourceId, '');
 	minifiedEditor.getModel().setValue('');
-
 }
 
 function updateTabStylesOut() {
