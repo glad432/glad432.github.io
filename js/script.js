@@ -31,6 +31,7 @@ const fileTabs = document.getElementById('file-tabs');
 const fileTabsOut = document.getElementById('file-tabs-out');
 const fileTabsOverlay = document.getElementById("tabs-overlay");
 const fileTabsOverlayOut = document.getElementById("tabs-overlay-out");
+const btnsOverlay = document.getElementById("btns-overlay");
 const addNewTabBtn = document.getElementById("addNewTab");
 const compressFileBtn = document.getElementById('CompressFile');
 const compressProgress = document.getElementById('comProgress')
@@ -686,7 +687,7 @@ async function copyfilelink() {
 
 fileShareLink.addEventListener('click', copyfilelink);
 
-async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, fileFormat, addReadme) {
+async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, fileFormat, addReadme, fastCompress) {
 	let comPress = new JSZip();
 	let nonEmptyFilesCount = 0;
 	let fileOccurrences = {};
@@ -741,7 +742,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 				compressProgressStatus.innerText = `Compressing... ${totalCompressProgress.toFixed(2)}%`;
 				compressProgress.classList.remove('hidden');
 
-				await delay(nonEmptyFilesCount > 10 ? 100 : 300);
+				await delay(fastCompress || (nonEmptyFilesCount > 10 ? 100 : 300));
 			}
 		}
 	}
@@ -821,17 +822,17 @@ function compressOptions() {
 	const label2 = document.createElement('label');
 	label2.setAttribute('for', 'add-readme');
 	label2.className = 'flex justify-center flex-row items-center mb-5 cursor-pointer pl-2';
-	const checkbox2 = document.createElement('input');
-	checkbox2.type = 'checkbox';
-	checkbox2.id = 'add-readme';
-	checkbox2.name = 'add-readme';
-	checkbox2.className = 'sr-only peer';
-	checkbox2.checked = true;
-	checkbox2.setAttribute('checked', '');
+	const checkbox1 = document.createElement('input');
+	checkbox1.type = 'checkbox';
+	checkbox1.id = 'add-readme';
+	checkbox1.name = 'add-readme';
+	checkbox1.className = 'sr-only peer';
+	checkbox1.checked = true;
+	checkbox1.setAttribute('checked', '');
 
 	const div3 = document.createElement('div');
 	div3.className = 'relative w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600';
-	label2.appendChild(checkbox2);
+	label2.appendChild(checkbox1);
 	label2.appendChild(div3);
 	const span2 = document.createElement('span');
 	span2.className = 'cursor-pointer ml-2 text-neutral-500 text-lg font-medium';
@@ -839,14 +840,30 @@ function compressOptions() {
 	const innerSpan2 = document.createElement('span');
 	innerSpan2.className = 'hover:underline text-blue-500';
 	innerSpan2.title = 'It will have the list of\nminified Python Files';
-	const i2 = document.createElement('i');
-	i2.className = 'fa-solid fa-file-lines fa-sm pr-1';
-	innerSpan2.appendChild(i2);
 	innerSpan2.textContent = 'readme.txt';
 	span2.appendChild(innerSpan2);
 	span2.innerHTML += ' file';
 	label2.appendChild(span2);
 	fragment.appendChild(label2);
+
+	const label3 = document.createElement('label');
+	label3.setAttribute('for', 'fast-compression');
+	label3.className = 'flex justify-center flex-row items-center mb-5 cursor-pointer pl-2';
+	const checkbox2 = document.createElement('input');
+	checkbox2.type = 'checkbox';
+	checkbox2.id = 'fast-compression';
+	checkbox2.name = 'fast-compression';
+	checkbox2.className = 'sr-only peer';
+
+	const div4 = document.createElement('div');
+	div4.className = 'relative w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600';
+	label3.appendChild(checkbox2);
+	label3.appendChild(div4);
+	const span3 = document.createElement('span');
+	span3.className = 'cursor-pointer ml-2 text-neutral-500 text-lg font-medium';
+	span3.textContent = 'Fast Compression';
+	label3.appendChild(span3);
+	fragment.appendChild(label3);
 
 	const tempDiv = document.createElement('div');
 	tempDiv.appendChild(fragment);
@@ -907,7 +924,8 @@ async function compressPyFiles() {
 			return {
 				fileFormat: document.querySelector('input[name="file-format"]:checked').value,
 				fileName: enteredFileName.replace(/[^a-zA-Z0-9,\s.()]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_") || 'minified_files',
-				addReadme: document.getElementById('add-readme').checked
+				addReadme: document.getElementById('add-readme').checked,
+				fastCompress: document.getElementById('fast-compression').checked
 			};
 		}
 	});
@@ -922,10 +940,11 @@ async function compressPyFiles() {
 	const {
 		fileFormat,
 		fileName,
-		addReadme
+		addReadme,
+		fastCompress
 	} = value;
 
-	await compressFiles(selectedIndices, sortedKeys, Math.min(20, maxLength), fileName, fileFormat, addReadme);
+	await compressFiles(selectedIndices, sortedKeys, Math.min(20, maxLength), fileName, fileFormat, addReadme, fastCompress);
 
 }
 
@@ -980,6 +999,7 @@ function initializeMinifier() {
 	async function minifyClick() {
 		fileTabsOverlayOut.classList.remove("hidden");
 		fileTabsOverlay.classList.remove("hidden");
+		btnsOverlay.classList.remove("hidden");
 		disableDwSrCpBtn(true);
 		selectallopt.disabled = true;
 		resetOpt.disabled = true;
@@ -1023,6 +1043,7 @@ function initializeMinifier() {
 		}
 		fileTabsOverlayOut.classList.add("hidden");
 		fileTabsOverlay.classList.add("hidden");
+		btnsOverlay.classList.add("hidden");
 		selectallopt.disabled = false;
 		resetOpt.disabled = false;
 		allOptions.forEach(option => {
@@ -1031,7 +1052,7 @@ function initializeMinifier() {
 		});
 		selectallopt.classList.remove("cursor-not-allowed");
 		resetOpt.classList.remove("cursor-not-allowed");
-		minifyButton.disabled = false;
+		minifyButton.classList.remove("pointer-events-none");
 		if (minifiedEditor.getModel().getValue().trim() === "" && sourceEditor.getModel().getValue() !== "") {
 			fileTabsOut.children[currentTabIndexOut].classList.add("error");
 			document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = "Minification failed!\nRe-check the Orginal code";
@@ -1047,7 +1068,7 @@ function initializeMinifier() {
 			copyClick();
 		}
 	});
-	minifyButton.disabled = false;
+	minifyButton.classList.remove("pointer-events-none");
 	let isProcessing = false;
 
 	minifyAllBtn.addEventListener('click', async () => {
@@ -1055,6 +1076,7 @@ function initializeMinifier() {
 		isProcessing = true;
 		animateIcon(`minifyAll`, "fa-fade", 800);
 		minifyAllBtn.disabled = true;
+		minifyButton.classList.add("pointer-events-none");
 		const tabs = document.querySelectorAll('.file-tab-out');
 		const maxIndex = tabs.length;
 		let endIndex = Math.min(startIndex + 5, maxIndex);
@@ -1069,6 +1091,7 @@ function initializeMinifier() {
 			startIndex = 0;
 		}
 		if (startIndex % 5 === 0) {
+			minifyButton.classList.remove("pointer-events-none");
 			minifyAllBtn.disabled = false;
 		}
 		isProcessing = false;
@@ -1571,12 +1594,10 @@ document.addEventListener('DOMContentLoaded', () => {
 function handleTabsOverlay(enable) {
 	fileTabsOverlay.classList.toggle("hidden", !enable)
 	fileTabsOverlayOut.classList.toggle("hidden", !enable)
+	btnsOverlay.classList.toggle("hidden", !enable)
 }
 
-function handleAutoScroll(isout = false) {
-	if (!isout) {
-		handleAutoScrollOut();
-	}
+function handleAutoScroll() {
 	var activeTab = fileTabs.children[currentTabIndex];
 	var tabPosition = activeTab.offsetLeft - fileTabs.offsetLeft;
 	var leftVisible = fileTabs.scrollLeft;
@@ -1652,7 +1673,7 @@ function editTabName() {
 	var saveIcon = document.createElement('button');
 	saveIcon.className = 'save-tab-icon hover:text-green-400 text-green-500';
 	saveIcon.title = 'Save or press enter';
-	saveIcon.innerHTML = '<i class="fa-solid fa-floppy-disk px-[2px]"></i>';
+	saveIcon.innerHTML = '<i class="fa-solid fa-floppy-disk px-0.5"></i>';
 	saveIcon.onclick = () => {
 		saveEditorContent();
 	};
@@ -1734,7 +1755,7 @@ function addEmptyTab() {
 	var newFileIndex = sources.length;
 	var newSourceId = `#PyFile-${newFileIndex + 1}`;
 	var newTab = document.createElement('li');
-	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] transition-opacity';
+	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity';
 	newTab.innerHTML = `${codeFile}File ${newFileIndex + 1}.py`;
 	newTab.id = `file-${newFileIndex + 1}`;
 	newTab.title = `${newFileIndex + 1}${(n => ["th", "st", "nd", "rd"][n % 100 >> 3 ^ 1 && n % 10] || "th")(newFileIndex + 1)} Tab`;
@@ -1777,7 +1798,7 @@ function updateTabStyles() {
 				if (!editBtn) {
 					editBtn = document.createElement('button');
 					editBtn.id = `editbtn-${currentTabIndex + 1}`;
-					editBtn.className = 'edit-tab-icon mr-[2px] ml-[3px] hover:text-blue-400 text-blue-600';
+					editBtn.className = 'edit-tab-icon mr-0.5 ml-[3px] hover:text-blue-400 text-blue-600';
 					editBtn.title = 'Edit file name';
 					editBtn.innerHTML = editFileNameIcon;
 					editBtn.onclick = () => {
@@ -1792,7 +1813,7 @@ function updateTabStyles() {
 				if (index === tabs.length - 1 && !deleteBtn) {
 					deleteBtn = document.createElement('button');
 					deleteBtn.id = `delbtn-${currentTabIndex + 1}`;
-					deleteBtn.className = 'delete-tab-icon absolute pl-[5px] right-[5px] top-[8px] font-bold cursor-pointer mr-[2px] ml-[3px] hover:text-red-400 text-red-500';
+					deleteBtn.className = 'delete-tab-icon absolute pl-[5px] right-[5px] top-2 font-bold cursor-pointer mr-0.5 ml-[3px] hover:text-red-400 text-red-500';
 					deleteBtn.title = 'Delete this tab';
 					deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
 					deleteBtn.onclick = () => {
@@ -1933,7 +1954,7 @@ document.getElementById("file-1").addEventListener('click', () => {
 })
 
 function handleAutoScrollOut() {
-	handleAutoScroll(true);
+	handleAutoScroll();
 	var activeTab = fileTabsOut.children[currentTabIndexOut];
 	var tabPosition = activeTab.offsetLeft - fileTabsOut.offsetLeft;
 	var leftVisible = fileTabsOut.scrollLeft;
@@ -1975,7 +1996,7 @@ function editTabNameOut() {
 	var saveIcon = document.createElement('button');
 	saveIcon.className = 'save-tab-icon hover:text-green-400 text-green-500';
 	saveIcon.title = 'Save or press enter';
-	saveIcon.innerHTML = '<i class="fa-solid fa-floppy-disk px-[2px]"></i>';
+	saveIcon.innerHTML = '<i class="fa-solid fa-floppy-disk px-0.5"></i>';
 	saveIcon.onclick = () => {
 		saveEditorContent(true);
 	};
@@ -2004,7 +2025,7 @@ function addTabOut() {
 	var newFileIndexOut = sourcesOut.length;
 	var newSourceId = `#PyFile-out-${newFileIndexOut + 1}`;
 	var newTab = document.createElement('li');
-	newTab.className = 'file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] transition-opacity';
+	newTab.className = 'file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity';
 	newTab.innerHTML = `${codeFile}File ${newFileIndexOut + 1}.py`;
 	newTab.id = `file-out-${newFileIndexOut + 1}`;
 	newTab.onclick = () => {
@@ -2033,7 +2054,7 @@ function updateTabStylesOut() {
 				if (!editBtn) {
 					editBtn = document.createElement('button');
 					editBtn.id = `editbtnout-${currentTabIndexOut + 1}`;
-					editBtn.className = 'edit-tab-icon-out mr-[2px] ml-[3px] hover:text-blue-400 text-blue-600';
+					editBtn.className = 'edit-tab-icon-out mr-0.5 ml-[3px] hover:text-blue-400 text-blue-600';
 					editBtn.title = 'Edit file name';
 					editBtn.innerHTML = editFileNameIcon;
 					editBtn.onclick = () => {
@@ -2048,7 +2069,7 @@ function updateTabStylesOut() {
 				if (index === tabs.length - 1 && !deleteBtn) {
 					deleteBtn = document.createElement('button');
 					deleteBtn.id = `delbtnout-${currentTabIndexOut + 1}`;
-					deleteBtn.className = 'delete-tab-icon-out absolute pl-[5px] right-[5px] top-[8px] font-bold cursor-pointer mr-[2px] ml-[3px] hover:text-red-400 text-red-500';
+					deleteBtn.className = 'delete-tab-icon-out absolute pl-[5px] right-[5px] top-2 font-bold cursor-pointer mr-0.5 ml-[3px] hover:text-red-400 text-red-500';
 					deleteBtn.title = 'Delete this tab';
 					deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
 					deleteBtn.onclick = () => {
