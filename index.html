@@ -7,14 +7,14 @@
     <title>Python Minifier - GLAD432</title>
     <meta name="robots" content="index, follow">
     <meta http-equiv="x-ua-compatible" content="IE=edge">
-    <meta name="description" content="Python minifier online is a tool that reduces the size of Python code by removing unnecessary characters, such as white spaces, comments, and line breaks. This can help to reduce the size of Python scripts and make them load faster, especially in web applications." />
+    <meta name="description" content="Optimize your web app's performance with our Python minifier online. Python minifier remove whitespace, comments, and line breaks to compress code, optimizing script size for faster loading and improved efficiency." />
     <meta name="keywords" content="Python, minifier, Python code optimization, online tool, script compression, code minification, web development, optimize Python code, improve script performance, reduce code size, web application optimization, code efficiency, code speed, streamline Python scripts">
     <meta name="author" content="Glad432">
     <link rel="canonical" href="https://glad432.github.io" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:title" content="Python Minifier - GLAD432" />
     <meta property="og:type" content="Website" />
-    <meta property="og:description" content="Python minifier online is a tool that reduces the size of Python code by removing unnecessary characters, such as white spaces, comments, and line breaks. This can help to reduce the size of Python scripts and make them load faster, especially in web applications." />
+    <meta property="og:description" content="Optimize your web app's performance with our Python minifier online. Python minifier removes whitespace, comments, and line breaks to compress code, optimizing script size for faster loading and improved efficiency." />
     <meta property="og:site_name" content="Python Minifier - GLAD432" />
     <meta property="og:image" content="https://glad432.github.io/favicon.ico" />
     <meta property="og:image:secure_url" content="https://glad432.github.io/favicon.ico" />
@@ -86,7 +86,7 @@
       }
     </script>
   </head>
-  <body class="bg-gray-100 font-sans select-none transition-all duration-200 ease-in-out">
+  <body class="bg-gray-100 font-sans select-none transition-colors duration-200 ease-in-out">
     <header class="top-0 z-30 w-full px-2 py-4 bg-black shadow-xl shadow-black-600/20 sm:px-4">
       <div class="flex items-center justify-between mx-auto max-w-7xl">
         <span class="pl-4 text-2xl font-extrabold text-white">
@@ -128,7 +128,7 @@
         </div>
       </div>
     </header>
-    <section class="mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow">
+    <div class="mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow">
       <div class="rounded p-5 mb-5 border-2 text-center border-solid simp_border">
         <h1 class="mb-4 text-3xl font-extrabold text-white md:text-5xl lg:text-6xl">
           <span class="cursor-default text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-blue-400 to-blue-400">Python Minifier</span>
@@ -173,8 +173,8 @@
       </div>
       <p id="errmsg"></p>
       <div class="flex items-center">
-        <ul id="file-tabs" class="list-none pr-[1px] mr-[4px] [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto colorhandle">
-          <li class="file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] transition-opacity active" id="file-1" title="1st Tab">
+        <ul id="file-tabs" class="list-none pr-px mr-1 [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto colorhandle">
+          <li class="file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity active" id="file-1" title="1st Tab">
             <i class="fa-solid fa-file-code text-blue-600 pr-2"></i>File 1.py
           </li>
         </ul>
@@ -182,7 +182,7 @@
           <i class="fa-solid fa-circle-plus fa-xl text-gray-700"></i>
         </button>
       </div>
-      <div id="editor" class="w-auto h-[300px] mt-[2px] rounded overflow-hidden border-[1px] border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]">
+      <div id="editor" class="w-auto h-[300px] mt-0.5 rounded overflow-hidden border border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]">
         <div id="type-overlay" class="md:md:cursor-default md:absolute md:h-[300px] md:z-10 md:left-[10vh] md:right-[10vh] md:bg-transparent"></div>
       </div>
       <button id="clearAll" class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
@@ -303,14 +303,15 @@
         <span id="minified-size" class="font-bold px-4 py-2 bg-red-500 rounded text-white">0.000 kB</span>
       </div>
       <div class="flex items-center">
-        <div id="tabs-overlay-out" class="hidden cursor-default absolute h-[80px] z-10 left-[1vh] right-[1vh] bg-transparent"></div>
-        <ul id="file-tabs-out" class="list-none pr-[1px] mr-[4px] [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto colorhandle">
-          <li class="file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-[8px] mb-[5px] border-[1px] border-solid rounded-[5px] mr-[5px] transition-opacity active" id="file-out-1">
+        <div id="tabs-overlay-out" class="hidden cursor-default absolute h-20 z-10 left-[1vh] right-[1vh] bg-transparent"></div>
+        <ul id="file-tabs-out" class="list-none pr-px mr-1 [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto colorhandle">
+          <li class="file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity active" id="file-out-1">
             <i class="fa-solid fa-file-code text-blue-600 pr-2"></i>File 1.py
           </li>
         </ul>
       </div>
-      <div id="minified" class="w-auto h-[300px] mt-[2px] rounded overflow-hidden border-[1px] border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]"></div>
+      <div id="minified" class="w-auto h-[300px] mt-0.5 rounded overflow-hidden border border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]"></div>
+      <div id="btns-overlay" class="hidden cursor-default absolute h-20 z-10 left-[1vh] right-[1vh] bg-transparent"></div>
       <div class="mb-2 md:mb-4">
         <button id="dw" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download <i id="fade-1" class="fa-solid fa-download"></i>
         </button>
@@ -325,13 +326,13 @@
           <p id="comProgressStatus" class="mt-2 text-base"></p>
         </div>
       </div>
-    </section>
-    <div id="graph-container" class="hidden font-['Source_Code_Pro'] mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 mt-8 mb-8 max-w-sm w-full bg-white rounded-lg shadow">
-      <h4 class="text-2xl font-bold colorhandle">
+    </div>
+    <div id="graph-container" class="hidden font-['Source_Code_Pro'] mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow">
+      <h4 class="text-2xl font-bold font-sans colorhandle">
         <i class="fa-solid fa-chart-line"></i> Visualization
       </h4>
       <div id="line-graph"></div>
-      <p class="text-sm mb-2 text-neutral-500">
+      <p class="text-sm mb-2 text-neutral-500 font-sans font-medium">
         <span class="text-red-500 font-bold">*</span> Minify to update
       </p>
       <div class="text-center space-x-1">
