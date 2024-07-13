@@ -89,6 +89,10 @@ div:where(.swal2-container) .swal2-radio {
 .apexcharts-menu-item:hover {
   border-radius: 5px;
 }
+#terminaltext {
+  color: #424242;
+  background: rgb(200 200 200 / 14%);
+}
 @media only screen and (max-width: 768px) {
   #errmsg,
   #line-count,
@@ -108,6 +112,7 @@ div:where(.swal2-container) .swal2-radio {
   #graphlines,
   #load_File,
   #resetOpt,
+  #runCode,
   #selectall,
   #share {
     font-size: 10px;
@@ -155,6 +160,10 @@ div:where(.swal2-container) .swal2-radio {
   border-color: #3e4446;
   border-left: 6px solid rgba(0, 83, 159, 0.65);
   overflow: hidden;
+}
+.dark #terminaltext {
+  color: rgb(72 228 72) !important;
+  background: #202020;
 }
 .dark html {
   background-color: #181a1b !important;

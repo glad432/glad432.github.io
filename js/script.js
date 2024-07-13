@@ -37,6 +37,9 @@ const compressFileBtn = document.getElementById('CompressFile');
 const compressProgress = document.getElementById('comProgress')
 const compressProgressBar = document.getElementById('comProgressBar');
 const compressProgressStatus = document.getElementById('comProgressStatus');
+const codeRunBtn = document.getElementById("runCode");
+const pyTerminal = document.getElementById("pyterminal");
+const terminalText = document.getElementById("terminaltext");
 const graphContainer = document.getElementById("graph-container");
 const graphKbSize = document.getElementById("graphkbsize");
 const graphLines = document.getElementById("graphlines");
@@ -48,8 +51,10 @@ var sources = ['#PyFile-1'];
 var sourcesOut = ['#PyFile-out-1'];
 var currentTabIndex = 0;
 var currentTabIndexOut = 0;
+var pyCompileAtTabIndex = 0;
 let startIndex = 0;
 let isGetLines = false;
+let jusDelete = false
 let graph = null;
 const defaultFilename = 'default.py';
 const defaultContent = "#Empty Python file, Enter code to minify";
@@ -165,13 +170,15 @@ window.addEventListener("load", () => {
 
 document.getElementById("year").textContent = new Date().getFullYear().toString();
 
-require.config({
-	paths: {
-		'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs'
-	}
-});
-
-require(['vs/editor/editor.main'], () => {
+async function initMonacoEditor() {
+	await new Promise(resolve => {
+		require.config({
+			paths: {
+				'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs'
+			}
+		});
+		require(['vs/editor/editor.main'], () => resolve());
+	});
 	sourceEditor = monaco.editor.create(document.getElementById('editor'), {
 		language: 'python',
 		minimap: {
@@ -255,6 +262,10 @@ require(['vs/editor/editor.main'], () => {
 		}
 	}
 	window.addEventListener("load", typeInEditor);
+};
+
+document.addEventListener('DOMContentLoaded', async () => {
+	await initMonacoEditor();
 });
 
 function disableTyping() {
@@ -376,7 +387,11 @@ window.addEventListener('load', () => {
 		updateEditorOptions();
 	}
 });
-window.addEventListener('resize', updateEditorOptions);
+window.addEventListener('resize', () => {
+	if (sourceEditor && minifiedEditor) {
+		updateEditorOptions();
+	}
+});
 
 async function truncateCode(content) {
 	var pyblob = new Blob([content]);
@@ -391,6 +406,49 @@ async function truncateCode(content) {
 	}
 	return Promise.resolve(content);
 }
+
+async function codeCompile() {
+	if (minifiedEditor.getModel().getValue() === '') {
+		return;
+	}
+	const fileName = getCurrentTabName();
+	let truncatedFileName = fileName.length >= 50 ? fileName.slice(0, 50) + ".py" : fileName;
+	const code = minifiedEditor.getModel().getValue();
+	try {
+		const response = await fetch('https://python-compile.vercel.app/run', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'text/plain',
+			},
+			body: code
+		});
+		if (!response.ok) {
+			throw new Error('Network error');
+		}
+
+		const data = await response.json();
+		pyCompileAtTabIndex = currentTabIndex;
+		pyTerminal.classList.remove("hidden");
+		terminalText.textContent = `[${new Date().toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${data.output.trim()}`;
+	} catch (error) {
+		pyTerminal.classList.remove("hidden");
+		terminalText.textContent = error || 'Error occurred while running the code. Please check your code and try again.';
+	}
+}
+
+function clearPyComplier(jusDelete = false) {
+	if (jusDelete || (pyCompileAtTabIndex === currentTabIndex && pyCompileAtTabIndex === currentTabIndexOut)) {
+		pyTerminal.classList.add("hidden");
+		terminalText.textContent = '';
+	}
+}
+
+codeRunBtn.addEventListener("click", () => {
+	if (minifiedEditor.getModel().getValue().trim() !== "") {
+		animateIcon("fade-9", "fa-fade", 1000);
+		codeCompile();
+	}
+});
 
 function validateFiles(files) {
 	const validFiles = [];
@@ -501,7 +559,7 @@ function downloadPyFile() {
 	var dataUri = URL.createObjectURL(blob);
 	var downloadLink = document.createElement("a");
 	downloadLink.href = dataUri;
-	downloadLink.download = `${(fileTabs.children[currentTabIndex].textContent || fileTabsOut.children[currentTabIndexOut].textContent || defaultFilename).trim()}`;
+	downloadLink.download = getCurrentTabName();
 	downloadLink.click();
 	URL.revokeObjectURL(dataUri);
 }
@@ -617,10 +675,9 @@ shareButton.addEventListener('click', () => {
 	if (minifiedEditor.getModel().getValue() !== "") {
 		animateIcon("fade-2", "fa-fade", 3000);
 		const content = minifiedEditor.getModel().getValue();
-		const filename = `${(fileTabs.children[currentTabIndex].textContent || fileTabsOut.children[currentTabIndexOut].textContent || defaultFilename).trim()}`;
 		shareButton.disabled = true;
 		compressFileBtn.disabled = true;
-		shareLink(content, filename, false, 'python');
+		shareLink(content, getCurrentTabName(), false, 'python');
 	}
 });
 
@@ -1031,10 +1088,12 @@ function initializeMinifier() {
 					graphContainer.classList.remove("hidden");
 				} else {
 					disableDwSrCpBtn(true);
+					clearPyComplier(true);
 					minifiedSize.innerHTML = `${excir} Minification failed!!`;
 				}
 			} catch {
 				disableDwSrCpBtn(true);
+				clearPyComplier(true);
 				minifiedSize.innerHTML = `${excir} Minification failed!!`;
 			}
 			updateGraph();
@@ -1110,6 +1169,7 @@ function clearSource() {
 	disableTyping();
 	disableDwSrCpBtn(true);
 	handleErrorMessage();
+	clearPyComplier(true);
 	fileInput.value = '';
 	minifiedEditor.getModel().setValue('');
 	sourceEditor.getModel().setValue('');
@@ -1152,6 +1212,7 @@ document.getElementById('clearAll').addEventListener('click', () => {
 					sourceEditor.getModel().setValue('');
 					handleErrorMessage();
 					disableTyping();
+					clearPyComplier()
 					updateNametoTab(`File ${currentTabIndex + 1}.py`);
 					minifiedSize.textContent = '0.000 kB';
 					updateGraph();
@@ -1591,6 +1652,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 });
 
+function getCurrentTabName() {
+	return (fileTabs.children[currentTabIndex].textContent || fileTabsOut.children[currentTabIndexOut].textContent || defaultFilename).trim()
+}
+
 function handleTabsOverlay(enable) {
 	fileTabsOverlay.classList.toggle("hidden", !enable)
 	fileTabsOverlayOut.classList.toggle("hidden", !enable)
@@ -1897,6 +1962,7 @@ function confirmDeleteFile(index) {
 			deleteFile(index);
 			deleteFile(index, true);
 			updateGraph();
+			clearPyComplier();
 			fileLinkInput.value = '';
 		}
 		addNewTabBtn.disabled = false;
