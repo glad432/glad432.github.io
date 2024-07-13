@@ -275,9 +275,7 @@
           <span class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i>
           </span>
         </span>
-        <button id="minifyAll" disabled class="hidden px-3 py-2 ml-2 font-bold cursor-pointer bg-blue-500 rounded-full text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 z-10">
-          <i class="fa-solid fa-angles-right"></i>
-        </button>
+        <button id="minifyAll" disabled class="hidden px-3 py-2 ml-2 font-bold cursor-pointer bg-blue-500 rounded-full text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 z-10"> 5+ </button>
       </div>
       <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 hidden transition-opacity duration-2000"></div>
       <div id="popup" class="fixed top-1/2 left-1/2 colorhandle transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded shadow-md z-50 hidden transition-transform duration-2000">
@@ -312,23 +310,53 @@
       </div>
       <div id="minified" class="w-auto h-[300px] mt-0.5 rounded overflow-hidden border border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]"></div>
       <div id="btns-overlay" class="hidden cursor-default absolute h-20 z-10 left-[1vh] right-[1vh] bg-transparent"></div>
-      <div class="mb-2 md:mb-4">
-        <button id="dw" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download <i id="fade-1" class="fa-solid fa-download"></i>
-        </button>
-        <button id="copy" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Copy <i class="fa-solid fa-clipboard"></i>
-        </button>
-        <button id="share" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Share <i id="fade-2" class="fa-solid fa-share-from-square"></i>
-        </button>
-        <button id="CompressFile" disabled class="hidden px-4 py-2 mt-2 font-bold cursor-pointer bg-orange-500 rounded text-white hover:bg-orange-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Compress <i id="fade-8" class="fa-solid fa-file-zipper"></i>
-        </button>
-        <div id="comProgress" class="hidden colorhandle">
-          <progress id="comProgressBar" max="100" value="0" class="w-full h-2 mt-4"></progress>
+      <div class="flex flex-col mb-2 md:mb-4">
+        <div class="flex flex-wrap justify-center lg:justify-start gap-0.5 mt-3">
+          <div class="flex flex-wrap justify-center gap-[3px] md:gap-1">
+            <button id="dw" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Download <i id="fade-1" class="fa-solid fa-download"></i>
+            </button>
+            <button id="copy" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Copy <i class="fa-solid fa-clipboard"></i>
+            </button>
+            <button id="share" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Share <i id="fade-2" class="fa-solid fa-share-from-square"></i>
+            </button>
+          </div>
+          <button id="CompressFile" disabled class="hidden lg:ml-0.5 px-4 py-2 mt-2 font-bold cursor-pointer bg-orange-500 rounded text-white hover:bg-orange-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Compress <i id="fade-8" class="fa-solid fa-file-zipper"></i>
+          </button>
+          <button id="runCode" class="sm:w-auto lg:ml-0.5 px-4 py-2 font-bold cursor-pointer bg-purple-500 rounded text-white hover:bg-purple-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 mt-2">Run Code <i id="fade-9" class="fa-regular fa-circle-play"></i>
+          </button>
+        </div>
+        <div id="comProgress" class="hidden colorhandle mt-2 w-full sm:w-auto">
+          <progress id="comProgressBar" max="100" value="0" class="w-full h-2"></progress>
           <p id="comProgressStatus" class="mt-2 text-base"></p>
         </div>
       </div>
     </div>
+    <div id="pyterminal" class="hidden mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow max-h-[400px]">
+      <div class="flex items-center">
+        <h4 class="text-2xl font-bold from-blue-600 via-blue-400 to-blue-500 bg-gradient-to-r bg-clip-text text-transparent mb-2">
+          <i class="fa-brands fa-python"></i> Python Compiler
+        </h4>
+        <div class="hidden md:block">
+          <div class="flex ml-2 relative bottom-5 text-sm cursor-pointer space-x-2 font-semibold">
+            <div class="help-container !left-0 mr-2" oncontextmenu="return false">
+              <i class="fas fa-question-circle text-red-500"></i>
+              <div class="help-content absolute cursor-default rounded-lg bg-white !w-96 shadow-md text-sm">
+                <ul class="text-gray-700 list-decimal list-inside">
+                  <li>The maximum execution time is 5 seconds.</li>
+                  <li>Will be compiled only after minification.</li>
+                  <li>Avoid using sensitive or proprietary code due to potential exposure.</li>
+                  <li>Be aware of any restrictions on file I/O, libraries, or Write permissions</li>
+                  <li>Consider that online compilers might have slower execution times compared to local setups.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <pre id="terminaltext" class="select-text font-mono text-xs lg:text-sm max-h-[295px] overflow-auto p-3 rounded [scrollbar-width:thin] colorhandle"></pre>
+    </div>
     <div id="graph-container" class="hidden font-['Source_Code_Pro'] mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow">
-      <h4 class="text-2xl font-bold font-sans colorhandle">
+      <h4 class="text-2xl font-bold from-blue-600 via-blue-400 to-blue-500 bg-gradient-to-r bg-clip-text text-transparent mb-2">
         <i class="fa-solid fa-chart-line"></i> Visualization
       </h4>
       <div id="line-graph"></div>
