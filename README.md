@@ -21,7 +21,7 @@ Welcome to my Python Minifier - Glad432. This repository showcases my work using
 - [CryptoJS](https://github.com/brix/crypto-js) for cryptographic tasks
 - [SweetAlert2](https://sweetalert2.github.io/) for beautiful popup boxes
 
-## Python Minification Benefits
+## Python Minification Benefits:
 
 Minifying Python files involves removing unnecessary whitespace, comments, and reducing variable names. This process offers several benefits:
 
