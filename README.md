@@ -3,7 +3,7 @@
 Welcome to my Python Minifier - Glad432. This repository showcases my work using Python, HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode for generating QR codes, Monaco Editor for code editing, CryptoJS for cryptographic tasks, and SweetAlert2 for beautiful popup boxes. Additionally, it utilizes the API to minify the python files , api for python compiler, file.io for file sharing, zipjs for compressing the python file, and ApexCharts for interactive data visualization charts.
 
 ## Screenshot
-![python minifier - glad432](https://glad432.github.io/screenshots/glad432.github.io.png)
+![python minifier - glad432](https://glad432.github.io/screenshots/glad432.github.io/image.png)
 
 ## Technologies Used
 
@@ -40,6 +40,10 @@ This project takes advantage of the [Tailwind CSS](https://tailwindcss.com/) fra
 ## Minifying Python Files using API
 
 The [Python Minify API](https://github.com/glad432/python-minifier-flask) allows you to programmatically minify your Python files. Building a Flask-based web API for minifying Python code. Enabling easy submission and minification of Python code. 
+
+## Python Compiler
+
+The [Python Compiler API](https://github.com/glad432/python-compiler-api) allows users to compile, and execute minifier Python code directly from a web browser without needing to install Python locally on their computer. 
 
 ## File Sharing with file.io
 
