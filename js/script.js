@@ -429,7 +429,7 @@ async function codeCompile() {
 		const data = await response.json();
 		pyCompileAtTabIndex = currentTabIndex;
 		pyTerminal.classList.remove("hidden");
-		terminalText.textContent = `[${new Date().toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${data.output.trim()}`;
+		terminalText.textContent = `[${new Date().toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${data.output.trim().length === 0 ? "Compiled but no output!" : data.output.trim()}`;
 	} catch (error) {
 		pyTerminal.classList.remove("hidden");
 		terminalText.textContent = error || 'Error occurred while running the code. Please check your code and try again.';
