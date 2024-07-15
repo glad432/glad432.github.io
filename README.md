@@ -26,7 +26,7 @@ Welcome to my Python Minifier - Glad432. This repository showcases my work using
 Minifying Python files involves removing unnecessary whitespace, comments, and reducing variable names. This process offers several benefits:
 
 1. **Reduced File Size:** Minified files are smaller in size, leading to faster load times and improved performance.
-2. **Improved Load Times:** Smaller files require less bandwidth, resulting in quicker page rendering.
+2. **Improved Load Times:** Smaller files require less bandwidth, resulting in quicker rendering.
 3. **Code Protection:** Minified code can be harder to read and understand, providing a level of code protection.
 
 ## Tailwind CSS
