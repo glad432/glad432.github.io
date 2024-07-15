@@ -1,3 +1,9 @@
+import CryptoJS from 'crypto-js';
+import Swal from 'sweetalert2'
+import QRCode from 'qrcode-generator';
+import JSZip from 'jszip';
+import Typewriter from 'typewriter-effect/dist/core';
+
 const minifyButton = document.getElementById('minify');
 const minifyAllBtn = document.getElementById('minifyAll');
 const copyButton = document.getElementById('copy');
@@ -702,7 +708,7 @@ function createFormData(content, fileName) {
 }
 
 function displayQRCode(fileLink) {
-	var qr = qrcode(10, 'M');
+	var qr = QRCode(10, 'M');
 	qr.addData(fileLink.trim());
 	qr.make();
 	var imgTag = qr.createImgTag(6, 0);

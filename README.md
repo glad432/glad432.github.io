@@ -3,7 +3,7 @@
 Welcome to my Python Minifier - Glad432. This repository showcases my work using Python, HTML, CSS, and JavaScript, along with the Tailwind CSS framework, Font Awesome for icons, QRcode for generating QR codes, Monaco Editor for code editing, CryptoJS for cryptographic tasks, and SweetAlert2 for beautiful popup boxes. Additionally, it utilizes the API to minify the python files , api for python compiler, file.io for file sharing, zipjs for compressing the python file, and ApexCharts for interactive data visualization charts.
 
 ## Screenshot
-![python minifier - glad432](https://glad432.github.io/screenshots/glad432.github.io/image.png)
+![python minifier - glad432](/public/img/screenshots/image.png)
 
 ## Technologies Used
 
@@ -12,6 +12,7 @@ Welcome to my Python Minifier - Glad432. This repository showcases my work using
 - JavaScript (including Monaco Editor)
 - [Python Minify API](https://github.com/glad432/python-minifier-flask)
 - [Python Compiler API](https://github.com/glad432/python-compiler-api)
+- [vitejs](https://vitejs.dev/) Next Generation Frontend Tooling
 - [file.io](https://www.file.io/) for file sharing
 - [Font Awesome](https://fontawesome.com/) for scalable vector icons
 - [QRCode](https://kazuhikoarase.github.io/qrcode-generator/) for generating QR codes
@@ -44,6 +45,10 @@ The [Python Minify API](https://github.com/glad432/python-minifier-flask) allows
 ## Python Compiler
 
 The [Python Compiler API](https://github.com/glad432/python-compiler-api) allows users to compile, and execute minifier Python code directly from a web browser without needing to install Python locally on their computer. 
+
+## vitejs
+
+The [vitejs](https://vitejs.dev/) is a modern build tool that offers extremely fast development server and optimized production builds for JavaScript and TypeScript applications.
 
 ## File Sharing with file.io
 
@@ -81,6 +86,7 @@ The [Python Compiler API](https://github.com/glad432/python-compiler-api) allows
 
 - [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework for rapid UI development.
 - [Monaco Editor](https://microsoft.github.io/monaco-editor/) - A fast and feature-rich code editor by Microsoft.
+- [Vitejs](https://vitejs.dev/) - A tool for quickly and efficiently managing frontend development tasks.
 - [file.io](https://www.file.io/) - Simple and secure file sharing.
 - [Font Awesome](https://fontawesome.com/) - Scalable vector icons.
 - [QRCode](https://kazuhikoarase.github.io/qrcode-generator/) - Library for generating QR codes.
