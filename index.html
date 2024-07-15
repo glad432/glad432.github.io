@@ -251,15 +251,15 @@
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove unnecessary returns</span>
           </label>
           <div class="relative mb-3">
-            <input type="text" id="preserve_locals" class="block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " spellcheck="false" />
+            <input type="text" id="preserve_locals" class="block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 peer" placeholder=" " spellcheck="false" />
             <label for="preserve_locals" class="absolute cursor-text text-bold text-gray-500 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Preserved Locals:</label>
           </div>
           <div class="relative mb-2">
-            <input type="text" id="preserve_globals" class="block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " spellcheck="false" />
+            <input type="text" id="preserve_globals" class="block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 peer" placeholder=" " spellcheck="false" />
             <label for="preserve_globals" class="absolute cursor-text text-bold text-gray-500 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Preserved Globals:</label>
           </div>
           <p class="text-sm mb-2 text-neutral-500">
-            <span class="text-red-500 font-bold">*</span> Delimiter is comma
+            <span class="text-red-500">^</span> Delimiter is comma
           </p>
           <a class="text-blue-500 text-base hover:underline hover:text-blue-600" href="https://dflook.github.io/python-minifier/transforms" target="_blank" rel="noopener noreferrer">Learn More <i class="fa-solid fa-arrow-up-right-from-square fa-sm"></i>
           </a>
@@ -331,7 +331,7 @@
         </div>
       </div>
     </div>
-    <div id="pyterminal" class="hidden mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow max-h-[400px]">
+    <div id="pyterminal" class="hidden mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow max-h-[420px]">
       <div class="flex items-center">
         <h4 class="text-2xl font-bold from-blue-600 via-blue-400 to-blue-500 bg-gradient-to-r bg-clip-text text-transparent mb-2">
           <i class="fa-brands fa-python"></i> Python Compiler
@@ -339,30 +339,29 @@
         <div class="hidden md:block">
           <div class="flex ml-2 relative bottom-5 text-sm cursor-pointer space-x-2 font-semibold">
             <div class="help-container !left-0 mr-2" oncontextmenu="return false">
-              <i class="fas fa-question-circle text-red-500"></i>
+              <i class="fas fa-question-circle text-gray-400"></i>
               <div class="help-content absolute cursor-default rounded-lg bg-white !w-96 shadow-md text-sm">
-                <ul class="text-gray-700 list-decimal list-inside">
+                <ol class="text-gray-700 list-decimal list-inside">
                   <li>The maximum execution time is 5 seconds.</li>
-                  <li>Will be compiled only after minification.</li>
+                  <li>Code will be compiled only after minification.</li>
                   <li>Avoid using sensitive or proprietary code due to potential exposure.</li>
                   <li>Be aware of any restrictions on file I/O, libraries, or Write permissions</li>
                   <li>Consider that online compilers might have slower execution times compared to local setups.</li>
-                </ul>
+                </ol>
               </div>
             </div>
           </div>
         </div>
       </div>
       <pre id="terminaltext" class="select-text font-mono text-xs lg:text-sm max-h-[295px] overflow-auto p-3 rounded [scrollbar-width:thin] colorhandle"></pre>
+      <button id="closeCompiler" class="cursor-pointer mt-1.5 pl-2 font-semibold text-red-500 hover:underline">Close</button>
     </div>
     <div id="graph-container" class="hidden font-['Source_Code_Pro'] mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 bg-white mt-8 mb-8 rounded-lg shadow">
       <h4 class="text-2xl font-bold from-blue-600 via-blue-400 to-blue-500 bg-gradient-to-r bg-clip-text text-transparent mb-2 font-sans">
         <i class="fa-solid fa-chart-line"></i> Visualization
       </h4>
       <div id="line-graph"></div>
-      <p class="text-sm mb-2 text-neutral-500 font-sans font-medium">
-        <span class="text-red-500 font-bold">*</span> Minify to update
-      </p>
+      <p class="text-sm mb-2 text-neutral-500 font-sans font-medium">Minify to update</p>
       <div class="text-center space-x-1">
         <button id="graphkbsize" class="px-4 py-2 mt-2 font-bold cursor-pointer bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Size</button>
         <button id="graphlines" class="px-4 py-2 mt-2 font-bold cursor-pointer bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Lines</button>

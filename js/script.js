@@ -31,6 +31,7 @@ const fileTabs = document.getElementById('file-tabs');
 const fileTabsOut = document.getElementById('file-tabs-out');
 const fileTabsOverlay = document.getElementById("tabs-overlay");
 const fileTabsOverlayOut = document.getElementById("tabs-overlay-out");
+const filetabOutOne = document.getElementById("file-out-1");
 const btnsOverlay = document.getElementById("btns-overlay");
 const addNewTabBtn = document.getElementById("addNewTab");
 const compressFileBtn = document.getElementById('CompressFile');
@@ -40,6 +41,7 @@ const compressProgressStatus = document.getElementById('comProgressStatus');
 const codeRunBtn = document.getElementById("runCode");
 const pyTerminal = document.getElementById("pyterminal");
 const terminalText = document.getElementById("terminaltext");
+const closeCompilerBtn = document.getElementById("closeCompiler");
 const graphContainer = document.getElementById("graph-container");
 const graphKbSize = document.getElementById("graphkbsize");
 const graphLines = document.getElementById("graphlines");
@@ -449,6 +451,13 @@ codeRunBtn.addEventListener("click", () => {
 		codeCompile();
 	}
 });
+
+closeCompilerBtn.addEventListener("click", () => {
+	animateIcon("closeCompiler", "fa-fade", 1000);
+	setTimeout(() => {
+		clearPyComplier(true);
+	}, 1100)
+})
 
 function validateFiles(files) {
 	const validFiles = [];
@@ -1216,6 +1225,9 @@ document.getElementById('clearAll').addEventListener('click', () => {
 					updateNametoTab(`File ${currentTabIndex + 1}.py`);
 					minifiedSize.textContent = '0.000 kB';
 					updateGraph();
+					if (filetabOutOne.classList.contains("error") && currentTabIndex === 0 && currentTabIndexOut === 0) {
+						filetabOutOne.classList.remove("error");
+					}
 				}
 			});
 		}, 200)
@@ -1959,10 +1971,10 @@ function confirmDeleteFile(index) {
 		cancelButtonColor: "#d33",
 	}).then((result) => {
 		if (result.isConfirmed) {
+			clearPyComplier();
 			deleteFile(index);
 			deleteFile(index, true);
 			updateGraph();
-			clearPyComplier();
 			fileLinkInput.value = '';
 		}
 		addNewTabBtn.disabled = false;
@@ -1981,6 +1993,9 @@ function deleteAllTabs() {
 			deleteFile(i);
 			deleteFile(i, true);
 		}
+	}
+	if (filetabOutOne.classList.contains("error")) {
+		filetabOutOne.classList.remove("error");
 	}
 	if (numTabs === 0) {
 		addEmptyTab();
