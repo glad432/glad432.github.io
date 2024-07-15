@@ -93,6 +93,10 @@ div:where(.swal2-container) .swal2-radio {
   color: #424242;
   background: rgb(200 200 200 / 14%);
 }
+#preserve_globals:focus,
+#preserve_locals:focus {
+  border-color: #2563eb !important;
+}
 @media only screen and (max-width: 768px) {
   #errmsg,
   #line-count,
