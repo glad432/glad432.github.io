@@ -1,8 +1,16 @@
 {
-  "name": "minify",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/glad432/glad432.github.io"
+  },
+  "author": {
+    "name": "Glad432",
+    "url": "https://gladw-in.github.io/"
+  },
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "predeploy": "npm run build",
