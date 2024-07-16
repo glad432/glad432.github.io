@@ -12,7 +12,7 @@ Welcome to my Python Minifier - Glad432. This repository showcases my work using
 - JavaScript (including Monaco Editor)
 - [Python Minify API](https://github.com/glad432/python-minifier-flask)
 - [Python Compiler API](https://github.com/glad432/python-compiler-api)
-- [vitejs](https://vitejs.dev/) Next Generation Frontend Tooling
+- [Vitejs](https://vitejs.dev/) Next Generation Frontend Tooling
 - [file.io](https://www.file.io/) for file sharing
 - [Font Awesome](https://fontawesome.com/) for scalable vector icons
 - [QRCode](https://kazuhikoarase.github.io/qrcode-generator/) for generating QR codes
@@ -46,9 +46,9 @@ The [Python Minify API](https://github.com/glad432/python-minifier-flask) allows
 
 The [Python Compiler API](https://github.com/glad432/python-compiler-api) allows users to compile, and execute minifier Python code directly from a web browser without needing to install Python locally on their computer. 
 
-## vitejs
+## Vitejs
 
-The [vitejs](https://vitejs.dev/) is a modern build tool that offers extremely fast development server and optimized production builds for JavaScript and TypeScript applications.
+The [Vitejs](https://vitejs.dev/) is a modern build tool that offers extremely fast development server and optimized production builds for JavaScript and TypeScript applications.
 
 ## File Sharing with file.io
 
