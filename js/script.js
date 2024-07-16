@@ -48,12 +48,13 @@ const codeRunBtn = document.getElementById("runCode");
 const pyTerminal = document.getElementById("pyterminal");
 const terminalText = document.getElementById("terminaltext");
 const closeCompilerBtn = document.getElementById("closeCompiler");
+const copyCompilertextBtn = document.getElementById("copyCompilertext")
 const graphContainer = document.getElementById("graph-container");
 const graphKbSize = document.getElementById("graphkbsize");
 const graphLines = document.getElementById("graphlines");
 var showOptionsContent = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-let errorTimeout, cpyTimeout0, cpyTimeout1, readonlyTimeout, typingTimeout, sourceEditor, minifiedEditor, darkModeEnabled;
+let errorTimeout, cpyTimeout0, cpyTimeout1, btnTimeout, typingTimeout, sourceEditor, minifiedEditor, darkModeEnabled, compileTime, compileData;
 let typingInProgress = false;
 var sources = ['#PyFile-1'];
 var sourcesOut = ['#PyFile-out-1'];
@@ -437,12 +438,16 @@ async function codeCompile() {
 		const data = await response.json();
 		pyCompileAtTabIndex = currentTabIndex;
 		pyTerminal.classList.remove("hidden");
-		terminalText.textContent = `[${new Date().toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${data.output.trim().length === 0 ? "Compiled but no output!" : data.output.trim()}`;
+		compileTime = new Date();
+		compileData = data.output.trim();
+		terminalText.textContent = `[${compileTime.toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${data.output.trim().length === 0 ? "Compiled but no output!" : compileData}`;
 	} catch (error) {
 		pyTerminal.classList.remove("hidden");
 		terminalText.textContent = error || 'Error occurred while running the code. Please check your code and try again.';
 	}
 }
+
+
 
 function clearPyComplier(jusDelete = false) {
 	if (jusDelete || (pyCompileAtTabIndex === currentTabIndex && pyCompileAtTabIndex === currentTabIndexOut)) {
@@ -464,6 +469,37 @@ closeCompilerBtn.addEventListener("click", () => {
 		clearPyComplier(true);
 	}, 1100)
 })
+
+copyCompilertextBtn.addEventListener("click", async () => {
+	if (terminalText.textContent.length > 0) {
+		await navigator.clipboard.writeText(compileData);
+	}
+	if (btnTimeout) {
+		clearTimeout(btnTimeout);
+	}
+	copyCompilertextBtn.textContent = "Copied";
+	animateIcon("copyCompilertext", "fa-fade", 1400);
+	btnTimeout = setTimeout(() => {
+		copyCompilertextBtn.textContent = "Copy";
+		btnTimeout = null;
+	}, 1500)
+})
+
+document.getElementById("exportCompilertext").addEventListener("click", () => {
+	const blob = new Blob([compileData], {
+		type: 'text/plain'
+	});
+	const a = document.createElement('a');
+	a.classList.add("hidden");
+	document.body.appendChild(a);
+	const url = window.URL.createObjectURL(blob);
+	a.href = url;
+	const exportFlename = fileTabs.children[pyCompileAtTabIndex].textContent || fileTabsOut.children[pyCompileAtTabIndex].textContent || defaultFilename;
+	a.download = `${exportFlename.trim().replace(/\.(py)$/,"")}-${compileTime.toLocaleString()}.txt`;
+	a.click();
+	window.URL.revokeObjectURL(url);
+	document.body.removeChild(a);
+});
 
 function validateFiles(files) {
 	const validFiles = [];
@@ -759,7 +795,7 @@ async function copyfilelink() {
 
 fileShareLink.addEventListener('click', copyfilelink);
 
-async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, fileFormat, addReadme, fastCompress) {
+async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, fileFormat, addReadme, fastCompress, generateLink) {
 	let comPress = new JSZip();
 	let nonEmptyFilesCount = 0;
 	let fileOccurrences = {};
@@ -836,8 +872,35 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 	});
 
 	setTimeout(() => {
-		shareLink(compressedBlob, `${fileName.trim()}.${fileFormat.trim().toLowerCase()}`, true, fileFormat);
+		if (!generateLink) {
+			if (compressedBlob) {
+				Swal.fire({
+					title: "Download now",
+					html: '<button id="download-btn" class="swal2-confirm swal2-styled bg-red-500 rounded text-white hover:bg-red-600">Download</button><button id="close-btn" class="swal2-cancel swal2-styled">Close</button>',
+					showConfirmButton: false,
+					allowOutsideClick: false,
+					didOpen: () => {
+						Swal.getPopup().querySelector('#download-btn').addEventListener('click', () => {
+							const a = document.createElement('a');
+							a.classList.add("hidden");
+							document.body.appendChild(a);
+							const url = window.URL.createObjectURL(compressedBlob);
+							a.href = url;
+							a.download = `${fileName.trim()}.${fileFormat.trim().toLowerCase()}`;
+							a.click();
+							window.URL.revokeObjectURL(url);
+							document.body.removeChild(a);
+						});
+						Swal.getPopup().querySelector('#close-btn').addEventListener('click', () => Swal.close());
+					}
+				});
+			}
+		} else {
+			shareLink(compressedBlob, `${fileName.trim()}.${fileFormat.trim().toLowerCase()}`, true, fileFormat);
+		}
+
 		compressFileBtn.disabled = false;
+		handleTabsOverlay(false);
 		disableDwSrCpBtn(false);
 	}, 600);
 }
@@ -920,7 +983,7 @@ function compressOptions() {
 
 	const label3 = document.createElement('label');
 	label3.setAttribute('for', 'fast-compression');
-	label3.className = 'flex justify-center flex-row items-center mb-5 cursor-pointer pl-2';
+	label3.className = 'flex justify-center flex-row items-center mb-5 cursor-pointer pl-2 right-2 relative';
 	const checkbox2 = document.createElement('input');
 	checkbox2.type = 'checkbox';
 	checkbox2.id = 'fast-compression';
@@ -936,6 +999,25 @@ function compressOptions() {
 	span3.textContent = 'Fast Compression';
 	label3.appendChild(span3);
 	fragment.appendChild(label3);
+
+	const label4 = document.createElement('label');
+	label4.setAttribute('for', 'generate-link');
+	label4.className = 'flex justify-center flex-row items-center mb-5 cursor-pointer pl-2 left-0.5 relative';
+	const checkbox3 = document.createElement('input');
+	checkbox3.type = 'checkbox';
+	checkbox3.id = 'generate-link';
+	checkbox3.name = 'generate-link';
+	checkbox3.className = 'sr-only peer';
+
+	const div5 = document.createElement('div');
+	div5.className = 'relative w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600';
+	label4.appendChild(checkbox3);
+	label4.appendChild(div5);
+	const span4 = document.createElement('span');
+	span4.className = 'cursor-pointer ml-2 text-neutral-500 text-lg font-medium';
+	span4.textContent = 'Generate Share Link';
+	label4.appendChild(span4);
+	fragment.appendChild(label4);
 
 	const tempDiv = document.createElement('div');
 	tempDiv.appendChild(fragment);
@@ -997,7 +1079,8 @@ async function compressPyFiles() {
 				fileFormat: document.querySelector('input[name="file-format"]:checked').value,
 				fileName: enteredFileName.replace(/[^a-zA-Z0-9,\s.()]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_") || 'minified_files',
 				addReadme: document.getElementById('add-readme').checked,
-				fastCompress: document.getElementById('fast-compression').checked
+				fastCompress: document.getElementById('fast-compression').checked,
+				generateLink: document.getElementById('generate-link').checked
 			};
 		}
 	});
@@ -1013,10 +1096,11 @@ async function compressPyFiles() {
 		fileFormat,
 		fileName,
 		addReadme,
-		fastCompress
+		fastCompress,
+		generateLink
 	} = value;
 
-	await compressFiles(selectedIndices, sortedKeys, Math.min(20, maxLength), fileName, fileFormat, addReadme, fastCompress);
+	await compressFiles(selectedIndices, sortedKeys, Math.min(20, maxLength), fileName, fileFormat, addReadme, fastCompress, generateLink);
 
 }
 
