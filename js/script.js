@@ -3,6 +3,10 @@ import Swal from 'sweetalert2'
 import QRCode from 'qrcode-generator';
 import JSZip from 'jszip';
 import Typewriter from 'typewriter-effect/dist/core';
+import Alpine from 'alpinejs'
+
+window.Alpine = Alpine
+Alpine.start()
 
 const minifyButton = document.getElementById('minify');
 const minifyAllBtn = document.getElementById('minifyAll');
@@ -63,7 +67,6 @@ var currentTabIndexOut = 0;
 var pyCompileAtTabIndex = 0;
 let startIndex = 0;
 let isGetLines = false;
-let jusDelete = false
 let graph = null;
 const defaultFilename = 'default.py';
 const defaultContent = "#Empty Python file, Enter code to minify";
@@ -179,15 +182,13 @@ window.addEventListener("load", () => {
 
 document.getElementById("year").textContent = new Date().getFullYear().toString();
 
-async function initMonacoEditor() {
-	await new Promise(resolve => {
-		require.config({
-			paths: {
-				'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs'
-			}
-		});
-		require(['vs/editor/editor.main'], () => resolve());
-	});
+require.config({
+	paths: {
+		'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs'
+	}
+});
+
+require(['vs/editor/editor.main'], () => {
 	sourceEditor = monaco.editor.create(document.getElementById('editor'), {
 		language: 'python',
 		minimap: {
@@ -271,10 +272,6 @@ async function initMonacoEditor() {
 		}
 	}
 	window.addEventListener("load", typeInEditor);
-};
-
-document.addEventListener('DOMContentLoaded', async () => {
-	await initMonacoEditor();
 });
 
 function disableTyping() {
@@ -471,7 +468,7 @@ closeCompilerBtn.addEventListener("click", () => {
 })
 
 copyCompilertextBtn.addEventListener("click", async () => {
-	if (terminalText.textContent.length > 0) {
+	if (compileData.length > 0) {
 		await navigator.clipboard.writeText(compileData);
 	}
 	if (btnTimeout) {
@@ -875,7 +872,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 		if (!generateLink) {
 			if (compressedBlob) {
 				Swal.fire({
-					title: "Download now",
+					title: `Download ${fileFormatFinal}`,
 					html: '<button id="download-btn" class="swal2-confirm swal2-styled bg-red-500 rounded text-white hover:bg-red-600">Download</button><button id="close-btn" class="swal2-cancel swal2-styled">Close</button>',
 					showConfirmButton: false,
 					allowOutsideClick: false,
@@ -1188,12 +1185,12 @@ function initializeMinifier() {
 				} else {
 					disableDwSrCpBtn(true);
 					clearPyComplier(true);
-					minifiedSize.innerHTML = `${excir} Minification failed!!`;
+					minifiedSize.innerHTML = `${excir} Minification failed!`;
 				}
 			} catch {
 				disableDwSrCpBtn(true);
 				clearPyComplier(true);
-				minifiedSize.innerHTML = `${excir} Minification failed!!`;
+				minifiedSize.innerHTML = `${excir} Minification failed!`;
 			}
 			updateGraph();
 		} else {
