@@ -329,6 +329,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	window.addEventListener("storage", (event) => {
 		if (event.key === "darkMode") {
 			setTheme();
+			if (darkModeEnabled) {
+				darkModeToggle.checked = true;
+				document.documentElement.classList.add("dark");
+				document.documentElement.classList.remove("light");
+
+			} else {
+				darkModeToggle.checked = false;
+				document.documentElement.classList.add("light");
+				document.documentElement.classList.remove("dark");
+			}
 		}
 	});
 });
