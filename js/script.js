@@ -368,6 +368,7 @@ function updateEditorOptions() {
 	minifiedEditor.updateOptions({
 		fontSize: getFontSize()
 	});
+
 	if (isMobile()) {
 		sourceEditor.updateOptions({
 			folding: false
@@ -383,6 +384,7 @@ function updateEditorOptions() {
 			folding: true
 		});
 	}
+
 	sourceEditor.onDidChangeModelContent(async () => {
 		if ((new Blob([sourceEditor.getModel().getValue()])).size / maxFileSizeInBytes > 1) {
 			sourceEditor.getModel().setValue(await truncateCode(sourceEditor.getModel().getValue()));
@@ -403,6 +405,7 @@ window.addEventListener('load', () => {
 		updateEditorOptions();
 	}
 });
+
 window.addEventListener('resize', () => {
 	if (sourceEditor && minifiedEditor) {
 		updateEditorOptions();
@@ -453,8 +456,6 @@ async function codeCompile() {
 		terminalText.textContent = error || 'Error occurred while running the code. Please check your code and try again.';
 	}
 }
-
-
 
 function clearPyComplier(jusDelete = false) {
 	if (jusDelete || (pyCompileAtTabIndex === currentTabIndex && pyCompileAtTabIndex === currentTabIndexOut)) {
