@@ -493,6 +493,7 @@ copyCompilertextBtn.addEventListener("click", async () => {
 })
 
 document.getElementById("exportCompilertext").addEventListener("click", () => {
+	animateIcon("exportCompilertext", "fa-fade", 1000);
 	const blob = new Blob([compileData], {
 		type: 'text/plain'
 	});
@@ -1519,7 +1520,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			if (section.sub_sections && section.sub_sections.length > 0) {
 				content += `<div class="ml-4 mb-2">`;
 				section.sub_sections.forEach((subsection) => {
-					content += `<h4 class="text-[14px] text-gray-500 lg:text-lg font-bold py-2"><i class="fa-solid fa-square-caret-right text-cyan-900 pr-2"></i>${subsection.subsubsection_title}</h4><p class="text-[13px] lg:text-[15px]">${subsection.subsubsection_content}</p>`;
+					content += `<h4 class="text-sm text-gray-500 lg:text-lg font-bold py-2"><i class="fa-solid fa-square-caret-right text-cyan-900 pr-2"></i>${subsection.subsubsection_title}</h4><p class="text-[13px] lg:text-[15px]">${subsection.subsubsection_content}</p>`;
 				});
 				content += `</div>`;
 			}
@@ -1942,6 +1943,11 @@ function addEmptyTab() {
 	switchTab(newFileIndex);
 	sessionStorage.setItem(newSourceId, '');
 	sourceEditor.getModel().setValue('');
+	sourceEditor.setPosition({
+		lineNumber: 1,
+		column: 1
+	});
+	sourceEditor.focus();
 	if ((!isMobile() && sources.length >= 20) || (isMobile() && sources.length >= 10)) {
 		addNewTabBtn.classList.add("hidden");
 	}
