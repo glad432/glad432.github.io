@@ -3,10 +3,6 @@ import Swal from 'sweetalert2'
 import QRCode from 'qrcode-generator';
 import JSZip from 'jszip';
 import Typewriter from 'typewriter-effect/dist/core';
-import Alpine from 'alpinejs'
-
-window.Alpine = Alpine
-Alpine.start()
 
 const minifyButton = document.getElementById('minify');
 const minifyAllBtn = document.getElementById('minifyAll');
@@ -146,6 +142,25 @@ var options = [
 	'remove_explicit_return_none'
 ];
 
+document.addEventListener('DOMContentLoaded', () => {
+	const menuToggle = document.getElementById('menuToggle');
+	const menu = document.getElementById('menu');
+
+	menuToggle.addEventListener('click', () => {
+		menu.classList.remove('hidden');
+	});
+
+	document.getElementById('menuClose').addEventListener('click', () => {
+		menu.classList.add('hidden');
+	});
+
+	document.addEventListener('click', (event) => {
+		if (!menu.contains(event.target) && !menuToggle.contains(event.target)) {
+			menu.classList.add('hidden');
+		}
+	});
+});
+
 function shuffleArray(array) {
 	for (let i = array.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
@@ -211,6 +226,7 @@ require(['vs/editor/editor.main'], () => {
 		cursorStyle: 'line',
 		automaticLayout: true
 	});
+
 	minifiedEditor = monaco.editor.create(document.getElementById('minified'), {
 		language: 'python',
 		minimap: {
@@ -233,6 +249,7 @@ require(['vs/editor/editor.main'], () => {
 		readOnly: true,
 		automaticLayout: true
 	});
+
 	sourceEditor.onDidChangeModelContent(() => {
 		saveEditorContent();
 		document.getElementById('line-count').textContent = `Lines: ${sourceEditor.getModel().getLineCount()}`;
@@ -833,6 +850,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 
 		const occurrence = (fileOccurrences[finalFileName] || 0) + 1;
 		fileOccurrences[finalFileName] = occurrence;
+
 		if (occurrence > 1) {
 			const extensionIndex = finalFileName.lastIndexOf('.');
 			const basename = extensionIndex === -1 ? finalFileName : finalFileName.slice(0, extensionIndex);
