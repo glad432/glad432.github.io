@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/'
+  base: 'https://glad432.github.io/'
 });

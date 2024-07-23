@@ -87,34 +87,36 @@
           </a>
         </span>
         <label class="inline-block ml-auto relative w-8 h-8 switch">
-          <input type="checkbox" id="darkModeToggle">
+          <input type="checkbox" id="darkModeToggle" aria-label="Toggle dark mode">
           <span class="slide top-0 left-0 right-0 bottom-0 round rounded-full absolute before:font-['Font_Awesome_6_Free'] before:top-[3.5px] before:left-[7px] before:font-black before:text-lg before:text-white before:absolute before:content-['\f185'] cursor-pointer hover:bg-blue-700"></span>
         </label>
         <div class="flex items-center space-x-1">
-          <ul class="hidden space-x-2 md:inline-flex">
-            <li>
-              <a href="https://github.com/gladw-in" target="_blank" rel="noopener noreferrer" class="px-4 py-2 font-semibold text-white rounded hover:text-blue-700">Github</a>
-            </li>
-          </ul>
-          <div class="inline-flex md:hidden" x-data="{ open: false }">
-            <button class="flex-none px-2 text-2xl text-white" @click="open = true">
+          <nav>
+            <ul class="hidden space-x-2 md:inline-flex">
+              <li>
+                <a href="https://github.com/gladw-in" target="_blank" rel="noopener noreferrer" class="px-4 py-2 font-semibold text-white rounded hover:text-blue-700">Github</a>
+              </li>
+            </ul>
+          </nav>
+          <div class="inline-flex md:hidden">
+            <button aria-label="Open menu" class="flex-none px-2 text-2xl text-white" id="menuToggle">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
               </svg>
-              <span class="sr-only"></span>
             </button>
-            <div class="absolute top-0 left-0 right-0 z-50 flex flex-col p-2 pb-4 m-2 space-y-3 bg-black rounded shadow" x-show.transition="open" @click.away="open = false" x-cloak>
-              <button class="self-end flex-none px-2 ml-2 text-2xl text-white" @click="open = false">
+            <div class="absolute top-0 left-0 right-0 z-50 flex flex-col p-2 pb-4 m-2 space-y-3 bg-black rounded shadow hidden" id="menu">
+              <button aria-label="Close menu" class="self-end flex-none px-2 ml-2 text-2xl text-white" id="menuClose">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-                <span class="sr-only"></span>
               </button>
-              <ul class="space-y-2">
-                <li>
-                  <a href="https://github.com/gladw-in" target="_blank" rel="noopener noreferrer" class="px-4 py-2 font-semibold text-white rounded hover:text-blue-700">Github</a>
-                </li>
-              </ul>
+              <nav>
+                <ul class="space-y-2">
+                  <li>
+                    <a href="https://github.com/gladw-in" target="_blank" rel="noopener noreferrer" class="px-4 py-2 font-semibold text-white rounded hover:text-blue-700">Github</a>
+                  </li>
+                </ul>
+              </nav>
             </div>
           </div>
         </div>
