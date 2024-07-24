@@ -447,6 +447,7 @@ async function codeCompile() {
 	if (minifiedEditor.getModel().getValue() === '') {
 		return;
 	}
+
 	const fileName = getCurrentTabName();
 	let truncatedFileName = fileName.length >= 50 ? fileName.slice(0, 50) + ".py" : fileName;
 	const code = minifiedEditor.getModel().getValue();
@@ -458,6 +459,7 @@ async function codeCompile() {
 			},
 			body: code
 		});
+
 		if (!response.ok) {
 			throw new Error('Network error');
 		}
@@ -466,7 +468,7 @@ async function codeCompile() {
 		pyCompileAtTabIndex = currentTabIndex;
 		pyTerminal.classList.remove("hidden");
 		compileTime = new Date();
-		compileData = data.output.trim();
+		compileData = data.output;
 		terminalText.textContent = `[${compileTime.toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${data.output.trim().length === 0 ? "Compiled but no output!" : compileData}`;
 	} catch (error) {
 		pyTerminal.classList.remove("hidden");
@@ -1094,6 +1096,7 @@ async function compressPyFiles() {
 				return "You need to choose one file format!";
 			}
 		},
+
 		allowOutsideClick: false,
 		confirmButtonColor: "#179fff",
 		showCancelButton: true,
@@ -1148,6 +1151,7 @@ function initializeMinifier() {
 				return `${option}=false`;
 			}
 		}).join('&');
+
 		const preserveGlobalsFinal = preserveGlobals ? preserveGlobals.value.split(',').map(str => str.trim()) : [];
 		if (preserveGlobalsFinal.length > 0) {
 			query += '&preserve_globals=' + encodeURIComponent(JSON.stringify(preserveGlobalsFinal));
@@ -1205,6 +1209,7 @@ function initializeMinifier() {
 					},
 					body: sourceEditor.getModel().getValue()
 				});
+
 				if (response.ok) {
 					const minified = await response.json();
 					minifiedEditor.getModel().setValue(minified.minified_code);
@@ -1238,6 +1243,7 @@ function initializeMinifier() {
 		selectallopt.classList.remove("cursor-not-allowed");
 		resetOpt.classList.remove("cursor-not-allowed");
 		minifyButton.classList.remove("pointer-events-none");
+
 		if (minifiedEditor.getModel().getValue().trim() === "" && sourceEditor.getModel().getValue() !== "") {
 			fileTabsOut.children[currentTabIndexOut].classList.add("error");
 			document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = "Minification failed!\nRe-check the Orginal code";
@@ -1271,6 +1277,7 @@ function initializeMinifier() {
 			updateEditorContent(true);
 			await delay(100);
 		}
+
 		startIndex = endIndex;
 		if (startIndex >= maxIndex) {
 			startIndex = 0;
