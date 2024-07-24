@@ -93,7 +93,7 @@ The [Vitejs](https://vitejs.dev/) is a modern build tool that offers extremely f
 - [JSZip](https://stuk.github.io/jszip/) -  JavaScript library for client-side compressing file.
 - [Typewriterjs](https://github.com/tameemsafi/typewriterjs/) -  JavaScript library for a cool typewriter effect
 - [ApexCharts](https://apexcharts.com/) - Interactive JavaScript charts for data visualization.
-- [CryptoJS](https://github.com/brix/crypto-js) - JavaScript library for cryptographic tasks..
+- [CryptoJS](https://github.com/brix/crypto-js) - JavaScript library for cryptographic tasks.
 - [SweetAlert2](https://sweetalert2.github.io/) - Replacement for JavaScript's popup boxes with beautiful designs.
 ---
 
