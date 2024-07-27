@@ -63,6 +63,8 @@ var currentTabIndexOut = 0;
 var pyCompileAtTabIndex = 0;
 let startIndex = 0;
 let isGetLines = false;
+let isTabNameEdit = false;
+let isTabNameEditOut = false;
 let graph = null;
 const defaultFilename = 'default.py';
 const defaultContent = "#Empty Python file, Enter code to minify";
@@ -775,6 +777,7 @@ function displayQRCode(fileLink) {
 	var qr = QRCode(10, 'M');
 	qr.addData(fileLink.trim());
 	qr.make();
+
 	var imgTag = qr.createImgTag(6, 0);
 	qrCode.innerHTML = imgTag;
 }
@@ -1369,6 +1372,7 @@ function animateIcon(fade, fadeClass, fadeDur) {
 	if (aniTimeout) {
 		clearTimeout(aniTimeout);
 	}
+
 	var aniIcon = document.getElementById(fade);
 	aniIcon.classList.add(fadeClass);
 	aniTimeout = setTimeout(() => {
@@ -1386,15 +1390,19 @@ function handleErrorMessage(text) {
 		if (errorTimeout) {
 			clearTimeout(errorTimeout);
 		}
+
 		errorMessage.innerHTML = text;
 		errorMessage.classList.add(...classlst);
+
 		setTimeout(() => {
 			errorMessage.classList.remove('opacity-0');
 			errorMessage.classList.add('opacity-100', 'duration-500');
 		}, 50);
+
 		errorTimeout = setTimeout(() => {
 			errorMessage.classList.remove('opacity-100');
 			errorMessage.classList.add('opacity-0');
+
 			setTimeout(() => {
 				errorMessage.textContent = '';
 				errorMessage.classList.remove(...classlst);
@@ -1649,14 +1657,22 @@ function graphConfig(originalData, minifiedData, tabFileNames) {
 
 async function decryptAndPush(list, dataArray, isGetLines) {
 	for (let key of list) {
-		const decryptedVal = CryptoJS.AES.decrypt(sessionStorage.getItem(key), newKey).toString(CryptoJS.enc.Utf8);
+		const encryptedData = sessionStorage.getItem(key);
+		if (!encryptedData) {
+			continue;
+		}
+
+		const decryptedVal = CryptoJS.AES.decrypt(encryptedData, newKey).toString(CryptoJS.enc.Utf8);
+
 		if (isGetLines) {
-			dataArray.push((decryptedVal.split("\n").length));
+			const lineCount = decryptedVal.split("\n").length;
+			dataArray.push(lineCount);
 		} else {
-			dataArray.push((decryptedVal.length / 1024).toFixed(3));
+			const sizeKB = (decryptedVal.length / 1024).toFixed(3);
+			dataArray.push(sizeKB);
 		}
 	}
-};
+}
 
 async function updateGraph() {
 	const pycodeOutList = [];
@@ -1705,17 +1721,9 @@ async function updateGraph() {
 		tabFileNames.push(chosenName.trim());
 	}
 
-	for (let i = 0; i < tabFileNames.length; i++) {
-		if (!isGetLines) {
-			minifiedDataFiltered.push(minifiedData[i]);
-			originalDataFiltered.push(originalData[i]);
-			tabFileNamesFiltered.push(tabFileNames[i]);
-		} else if (isGetLines) {
-			minifiedDataFiltered.push(minifiedData[i]);
-			originalDataFiltered.push(originalData[i]);
-			tabFileNamesFiltered.push(tabFileNames[i]);
-		}
-	}
+	minifiedDataFiltered.push(...minifiedData.filter(value => value > 0));
+	originalDataFiltered.push(...originalData.filter((value, index) => minifiedData[index] > 0));
+	tabFileNamesFiltered.push(...tabFileNames.filter((_, index) => minifiedData[index] > 0));
 
 	if (minifiedDataFiltered.length > 1) {
 		minifiedData.splice(0, minifiedData.length, ...minifiedDataFiltered);
@@ -1799,10 +1807,10 @@ function handleTabsOverlay(enable) {
 }
 
 function handleAutoScroll() {
-	var activeTab = fileTabs.children[currentTabIndex];
-	var tabPosition = activeTab.offsetLeft - fileTabs.offsetLeft;
-	var leftVisible = fileTabs.scrollLeft;
-	var rightVisible = leftVisible + fileTabs.offsetWidth;
+	const activeTab = fileTabs.children[currentTabIndex];
+	const tabPosition = activeTab.offsetLeft - fileTabs.offsetLeft;
+	const leftVisible = fileTabs.scrollLeft;
+	const rightVisible = leftVisible + fileTabs.offsetWidth;
 
 	if (tabPosition >= leftVisible && tabPosition + activeTab.offsetWidth <= rightVisible) {
 		return;
@@ -1849,6 +1857,15 @@ function updateEditorContent(isOut = false) {
 	}
 }
 
+function updateEmptyTabInput(tabNameInput, index, isOut) {
+	let filename = (isOut ? fileTabs.children[index].textContent : fileTabsOut.children[index].textContent) || `File ${index + 1}.py`;
+	if (tabNameInput.value.trim() === '' || tabNameInput.value.trim() === '.py') {
+		updateNametoTab(filename.trim());
+	}
+	isTabNameEdit = false;
+	isTabNameEditOut = false;
+}
+
 function editTabName() {
 	var activeTab = fileTabs.children[currentTabIndex];
 	var tabNameInput = document.createElement('input');
@@ -1861,12 +1878,13 @@ function editTabName() {
 	tabNameInput.style.width = `${activeTab.offsetWidth - 90}px`;
 	tabNameInput.addEventListener('keypress', (event) => {
 		if (event.key === 'Enter') {
+			updateEmptyTabInput(tabNameInput, currentTabIndex, false);
 			updateTabName('.tab-name-input', fileTabs, currentTabIndex);
 			updateGraph();
-			handleAutoScroll();
 		}
 	});
 	tabNameInput.addEventListener('blur', () => {
+		updateEmptyTabInput(tabNameInput, currentTabIndex, false);
 		updateTabName('.tab-name-input', fileTabs, currentTabIndex);
 		updateGraph();
 	});
@@ -1876,6 +1894,8 @@ function editTabName() {
 	saveIcon.title = 'Save or press enter';
 	saveIcon.innerHTML = '<i class="fa-solid fa-floppy-disk px-0.5"></i>';
 	saveIcon.onclick = () => {
+		updateEmptyTabInput(tabNameInput, currentTabIndex, false);
+		isTabNameEdit = false
 		saveEditorContent();
 	};
 
@@ -1894,28 +1914,46 @@ function editTabName() {
 	activeTab.appendChild(saveIcon);
 	activeTab.appendChild(editIcon);
 	tabNameInput.focus();
-	handleAutoScroll();
+	isTabNameEdit = true
 }
 
 function updateTabName(tabQueryInput, fileTabs, currentTabIndex) {
 	var tabNameInput = document.querySelector(tabQueryInput);
-	var newName = tabNameInput.value.trim();
+
+	if (!tabNameInput) {
+		return;
+	}
+
+	var newName = tabNameInput.value.trim() || '';
+
 	var cleanedStrnopy = newName.replace(/\.py$/, '');
-	if (!(/^\s+$/.test(cleanedStrnopy)) && (cleanedStrnopy.length >= 1 && cleanedStrnopy.length <= 256)) {
+	cleanedStrnopy = cleanedStrnopy.slice(0, 200);
+
+	if (cleanedStrnopy.length > 0 && !/^\s+$/.test(cleanedStrnopy)) {
 		var cleanedString = cleanedStrnopy.replace(/[^a-zA-Z0-9,\s.()]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_");
+
 		if (!cleanedString.endsWith('.py')) {
 			cleanedString += '.py';
 		}
-		fileTabs.children[currentTabIndex].textContent = cleanedString;
+
+		var currentTab = fileTabs.children[currentTabIndex];
+		currentTab.textContent = cleanedString;
+
+		var existingIcon = currentTab.querySelector('i');
+		if (existingIcon) {
+			currentTab.removeChild(existingIcon);
+		}
+
 		var icon = document.createElement('i');
 		icon.className = "fa-solid fa-file-code text-blue-600 pr-2";
-		fileTabs.children[currentTabIndex].insertBefore(icon, fileTabs.children[currentTabIndex].childNodes[0]);
+		currentTab.insertBefore(icon, currentTab.firstChild);
+
 		updateNametoTab(cleanedString);
+
 		tabNameInput.value = cleanedString;
+
 	} else if (newName.trim() === '') {
 		return;
-	} else {
-		handleErrorMessage(`${exctri} Ensure file name has 256 characters max, no invalid characters`);
 	}
 }
 
@@ -1925,7 +1963,8 @@ function updateNametoTab(fileName, isOut = false) {
 	}
 	var activeTabIndex = isOut ? currentTabIndexOut : currentTabIndex;
 	var fileTabsToUpdate = isOut ? fileTabsOut : fileTabs;
-	var tabToUpdate = fileTabsToUpdate.children[activeTabIndex];
+	const tabToUpdate = fileTabsToUpdate.children[activeTabIndex];
+
 	if (tabToUpdate) {
 		tabToUpdate.innerHTML = `${codeFile}${fileName.trim()}`;
 	}
@@ -2011,7 +2050,6 @@ function updateTabStyles() {
 						animateIcon(`editbtn-${currentTabIndex + 1}`, "fa-bounce", 800);
 						setTimeout(() => {
 							editTabName();
-							handleAutoScroll();
 						}, 800)
 					};
 					tab.appendChild(editBtn);
@@ -2148,9 +2186,11 @@ function switchTab(index, fromSwitchTabOut = false) {
 	disableTyping();
 	var previousIndex = currentTabIndex;
 	currentTabIndex = Math.max(0, Math.min(index, sources.length - 1));
-	animateIcon(`file-${currentTabIndex + 1}`, "animate-pulse", 700);
+	if (!isTabNameEdit) {
+		animateIcon(`file-${currentTabIndex + 1}`, "animate-pulse", 700);
+		updateTabStyles();
+	}
 	updateEditorContent();
-	updateTabStyles();
 	if (previousIndex !== currentTabIndex) {
 		if (fileTabs.children[previousIndex].querySelector('.tab-name-input')) {
 			updateTabName('.tab-name-input', fileTabs, currentTabIndex);
@@ -2165,10 +2205,10 @@ document.getElementById("file-1").addEventListener('click', () => {
 
 function handleAutoScrollOut() {
 	handleAutoScroll();
-	var activeTab = fileTabsOut.children[currentTabIndexOut];
-	var tabPosition = activeTab.offsetLeft - fileTabsOut.offsetLeft;
-	var leftVisible = fileTabsOut.scrollLeft;
-	var rightVisible = leftVisible + fileTabsOut.offsetWidth;
+	const activeTab = fileTabsOut.children[currentTabIndexOut];
+	const tabPosition = activeTab.offsetLeft - fileTabsOut.offsetLeft;
+	const leftVisible = fileTabsOut.scrollLeft;
+	const rightVisible = leftVisible + fileTabsOut.offsetWidth;
 
 	if (tabPosition >= leftVisible && tabPosition + activeTab.offsetWidth <= rightVisible) {
 		return;
@@ -2193,13 +2233,14 @@ function editTabNameOut() {
 	tabNameInput.style.width = `${activeTab.offsetWidth - 90}px`;
 	tabNameInput.addEventListener('keypress', (event) => {
 		if (event.key === 'Enter') {
-			updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut);
+			updateEmptyTabInput(tabNameInput, currentTabIndexOut, true);
+			updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut, true);
 			updateGraph();
-			handleAutoScrollOut();
 		}
 	});
 	tabNameInput.addEventListener('blur', () => {
-		updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut);
+		updateEmptyTabInput(tabNameInput, currentTabIndexOut, true);
+		updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut, true);
 		updateGraph();
 	});
 
@@ -2208,6 +2249,8 @@ function editTabNameOut() {
 	saveIcon.title = 'Save or press enter';
 	saveIcon.innerHTML = '<i class="fa-solid fa-floppy-disk px-0.5"></i>';
 	saveIcon.onclick = () => {
+		updateEmptyTabInput(tabNameInput, currentTabIndex, true);
+		isTabNameEditOut = false
 		saveEditorContent(true);
 	};
 
@@ -2226,7 +2269,7 @@ function editTabNameOut() {
 	activeTab.appendChild(saveIcon);
 	activeTab.appendChild(editIcon);
 	tabNameInput.focus();
-	handleAutoScrollOut();
+	isTabNameEditOut = true
 }
 
 function addTabOut() {
@@ -2271,7 +2314,6 @@ function updateTabStylesOut() {
 						animateIcon(`editbtnout-${currentTabIndexOut + 1}`, "fa-bounce", 800);
 						setTimeout(() => {
 							editTabNameOut();
-							handleAutoScrollOut();
 						}, 800)
 					};
 					tab.appendChild(editBtn);
@@ -2311,12 +2353,14 @@ function switchTabOut(index) {
 	switchTab(index, true);
 	var previousIndexOut = currentTabIndexOut;
 	currentTabIndexOut = Math.max(0, Math.min(index, sourcesOut.length - 1));
-	animateIcon(`file-out-${currentTabIndexOut + 1}`, "animate-pulse", 700);
+	if (!isTabNameEditOut) {
+		animateIcon(`file-out-${currentTabIndexOut + 1}`, "animate-pulse", 700);
+		updateTabStylesOut();
+	}
 	updateEditorContent(true);
-	updateTabStylesOut();
 	if (previousIndexOut !== currentTabIndexOut) {
 		if (fileTabsOut.children[previousIndexOut].querySelector('.tab-name-input-out')) {
-			updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut);
+			updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut, true);
 		}
 	}
 }
