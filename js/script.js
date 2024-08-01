@@ -3,6 +3,8 @@ import Swal from 'sweetalert2'
 import QRCode from 'qrcode-generator';
 import JSZip from 'jszip';
 import Typewriter from 'typewriter-effect/dist/core';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import articleData from './articleData.json';
 
 const minifyButton = document.getElementById('minify');
 const minifyAllBtn = document.getElementById('minifyAll');
@@ -516,19 +518,8 @@ copyCompilertextBtn.addEventListener("click", async () => {
 
 document.getElementById("exportCompilertext").addEventListener("click", () => {
 	animateIcon("exportCompilertext", "fa-fade", 1000);
-	const blob = new Blob([compileData], {
-		type: 'text/plain'
-	});
-	const a = document.createElement('a');
-	a.classList.add("hidden");
-	document.body.appendChild(a);
-	const url = window.URL.createObjectURL(blob);
-	a.href = url;
 	const exportFlename = fileTabs.children[pyCompileAtTabIndex].textContent || fileTabsOut.children[pyCompileAtTabIndex].textContent || defaultFilename;
-	a.download = `${exportFlename.trim().replace(/\.(py)$/,"")}-${compileTime.toLocaleString()}.txt`;
-	a.click();
-	window.URL.revokeObjectURL(url);
-	document.body.removeChild(a);
+	downloadFile(compileData, 'text/plain', `${exportFlename.trim().replace(/\.(py)$/,"")}-${compileTime.toLocaleString()}.txt`);
 });
 
 function validateFiles(files) {
@@ -632,22 +623,22 @@ function setupFileInput() {
 
 window.addEventListener('load', setupFileInput);
 
-function downloadPyFile() {
+function downloadFile(content, mimeType, fileName) {
 	animateIcon("fade-1", "fa-fade", 3000);
-	var blob = new Blob([minifiedEditor.getModel().getValue()], {
-		type: "text/x-python"
+	var blob = new Blob([content], {
+		type: mimeType
 	});
 	var dataUri = URL.createObjectURL(blob);
 	var downloadLink = document.createElement("a");
 	downloadLink.href = dataUri;
-	downloadLink.download = getCurrentTabName();
+	downloadLink.download = fileName.trim();
 	downloadLink.click();
 	URL.revokeObjectURL(dataUri);
 }
 
 dwButton.addEventListener('click', () => {
 	if (minifiedEditor.getModel().getValue() !== "") {
-		downloadPyFile();
+		downloadFile(minifiedEditor.getModel().getValue(), "text/x-python", getCurrentTabName());
 	}
 });
 
@@ -662,6 +653,21 @@ async function createShareLink(file, filename) {
 	} catch (error) {
 		throw error;
 	}
+}
+
+function getCompressMimetype(fileFormat) {
+	let mimeType;
+	const fileType = fileFormat.trim().toLowerCase();
+
+	if (fileType === 'zip') {
+		mimeType = 'application/zip';
+	} else if (fileType === 'rar') {
+		mimeType = 'application/vnd.rar';
+	} else if (fileType === '7z') {
+		mimeType = 'application/x-7z-compressed';
+	}
+
+	return mimeType
 }
 
 function shareLink(content, filename, isCompressed, fileFormat) {
@@ -701,29 +707,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 				downloadLinkUrl.innerHTML = `Download ${fileFormat.trim().toLowerCase() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim()} <i class="fa-solid fa-file-zipper"></i>`
 				if (isCompressed) {
 					downloadLinkUrl.onclick = () => {
-						let mimeType;
-						const fileType = fileFormat.trim().toLowerCase();
-
-						if (fileType === 'zip') {
-							mimeType = 'application/zip';
-						} else if (fileType === 'rar') {
-							mimeType = 'application/vnd.rar';
-						} else if (fileType === '7z') {
-							mimeType = 'application/x-7z-compressed';
-						}
-
-						const blob = new Blob([content], {
-							type: mimeType
-						});
-						const url = URL.createObjectURL(blob);
-						const a = document.createElement('a');
-						a.href = url;
-						a.download = filename.trim();
-						a.classList.add("hidden");
-						document.body.appendChild(a);
-						a.click();
-						window.URL.revokeObjectURL(url);
-						document.body.removeChild(a);
+						downloadFile(content, getCompressMimetype(fileFormat), filename.trim());
 					};
 					downloadLinkUrl.classList.remove('hidden');
 				} else {
@@ -774,11 +758,11 @@ function createFormData(content, fileName) {
 }
 
 function displayQRCode(fileLink) {
-	var qr = QRCode(10, 'M');
+	const qr = QRCode(10, 'M');
 	qr.addData(fileLink.trim());
 	qr.make();
 
-	var imgTag = qr.createImgTag(6, 0);
+	const imgTag = qr.createImgTag(6, 0);
 	qrCode.innerHTML = imgTag;
 }
 
@@ -913,15 +897,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 					allowOutsideClick: false,
 					didOpen: () => {
 						Swal.getPopup().querySelector('#download-btn').addEventListener('click', () => {
-							const a = document.createElement('a');
-							a.classList.add("hidden");
-							document.body.appendChild(a);
-							const url = window.URL.createObjectURL(compressedBlob);
-							a.href = url;
-							a.download = `${fileName.trim()}.${fileFormat.trim().toLowerCase()}`;
-							a.click();
-							window.URL.revokeObjectURL(url);
-							document.body.removeChild(a);
+							downloadFile(compressedBlob, getCompressMimetype(fileFormat), `${fileName.trim()}.${fileFormat.trim().toLowerCase()}`);
 						});
 						Swal.getPopup().querySelector('#close-btn').addEventListener('click', () => Swal.close());
 					}
@@ -1157,11 +1133,11 @@ function initializeMinifier() {
 
 		const preserveGlobalsFinal = preserveGlobals ? preserveGlobals.value.split(',').map(str => str.trim()) : [];
 		if (preserveGlobalsFinal.length > 0) {
-			query += '&preserve_globals=' + encodeURIComponent(JSON.stringify(preserveGlobalsFinal));
+			query += `&preserve_globals=${encodeURIComponent(JSON.stringify(preserveGlobalsFinal))}`;
 		}
 		const preserveLocalsFinal = preserveLocals ? preserveLocals.value.split(',').map(str => str.trim()) : [];
 		if (preserveLocalsFinal.length > 0) {
-			query += '&preserve_locals=' + encodeURIComponent(JSON.stringify(preserveLocalsFinal));
+			query += `&preserve_locals=${encodeURIComponent(JSON.stringify(preserveLocalsFinal))}`;
 		}
 		return query;
 	}
@@ -1187,9 +1163,7 @@ function initializeMinifier() {
 	}
 
 	async function minifyClick() {
-		fileTabsOverlayOut.classList.remove("hidden");
-		fileTabsOverlay.classList.remove("hidden");
-		btnsOverlay.classList.remove("hidden");
+		handleTabsOverlay(true);
 		disableDwSrCpBtn(true);
 		selectallopt.disabled = true;
 		resetOpt.disabled = true;
@@ -1234,9 +1208,7 @@ function initializeMinifier() {
 		} else {
 			minifiedSize.textContent = "Enter Code";
 		}
-		fileTabsOverlayOut.classList.add("hidden");
-		fileTabsOverlay.classList.add("hidden");
-		btnsOverlay.classList.add("hidden");
+		handleTabsOverlay(false);
 		selectallopt.disabled = false;
 		resetOpt.disabled = false;
 		allOptions.forEach(option => {
@@ -1328,8 +1300,8 @@ document.getElementById('clearAll').addEventListener('click', () => {
 				showDenyButton: true,
 				showCancelButton: true,
 				allowOutsideClick: false,
-				confirmButtonColor: "#179fff",
-				cancelButtonColor: "#d33",
+				confirmButtonColor: "#d33",
+				cancelButtonColor: "#179fff",
 				denyButtonColor: "#ffA500",
 				confirmButtonText: "Clear All",
 				denyButtonText: "Clear this tab"
@@ -1541,9 +1513,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-	const response = await fetch("https://glad432.github.io/article/blog.min.json");
-	const articleData = await response.json();
-	let content = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h2 class="sm:text-xl lg:text-3xl text-gray-600 text-left font-bold mb-4"><i class="fa-solid fa-circle-info text-blue-500 pr-2"></i>${articleData.article.title}</h2>`;
+	let content = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h2 class="sm:text-xl lg:text-3xl text-gray-600 text-left font-bold mb-4"><i class="fa-brands fa-python text-blue-500 pr-2"></i>${articleData.article.title}</h2>`;
 
 	articleData.article.sections.forEach((section) => {
 		if (section.section_title !== "FAQs") {
@@ -1971,27 +1941,24 @@ function updateNametoTab(fileName, isOut = false) {
 }
 
 function addEmptyTab() {
+	const maxLimit = isMobile() ? 10 : 20;
 	disableTyping(true);
-	if (!isMobile() && sources.length >= 20) {
+
+	if (sources.length >= maxLimit && sourcesOut.length >= maxLimit) {
 		Swal.fire({
 			icon: "error",
-			html: `${exctri} You can't add more than 20 tabs.`,
-			confirmButtonColor: "#179fff"
-		});
-		return;
-	} else if (isMobile() && sources.length >= 10) {
-		Swal.fire({
-			icon: "error",
-			html: `${exctri} You can't add more than 10 tabs.`,
+			html: `${exctri} You can't add more than ${maxLimit} tabs.`,
 			confirmButtonColor: "#179fff"
 		});
 		return;
 	}
+
 	saveEditorContent();
-	addNewTabBtn.classList.remove("hidden")
+	addNewTabBtn.classList.remove("hidden");
 	minifyAllBtn.disabled = false;
-	minifyAllBtn.classList.remove("hidden")
+	minifyAllBtn.classList.remove("hidden");
 	addTabOut();
+
 	var newFileIndex = sources.length;
 	var newSourceId = `#PyFile-${newFileIndex + 1}`;
 	var newTab = document.createElement('li');
@@ -2008,19 +1975,22 @@ function addEmptyTab() {
 	switchTab(newFileIndex);
 	sessionStorage.setItem(newSourceId, '');
 	sourceEditor.getModel().setValue('');
-	sourceEditor.setPosition({
-		lineNumber: 1,
-		column: 1
-	});
-	sourceEditor.focus();
-	if ((!isMobile() && sources.length >= 20) || (isMobile() && sources.length >= 10)) {
+
+	if (sources.length >= maxLimit && sourcesOut.length >= maxLimit) {
 		addNewTabBtn.classList.add("hidden");
 	}
 }
 
 addNewTabBtn.addEventListener("click", () => {
 	animateIcon("addNewTab", "fa-fade", 500);
-	setTimeout(addEmptyTab, 400);
+	setTimeout(() => {
+		addEmptyTab();
+		sourceEditor.setPosition({
+			lineNumber: 1,
+			column: 1
+		});
+		sourceEditor.focus();
+	}, 400);
 });
 
 function updateTabStyles() {
