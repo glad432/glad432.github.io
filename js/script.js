@@ -656,18 +656,15 @@ async function createShareLink(file, filename) {
 }
 
 function getCompressMimetype(fileFormat) {
-	let mimeType;
 	const fileType = fileFormat.trim().toLowerCase();
 
 	if (fileType === 'zip') {
-		mimeType = 'application/zip';
+		return 'application/zip';
 	} else if (fileType === 'rar') {
-		mimeType = 'application/vnd.rar';
+		return 'application/vnd.rar';
 	} else if (fileType === '7z') {
-		mimeType = 'application/x-7z-compressed';
+		return 'application/x-7z-compressed';
 	}
-
-	return mimeType
 }
 
 function shareLink(content, filename, isCompressed, fileFormat) {
@@ -1513,7 +1510,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-	let content = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h2 class="sm:text-xl lg:text-3xl text-gray-600 text-left font-bold mb-4"><i class="fa-brands fa-python text-blue-500 pr-2"></i>${articleData.article.title}</h2>`;
+	let content = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h2 class="text-xl lg:text-3xl text-gray-600 text-left font-bold mb-4"><i class="fa-brands fa-python text-blue-500 pr-2"></i>${articleData.article.title}</h2>`;
 
 	articleData.article.sections.forEach((section) => {
 		if (section.section_title !== "FAQs") {
