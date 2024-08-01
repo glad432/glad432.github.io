@@ -4,7 +4,7 @@ import QRCode from 'qrcode-generator';
 import JSZip from 'jszip';
 import Typewriter from 'typewriter-effect/dist/core';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import articleData from './articleData.json';
+import articleData from './articledata.json';
 
 const minifyButton = document.getElementById('minify');
 const minifyAllBtn = document.getElementById('minifyAll');
@@ -624,7 +624,6 @@ function setupFileInput() {
 window.addEventListener('load', setupFileInput);
 
 function downloadFile(content, mimeType, fileName) {
-	animateIcon("fade-1", "fa-fade", 3000);
 	var blob = new Blob([content], {
 		type: mimeType
 	});
@@ -638,6 +637,7 @@ function downloadFile(content, mimeType, fileName) {
 
 dwButton.addEventListener('click', () => {
 	if (minifiedEditor.getModel().getValue() !== "") {
+		animateIcon("fade-1", "fa-fade", 3000);
 		downloadFile(minifiedEditor.getModel().getValue(), "text/x-python", getCurrentTabName());
 	}
 });
