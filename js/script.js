@@ -4,7 +4,7 @@ import QRCode from 'qrcode-generator';
 import JSZip from 'jszip';
 import Typewriter from 'typewriter-effect/dist/core';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import articleData from './articledata.json';
+import articleData from './articleData.json';
 
 const minifyButton = document.getElementById('minify');
 const minifyAllBtn = document.getElementById('minifyAll');
@@ -859,14 +859,14 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 
 			if (decryptedCode.trim() !== '') {
 				comPress.file(fileName, decryptedCode);
-				addReadme && (fileNamesList += `${nonEmptyFilesCount + 1}. ${fileName}\n`);
+				addReadme && (fileNamesList += `${(nonEmptyFilesCount + 1).toString().padStart(2, '0')}. ${fileName}\n`);
 				nonEmptyFilesCount++;
 				let totalCompressProgress = ((nonEmptyFilesCount / maxLength) * 100);
 				compressProgressBar.value = totalCompressProgress;
 				compressProgressStatus.innerText = `Compressing... ${totalCompressProgress.toFixed(2)}%`;
 				compressProgress.classList.remove('hidden');
 
-				await delay(fastCompress || (nonEmptyFilesCount > 10 ? 100 : 300));
+				await delay(fastCompress || (nonEmptyFilesCount > 10 ? 100 : 200));
 			}
 		}
 	}
