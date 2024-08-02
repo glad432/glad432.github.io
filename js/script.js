@@ -146,9 +146,31 @@ var options = [
 	'remove_explicit_return_none'
 ];
 
+const schema = {
+	"@context": "http://schema.org",
+	"@type": "Website",
+	"url": "https://glad432.github.io",
+	"name": "Python Minifier - GLAD432",
+	"description": "Optimize your web app's performance with our Python minifier online. Python minifier remove whitespace, comments, and line breaks to compress code, optimizing script size for faster loading and improved efficiency.",
+	"keywords": "Python, minifier, Python code optimization, online tool, script compression, code minification, web development, optimize Python code, improve script performance, reduce code size, web application optimization, code efficiency, code speed, streamline Python scripts",
+	"publisher": {
+		"@type": "Organization",
+		"name": "GLAD432",
+		"logo": {
+			"@type": "ImageObject",
+			"url": "https://glad432.github.io/favicon.ico"
+		}
+	}
+};
+
 document.addEventListener('DOMContentLoaded', () => {
 	const menuToggle = document.getElementById('menuToggle');
 	const menu = document.getElementById('menu');
+	const script = document.createElement('script');
+
+	script.type = 'application/ld+json';
+	script.text = JSON.stringify(schema);
+	document.head.appendChild(script);
 
 	menuToggle.addEventListener('click', () => {
 		menu.classList.remove('hidden');
@@ -1866,12 +1888,6 @@ function editTabName() {
 		saveEditorContent();
 	};
 
-	var editIcon = document.createElement('button');
-	editIcon.className = 'edit-tab-icon hover:text-blue-400 text-blue-600 hidden';
-	editIcon.title = 'Edit file name';
-	editIcon.innerHTML = editFileNameIcon;
-	editIcon.onclick = editTabName;
-
 	var icon = document.createElement('i');
 	icon.className = "fa-solid fa-file-code text-blue-600 pr-2";
 
@@ -1879,7 +1895,6 @@ function editTabName() {
 	activeTab.appendChild(icon);
 	activeTab.appendChild(tabNameInput);
 	activeTab.appendChild(saveIcon);
-	activeTab.appendChild(editIcon);
 	tabNameInput.focus();
 	isTabNameEdit = true
 }
@@ -2216,16 +2231,10 @@ function editTabNameOut() {
 	saveIcon.title = 'Save or press enter';
 	saveIcon.innerHTML = '<i class="fa-solid fa-floppy-disk px-0.5"></i>';
 	saveIcon.onclick = () => {
-		updateEmptyTabInput(tabNameInput, currentTabIndex, true);
+		updateEmptyTabInput(tabNameInput, currentTabIndexOut, true);
 		isTabNameEditOut = false
 		saveEditorContent(true);
 	};
-
-	var editIcon = document.createElement('button');
-	editIcon.className = 'edit-tab-icon hover:text-blue-400 text-blue-600 hidden';
-	editIcon.title = 'Edit file name';
-	editIcon.innerHTML = editFileNameIcon;
-	editIcon.onclick = editTabNameOut;
 
 	var icon = document.createElement('i');
 	icon.className = "fa-solid fa-file-code text-blue-600 pr-2";
@@ -2234,7 +2243,6 @@ function editTabNameOut() {
 	activeTab.appendChild(icon);
 	activeTab.appendChild(tabNameInput);
 	activeTab.appendChild(saveIcon);
-	activeTab.appendChild(editIcon);
 	tabNameInput.focus();
 	isTabNameEditOut = true
 }
@@ -2251,6 +2259,7 @@ function addTabOut() {
 	newTab.onclick = () => {
 		switchTabOut(newFileIndexOut);
 	};
+
 	updateTabStylesOut();
 	fileTabsOut.appendChild(newTab);
 	sourcesOut.push(newSourceId);
