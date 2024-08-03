@@ -40,6 +40,7 @@ input:checked + .slide:before {
   display: block;
   opacity: 1;
 }
+#diff-tab.active,
 .file-tab-out.active,
 .file-tab.active {
   background-color: rgb(69 69 69 / 14%);
@@ -110,6 +111,7 @@ div:where(.swal2-container) .swal2-radio {
   #CompressFile,
   #clearAll,
   #copy,
+  #diffPopup,
   #dw,
   #graphkbsize,
   #graphlines,
@@ -121,7 +123,8 @@ div:where(.swal2-container) .swal2-radio {
     font-size: 10px;
   }
   .file-tab,
-  .file-tab-out {
+  .file-tab-out,
+  #diff-tab {
     font-size: 14px;
   }
   #editor,
@@ -143,6 +146,7 @@ div:where(.swal2-container) .swal2-radio {
 .dark .apexcharts-menu-item:hover {
   background: #70707080 !important;
 }
+.dark #diff-tab.active,
 .dark .file-tab-out.active,
 .dark .file-tab.active {
   background-color: #404040ca;
@@ -176,6 +180,12 @@ div:where(.swal2-container) .swal2-radio {
   color-scheme: dark;
   border-color: #736b5e;
   color: #e8e6e3;
+}
+.dark .monaco-diff-editor .diffOverview {
+  background: rgba(0, 0, 0, 0.64) !important;
+}
+.dark #diff-popup {
+  background: #7070708c;
 }
 .dark ::-webkit-input-placeholder {
   color: #b2aba1;
