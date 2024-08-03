@@ -86,7 +86,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
               </svg>
             </button>
-            <div class="absolute top-0 left-0 right-0 z-50 flex flex-col p-2 pb-4 m-2 space-y-3 bg-black rounded shadow hidden" id="menu">
+            <div class="absolute top-0 left-0 right-0 z-50 flex-col p-2 pb-4 m-2 space-y-3 bg-black rounded shadow hidden" id="menu">
               <button aria-label="Close menu" class="self-end flex-none px-2 ml-2 text-2xl text-white" id="menuClose">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -298,6 +298,8 @@
           </div>
           <button id="CompressFile" disabled class="hidden lg:ml-0.5 px-4 py-2 mt-2 font-bold cursor-pointer bg-orange-500 rounded text-white hover:bg-orange-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Compress <i id="fade-8" class="fa-solid fa-file-zipper"></i>
           </button>
+          <button id="diffPopup" class="hidden md:block lg:ml-0.5 px-4 py-2 mt-2 font-bold cursor-pointer bg-yellow-500 rounded text-white hover:bg-yellow-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Compare <i id="fade-10" class="fa-solid fa-code-compare"></i>
+          </button>
           <button id="runCode" class="sm:w-auto lg:ml-0.5 px-4 py-2 font-bold cursor-pointer bg-purple-500 rounded text-white hover:bg-purple-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 mt-2">Run Code <i id="fade-9" class="fa-regular fa-circle-play"></i>
           </button>
         </div>
@@ -344,6 +346,21 @@
         <button id="graphkbsize" class="px-4 py-2 mt-2 font-bold cursor-pointer bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Size</button>
         <button id="graphlines" class="px-4 py-2 mt-2 font-bold cursor-pointer bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Lines</button>
       </div>
+    </div>
+    <div class="relative">
+      <div id="diff-popup" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
+        <div id="diff-popup-content" class="relative w-[90%] h-[90%] bg-white rounded shadow-lg overflow-hidden transform scale-90 opacity-0 transition-opacity duration-300 z-60">
+          <div class="flex items-center pl-1 mx-2">
+            <div class="list-none pr-px mr-1 pt-3 inline-flex colorhandle">
+              <div class="relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] rounded mr-[5px] transition-opacity active" id="diff-tab"></div>
+            </div>
+          </div>
+          <div id="diff-editor" class="h-full w-full"></div>
+        </div>
+      </div>
+      <button id="close-diff-popup" class="fixed hidden top-4 right-4 bg-red-500 text-white rounded-full w-8 h-8 items-center justify-center text-xl cursor-pointer hover:bg-red-600 focus:outline-none z-[70]" title="Close Diff Editor">
+        <i id="fade-11" class="fa-solid fa-xmark"></i>
+      </button>
     </div>
     <div class="flex justify-center items-center pb-[25px]">
       <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row md:items-center">

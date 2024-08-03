@@ -1,8 +1,9 @@
 import CryptoJS from 'crypto-js';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 import QRCode from 'qrcode-generator';
 import JSZip from 'jszip';
 import Typewriter from 'typewriter-effect/dist/core';
+import 'sweetalert2/src/sweetalert2.scss'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import articleData from './articleData.json';
 
@@ -54,9 +55,17 @@ const copyCompilertextBtn = document.getElementById("copyCompilertext")
 const graphContainer = document.getElementById("graph-container");
 const graphKbSize = document.getElementById("graphkbsize");
 const graphLines = document.getElementById("graphlines");
+const diffPopup = document.getElementById('diff-popup');
+const diffPopupContent = document.getElementById('diff-popup-content');
+const diffTab = document.getElementById("diff-tab");
+const openDiffPopupBtn = document.getElementById('diffPopup');
+const closeDiffPopupBtn = document.getElementById('close-diff-popup');
+const menuToggle = document.getElementById('menuToggle');
+const menu = document.getElementById('menu');
+const jsonScript = document.createElement('script');
 var showOptionsContent = document.querySelector('.content-ll');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-let errorTimeout, cpyTimeout0, cpyTimeout1, btnTimeout, typingTimeout, sourceEditor, minifiedEditor, darkModeEnabled, compileTime, compileData;
+let errorTimeout, cpyTimeout0, cpyTimeout1, btnTimeout, typingTimeout, sourceEditor, minifiedEditor, diffEditor, darkModeEnabled, compileTime, compileData;
 let typingInProgress = false;
 var sources = ['#PyFile-1'];
 var sourcesOut = ['#PyFile-out-1'];
@@ -164,25 +173,24 @@ const schema = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-	const menuToggle = document.getElementById('menuToggle');
-	const menu = document.getElementById('menu');
-	const script = document.createElement('script');
-
-	script.type = 'application/ld+json';
-	script.text = JSON.stringify(schema);
-	document.head.appendChild(script);
+	jsonScript.type = 'application/ld+json';
+	jsonScript.text = JSON.stringify(schema);
+	document.head.appendChild(jsonScript);
 
 	menuToggle.addEventListener('click', () => {
 		menu.classList.remove('hidden');
+		menu.classList.add('flex');
 	});
 
 	document.getElementById('menuClose').addEventListener('click', () => {
 		menu.classList.add('hidden');
+		menu.classList.remove('flex');
 	});
 
 	document.addEventListener('click', (event) => {
 		if (!menu.contains(event.target) && !menuToggle.contains(event.target)) {
 			menu.classList.add('hidden');
+			menu.classList.remove('flex');
 		}
 	});
 });
@@ -291,7 +299,7 @@ require(['vs/editor/editor.main'], () => {
 	function typeInEditor() {
 		if (typingInProgress) return;
 		const typingPYcode = CryptoJS.AES.decrypt("U2FsdGVkX193pc0vAtJ5A6OWR/h1wgrCfeKfO/6qgjWA+pkCUbdIupXhCTFRoDR2n65EQf5blOu2I+RDW598wSH7M1e3zTH4XIA0Wcl8+qmoZKaiUJFKC3QaiT9gYtcEFOteoT/6uKl2b8kUNM+Dl2U+A5cezQFkURxj5xxIjCqgX1jcRLpLQY2LIOpV0IbA3GLbvaNuh1wDUUsvwnIx+vnNeYruSD2fOXKdz0Lfyn1bnYPA6BxSWrvRxbgoSXTBVAD4tlN19YxI14tUJdizCFsGAKkLvUtKecD9X72maj6ZzEhvoqVTwMwxGawFCzuUeAm8TyxTlfOrVWfVxPoQatCQ0dOsWqRUiVCY8HE+A/OiJ133mA0+l0W1wvkV9bHDqR1UzqP8VAyh8UPB2YMLYnHZVr+US3Bpgu+iczkl2vewGWtt2WJ991O+HsXGCj0tc6iWcwmPu2PaKfR8t0x1PLWYUfVo2lycMMgBCfjhQyIq61Bfhm9QHMisqlap6hE0k1QsBHZOoL9Q+yCslEM8Us0FkQP/KK07NBCKULM8H47aFac6sOBd1VxCw9k1nnA+L1gNeG8oDVu4leUf6bZjs6m0msJISL1plqZY5cCpjdhrcImSsdNGt1jqXV1p7QnwGgVMl9HuRK9AlzxLCA0YNLyXzGqQNJlbSVrzJYS2JgW0Xw0B9M6vL/0G7FygNn2FefvXfx/Pk1ImUqH1u5y6tiuEUYAnxATe7y2cGcHa1J+f4IEV7AeXTEc/zoSh3mhmze8Y6gQN23YEtD0Pxr+3+42FO1dS1zSy3Un9G4vbpgbAPdb29lP/fVUrHSVokEadqfmWDxbnNsg2kwbkb3SuCVhd95Ev+5k9b++oGzlJ4npthp7mczo0IuaYFAZv42t2dPvbI3B6noUaa1S5hXJz4AWvzXX/M5mNxTxmrTblhu1UfomDBgJPnV7Udz6f2yVsPlSsJwApJYykUiB2xPOwPaQl1Zu4j7JhsSgHo2oP2sJonUtVYV3ui1aHwdJIIDCJT0GxCajxjxlTpEVE/P5FEpWymIScnbZ6kEZiy41OagjHnDx+HsbrNn5z6hpGR6u3U8n1hIeE5mfWMBb6XXRurTGU6x1UYDWTTFviIhLCCK2u7ociPOpvYVuD499vA+MYzfKJy0Itjw4S6rd8Ftw0cGsaaY0VbETbchMMtAWN637HgCf6tssXZG0wnjcicVBHrelgKSp+v2rxjfvBtbkYRJTpKhNoT/M+lf8eMy3Ww9OP7G3W4iM71mv9PC9YCYSFehCWFCyUOaDbhslZHqnNrfCmGJSEELLFGb9nnx1EbCvuy5G5ewRtMYzFPRYk3Sf5BlF6AVbiOjgt70tExE8tToejh5gLHjaf4SAGIy24e0Q=", '4#>5p[:/v,o2q/(\\*=:6').toString(CryptoJS.enc.Utf8);
-		if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+		if ((/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
 			typeOverlay.classList.remove('!hidden');
 			let index = 0;
 
@@ -362,6 +370,11 @@ function setTheme() {
 		minifiedEditor.updateOptions({
 			theme: vsTheme
 		});
+		if (diffEditor) {
+			diffEditor.updateOptions({
+				theme: vsTheme
+			});
+		}
 		setGraphTheme();
 	}
 }
@@ -542,6 +555,109 @@ document.getElementById("exportCompilertext").addEventListener("click", () => {
 	animateIcon("exportCompilertext", "fa-fade", 1000);
 	const exportFlename = fileTabs.children[pyCompileAtTabIndex].textContent || fileTabsOut.children[pyCompileAtTabIndex].textContent || defaultFilename;
 	downloadFile(compileData, 'text/plain', `${exportFlename.trim().replace(/\.(py)$/,"")}-${compileTime.toLocaleString()}.txt`);
+});
+
+
+function updateDiffEditor() {
+	if (diffEditor) {
+		let orginalCode = monaco.editor.createModel(
+			CryptoJS.AES.decrypt(sessionStorage.getItem(sources[currentTabIndex]), newKey).toString(CryptoJS.enc.Utf8),
+			'python'
+		);
+		let minifiedCode = monaco.editor.createModel(
+			CryptoJS.AES.decrypt(sessionStorage.getItem(sourcesOut[currentTabIndexOut]), newKey).toString(CryptoJS.enc.Utf8),
+			'python'
+		);
+
+		diffEditor.setModel({
+			original: orginalCode,
+			modified: minifiedCode
+		});
+	}
+}
+
+function showDiffPopup() {
+	if (!isMobile() && (sourceEditor.getModel().getValue().trim() === '' || minifiedEditor.getModel().getValue().trim() === '')) {
+		return;
+	}
+
+	diffPopupContent.classList.remove('scale-90', 'opacity-0');
+	diffPopupContent.classList.add('scale-100', 'opacity-100');
+	diffTab.innerHTML = codeFile + getCurrentTabName();
+
+	if (currentTabIndex === currentTabIndexOut) {
+		diffTab.title = `${currentTabIndex + 1}${(n => ["th", "st", "nd", "rd"][n % 100 >> 3 ^ 1 && n % 10] || "th")(currentTabIndex + 1)} Tab`;
+	}
+
+	setTimeout(() => {
+		diffPopup.classList.remove('hidden');
+		diffPopup.classList.add('flex');
+		document.body.classList.add("overflow-y-hidden");
+		document.body.classList.remove("overflow-y-scroll");
+		closeDiffPopupBtn.classList.remove('hidden');
+	}, 200);
+
+	if (!diffEditor) {
+		require(['vs/editor/editor.main'], () => {
+			diffEditor = monaco.editor.createDiffEditor(document.getElementById('diff-editor'), {
+				theme: darkModeEnabled ? 'vs-dark' : 'vs',
+				readOnly: true,
+				minimap: {
+					enabled: false
+				},
+				fontFamily: 'Source Code Pro',
+				renderValidationDecorations: 'on',
+				scrollbar: {
+					vertical: 'visible',
+					horizontal: 'visible'
+				},
+				fontWeight: 'bold',
+				formatOnPaste: true,
+				semanticHighlighting: true,
+				folding: true,
+				cursorBlinking: 'smooth',
+				cursorSmoothCaretAnimation: true,
+				cursorStyle: 'line',
+				automaticLayout: true
+			});
+
+			updateDiffEditor();
+
+			sourceEditor.getModel().onDidChangeContent(updateDiffEditor);
+			minifiedEditor.getModel().onDidChangeContent(updateDiffEditor);
+		});
+	} else {
+		updateDiffEditor();
+	}
+}
+
+function hideDiffPopup() {
+	diffPopupContent.classList.remove('scale-100', 'opacity-100');
+	diffPopupContent.classList.add('scale-90', 'opacity-0');
+	diffTab.innerHTML = '';
+	diffTab.title = '';
+
+	setTimeout(() => {
+		diffPopup.classList.add('hidden');
+		diffPopup.classList.remove('flex');
+		document.body.classList.remove("overflow-y-hidden");
+		document.body.classList.add("overflow-y-scroll");
+		closeDiffPopupBtn.classList.add('hidden');
+		if (diffEditor) {
+			diffEditor.dispose();
+			diffEditor = null;
+		}
+	}, 300);
+}
+
+openDiffPopupBtn.addEventListener('click', () => {
+	animateIcon("fade-10", "fa-fade", 500);
+	setTimeout(showDiffPopup, 400);
+});
+
+closeDiffPopupBtn.addEventListener('click', () => {
+	animateIcon("fade-11", "fa-fade", 400);
+	setTimeout(hideDiffPopup, 300);
 });
 
 function validateFiles(files) {
