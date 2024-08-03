@@ -696,6 +696,8 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 	createShareLink(content, filename).then(result => {
 		if (result.success) {
 			const fileLink = result.link;
+			const finalFileFormat = fileFormat.trim().toLowerCase() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim();
+			const expTime = `${isCompressed ? finalFileFormat + ' File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span>`;
 			shareOverlay.classList.remove("hidden");
 			popup.classList.remove("hidden");
 			document.body.classList.add("overflow-y-hidden");
@@ -712,7 +714,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 				linkNewtab.title = 'Open in new tab';
 				orScan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
 				downloadLinkUrl.classList.remove('hidden');
-				helpMsg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content rounded-lg"><p class="text-sm text-center text-gray-700">${isCompressed ? (fileFormat.trim() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim()) +' File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span></p></div>`;
+				helpMsg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content rounded-lg"><p class="text-sm text-center text-gray-700">${expTime}</span></p></div>`;
 				orScan.classList.add('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				closePopupOverlay.classList.remove('hidden');
 				qrCode.title = "Double Click to zoom-in and zoom-out";
@@ -723,7 +725,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 				qrCode.classList.remove('inline');
 				fileShareLink.href = fileLink;
 				fileShareLink.value = fileLink;
-				downloadLinkUrl.innerHTML = `Download ${fileFormat.trim().toLowerCase() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim()} <i class="fa-solid fa-file-zipper"></i>`
+				downloadLinkUrl.innerHTML = `Download ${finalFileFormat} <i class="fa-solid fa-file-zipper"></i>`
 				if (isCompressed) {
 					downloadLinkUrl.onclick = () => {
 						downloadFile(content, getCompressMimetype(fileFormat), filename.trim());
@@ -1332,7 +1334,7 @@ document.getElementById('clearAll').addEventListener('click', () => {
 						text: "All the tabs are Cleared.",
 						icon: "success",
 						confirmButtonColor: "#179fff",
-						confirmButtonText: "Close"
+						confirmButtonText: "Ok"
 					});
 				} else if (result.isDenied) {
 					minifiedEditor.getModel().setValue('');
@@ -2104,7 +2106,7 @@ function confirmDeleteFile(index) {
 			icon: "error",
 			html: `${exctri} You can't delete this tab`,
 			confirmButtonColor: "#179fff",
-			confirmButtonText: "Close"
+			confirmButtonText: "Ok"
 		});
 		addNewTabBtn.disabled = false;
 		return;
@@ -2114,10 +2116,10 @@ function confirmDeleteFile(index) {
 		icon: "question",
 		allowOutsideClick: false,
 		showCancelButton: true,
-		confirmButtonColor: "#179fff",
+		confirmButtonColor: "#d33",
 		confirmButtonText: "Yes",
 		cancelButtonText: "No",
-		cancelButtonColor: "#d33",
+		cancelButtonColor: "#179fff",
 	}).then((result) => {
 		if (result.isConfirmed) {
 			clearPyComplier();
