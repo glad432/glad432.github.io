@@ -185,7 +185,7 @@ div:where(.swal2-container) .swal2-radio {
   background: rgba(0, 0, 0, 0.64) !important;
 }
 .dark #diff-popup {
-  background: #7070708c;
+  background: #3938388c;
 }
 .dark ::-webkit-input-placeholder {
   color: #b2aba1;
