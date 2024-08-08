@@ -60,10 +60,10 @@ const diffPopupContent = document.getElementById('diff-popup-content');
 const diffTab = document.getElementById("diff-tab");
 const openDiffPopupBtn = document.getElementById('diffPopup');
 const closeDiffPopupBtn = document.getElementById('close-diff-popup');
-const menuToggle = document.getElementById('menuToggle');
-const menu = document.getElementById('menu');
+const headerMenuToggle = document.getElementById('menuToggle');
+const headerMenu = document.getElementById('menu');
 const jsonScript = document.createElement('script');
-var showOptionsContent = document.querySelector('.content-ll');
+const showOptionsContent = document.getElementById('showOptionsContent');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 let errorTimeout, cpyTimeout0, cpyTimeout1, btnTimeout, typingTimeout, sourceEditor, minifiedEditor, diffEditor, darkModeEnabled, compileTime, compileData;
 let typingInProgress = false;
@@ -79,12 +79,8 @@ let isTabNameEditOut = false;
 let graph = null;
 const defaultFilename = 'default.py';
 const defaultContent = "#Empty Python file, Enter code to minify";
+const defaultOutput = "Compiled but no output!";
 const maxFileSizeInBytes = 1 * 400 * 1024;
-const excir = `<i class="fa-solid fa-circle-exclamation"></i>`;
-const exctri = `<i class="fa-solid fa-file-circle-exclamation"></i>`;
-const codeFile = '<i class="fa-solid fa-file-code text-blue-600 pr-2"></i>';
-const editFileNameIcon = '<i class="fa-solid fa-pen-to-square"></i>';
-const classlst = ['font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4', 'transition', 'opacity-100'];
 
 const sentences = [
 	"A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks.",
@@ -177,20 +173,20 @@ document.addEventListener('DOMContentLoaded', () => {
 	jsonScript.text = JSON.stringify(schema);
 	document.head.appendChild(jsonScript);
 
-	menuToggle.addEventListener('click', () => {
-		menu.classList.remove('hidden');
-		menu.classList.add('flex');
+	headerMenuToggle.addEventListener('click', () => {
+		headerMenu.classList.remove('hidden');
+		headerMenu.classList.add('flex');
 	});
 
 	document.getElementById('menuClose').addEventListener('click', () => {
-		menu.classList.add('hidden');
-		menu.classList.remove('flex');
+		headerMenu.classList.add('hidden');
+		headerMenu.classList.remove('flex');
 	});
 
 	document.addEventListener('click', (event) => {
-		if (!menu.contains(event.target) && !menuToggle.contains(event.target)) {
-			menu.classList.add('hidden');
-			menu.classList.remove('flex');
+		if (!headerMenu.contains(event.target) && !headerMenuToggle.contains(event.target)) {
+			headerMenu.classList.add('hidden');
+			headerMenu.classList.remove('flex');
 		}
 	});
 });
@@ -450,7 +446,7 @@ function updateEditorOptions() {
 				column: sourceEditor.getModel().getLineMaxColumn(totalLines)
 			});
 			sourceEditor.revealLineInCenter(Math.max(totalLines - 5, 1));
-			handleErrorMessage(`${exctri} Maximum Size limit (400kB) reached!`);
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Maximum Size limit (400kB) reached!`);
 		}
 	});
 
@@ -488,7 +484,7 @@ async function codeCompile() {
 	}
 
 	const fileName = getCurrentTabName();
-	let truncatedFileName = fileName.length >= 50 ? fileName.slice(0, 50) + ".py" : fileName;
+	const truncatedFileName = fileName.length >= 50 ? `${fileName.slice(0, 50)}.py` : fileName;
 	const code = minifiedEditor.getModel().getValue();
 	try {
 		const response = await fetch('https://python-compile.vercel.app/run', {
@@ -508,7 +504,7 @@ async function codeCompile() {
 		pyTerminal.classList.remove("hidden");
 		compileTime = new Date();
 		compileData = data.output;
-		terminalText.textContent = `[${compileTime.toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${data.output.trim().length === 0 ? "Compiled but no output!" : compileData}`;
+		terminalText.textContent = `[${compileTime.toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${data.output.trim().length === 0 ? defaultOutput : compileData}`;
 	} catch (error) {
 		pyTerminal.classList.remove("hidden");
 		terminalText.textContent = error || 'Error occurred while running the code. Please check your code and try again.';
@@ -554,9 +550,10 @@ copyCompilertextBtn.addEventListener("click", async () => {
 document.getElementById("exportCompilertext").addEventListener("click", () => {
 	animateIcon("exportCompilertext", "fa-fade", 1000);
 	const exportFlename = fileTabs.children[pyCompileAtTabIndex].textContent || fileTabsOut.children[pyCompileAtTabIndex].textContent || defaultFilename;
-	downloadFile(compileData, 'text/plain', `${exportFlename.trim().replace(/\.(py)$/,"")}-${compileTime.toLocaleString()}.txt`);
-});
+	const exportOutput = compileData.length === 0 ? defaultOutput : compileData;
 
+	downloadFile(exportOutput, 'text/plain', `${exportFlename.trim().replace(/\.(py)$/,"")}-${compileTime.toLocaleString()}.txt`);
+});
 
 function updateDiffEditor() {
 	if (diffEditor) {
@@ -564,6 +561,7 @@ function updateDiffEditor() {
 			CryptoJS.AES.decrypt(sessionStorage.getItem(sources[currentTabIndex]), newKey).toString(CryptoJS.enc.Utf8),
 			'python'
 		);
+
 		let minifiedCode = monaco.editor.createModel(
 			CryptoJS.AES.decrypt(sessionStorage.getItem(sourcesOut[currentTabIndexOut]), newKey).toString(CryptoJS.enc.Utf8),
 			'python'
@@ -583,9 +581,9 @@ function showDiffPopup() {
 
 	diffPopupContent.classList.remove('scale-90', 'opacity-0');
 	diffPopupContent.classList.add('scale-100', 'opacity-100');
-	diffTab.innerHTML = codeFile + getCurrentTabName();
 
 	if (currentTabIndex === currentTabIndexOut) {
+		diffTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2', 'relative', 'top-[5px]'])}${getCurrentTabName()}`;
 		diffTab.title = `${currentTabIndex + 1}${(n => ["th", "st", "nd", "rd"][n % 100 >> 3 ^ 1 && n % 10] || "th")(currentTabIndex + 1)} Tab`;
 	}
 
@@ -612,7 +610,6 @@ function showDiffPopup() {
 					horizontal: 'visible'
 				},
 				fontWeight: 'bold',
-				formatOnPaste: true,
 				semanticHighlighting: true,
 				folding: true,
 				cursorBlinking: 'smooth',
@@ -675,7 +672,7 @@ function validateFiles(files) {
 	}
 
 	if (invalidFiles.length > 0) {
-		handleErrorMessage(`${exctri} Invalid file format. Please select only .py file(s).`);
+		handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Invalid file format. Please select only .py file(s).`);
 	}
 
 	return validFiles;
@@ -700,7 +697,7 @@ function setupFileInput() {
 		disableTyping();
 		const pyFiles = [...event.target.files].filter(file => file.name.trim().toLowerCase().endsWith('.py'));
 		if (pyFiles.length !== event.target.files.length) {
-			handleErrorMessage(`${exctri} Invalid file format. Please select only .py file(s).`);
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Invalid file format. Please select only .py file(s).`);
 		} else {
 			handleFiles(pyFiles);
 		}
@@ -729,7 +726,7 @@ function setupFileInput() {
 		var fileCount = 0;
 
 		Array.from(files).forEach((file) => {
-			if (fileCount < (isMobile() ? 10 : 20)) {
+			if (fileCount < getMaxTabs()) {
 				handleErrorMessage();
 				handleFile(file);
 				fileCount++;
@@ -741,7 +738,7 @@ function setupFileInput() {
 		if (file.size <= maxFileSizeInBytes) {
 			const reader = new FileReader();
 			reader.onload = (e) => {
-				if (sourceEditor.getModel().getValue().trim() !== '') {
+				if (sourceEditor.getModel().getValue().trim() !== '' && (sources.length < getMaxTabs() && sourcesOut.length < getMaxTabs())) {
 					addEmptyTab();
 				}
 
@@ -749,11 +746,13 @@ function setupFileInput() {
 				sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 				handleErrorMessage();
 				updateNametoTab(file.name.trim());
+				minifiedEditor.getModel().setValue('');
 				handleAutoScroll();
+				updateGraph();
 			};
 			reader.readAsText(file);
 		} else {
-			handleErrorMessage(`${exctri} File size exceeds 400kb. Please select a smaller file.`);
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} File size exceeds 400kb. Please select a smaller file.`);
 			fileInput.value = '';
 		}
 	}
@@ -807,7 +806,7 @@ function getCompressMimetype(fileFormat) {
 
 function shareLink(content, filename, isCompressed, fileFormat) {
 	handleTabsOverlay(false);
-	fileLinkLoad.innerHTML = `<span class="font-bold text-gray-500">loading <i class="fa-solid fa-spinner fa-spin"></i></span>`;
+	fileLinkLoad.innerHTML = `<span class="font-bold text-gray-500">loading ${addFontAwesomeIcon('fa-solid fa-spinner fa-spin')}</span>`;
 
 	createShareLink(content, filename).then(result => {
 		if (result.success) {
@@ -822,15 +821,15 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 			copyMsg.textContent = '';
 			helpMsg.innerHTML = '';
 			setTimeout(() => {
-				copyMsg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
+				copyMsg.innerHTML = `Tap to copy ${addFontAwesomeIcon('fa-solid fa-copy')}`;
 				linkNewtab.href = fileLink;
 				linkNewtab.classList.add('text-white', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5', 'bg-blue-600', 'hover:bg-blue-700');
-				linkNewtab.innerHTML = ` <i class="fa-solid fa-up-right-from-square"></i>`;
+				linkNewtab.innerHTML = addFontAwesomeIcon('fa-solid fa-up-right-from-square');
 				linkNewtab.target = "_blank";
 				linkNewtab.title = 'Open in new tab';
-				orScan.innerHTML = `or Scan <i class="fa-solid fa-expand"></i>`;
+				orScan.innerHTML = `or Scan ${addFontAwesomeIcon('fa-solid fa-expand')}`;
 				downloadLinkUrl.classList.remove('hidden');
-				helpMsg.innerHTML = `<i class="fas fa-question-circle text-blue-500 text-2xl"></i><div class="help-content rounded-lg"><p class="text-sm text-center text-gray-700">${expTime}</span></p></div>`;
+				helpMsg.innerHTML = `${addFontAwesomeIcon('fas fa-question-circle' ,['text-blue-500' ,'text-2xl'])}<div class="help-content rounded-lg"><p class="text-sm text-center text-gray-700">${expTime}</span></p></div>`;
 				orScan.classList.add('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				closePopupOverlay.classList.remove('hidden');
 				qrCode.title = "Double Click to zoom-in and zoom-out";
@@ -841,7 +840,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 				qrCode.classList.remove('inline');
 				fileShareLink.href = fileLink;
 				fileShareLink.value = fileLink;
-				downloadLinkUrl.innerHTML = `Download ${finalFileFormat} <i class="fa-solid fa-file-zipper"></i>`
+				downloadLinkUrl.innerHTML = `Download ${finalFileFormat} ${addFontAwesomeIcon('fa-solid fa-file-zipper')}`
 				if (isCompressed) {
 					downloadLinkUrl.onclick = () => {
 						downloadFile(content, getCompressMimetype(fileFormat), filename.trim());
@@ -856,7 +855,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 		}
 	}).catch(error => {
 		Swal.fire({
-			html: `${excir} ${error.message}, try again later`,
+			html: `${addFontAwesomeIcon('fa-solid fa-circle-exclamation')} ${error.message}, try again later`,
 			icon: "error",
 			confirmButtonColor: "#179fff"
 		});
@@ -938,9 +937,9 @@ async function copyfilelink() {
 	if (cpyTimeout1) {
 		clearTimeout(cpyTimeout1);
 	}
-	copyMsg.innerHTML = 'Copied <i class="fa-solid fa-copy fa-fade"></i>';
+	copyMsg.innerHTML = `Copied ${addFontAwesomeIcon('fa-solid fa-copy fa-fade')}`;
 	cpyTimeout1 = setTimeout(() => {
-		copyMsg.innerHTML = 'Tap to copy <i class="fa-solid fa-copy"></i>';
+		copyMsg.innerHTML = `Tap to copy ${addFontAwesomeIcon('fa-solid fa-copy')}`;
 		cpyTimeout1 = null;
 	}, 3000);
 }
@@ -1289,12 +1288,14 @@ function initializeMinifier() {
 			endLineNumber: lastLineNumber,
 			endColumn: minifiedEditor.getModel().getLineMaxColumn(lastLineNumber)
 		});
+
 		if (cpyTimeout0) {
 			clearTimeout(cpyTimeout0);
 		}
-		copyButton.innerHTML = `Copied <i class="fa-solid fa-clipboard fa-fade"></i>`;
+
+		copyButton.innerHTML = `Copied ${addFontAwesomeIcon('fa-solid fa-clipboard fa-fade')}`;
 		cpyTimeout0 = setTimeout(() => {
-			copyButton.innerHTML = `Copy <i class="fa-solid fa-clipboard"></i>`;
+			copyButton.innerHTML = `Copy ${addFontAwesomeIcon('fa-solid fa-clipboard')}`;
 			cpyTimeout0 = null;
 		}, 2500);
 	}
@@ -1313,7 +1314,8 @@ function initializeMinifier() {
 		resetOpt.classList.add("cursor-not-allowed");
 		minifiedEditor.getModel().setValue('');
 		animateIcon("fade-0", "fa-fade", 1500);
-		minifiedSize.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading....`;
+		minifiedSize.innerHTML = `${addFontAwesomeIcon('fa-solid fa-spinner fa-spin-pulse')} Loading....`;
+		const code = sourceEditor.getModel().getValue();
 		if (sourceEditor.getModel().getValue() !== '' && minifiedEditor.getModel().getValue() === '') {
 			try {
 				const response = await fetch(`https://python-minify.vercel.app/minify?${buildQuery()}`, {
@@ -1321,7 +1323,7 @@ function initializeMinifier() {
 					headers: {
 						'Content-Type': 'text/plain'
 					},
-					body: sourceEditor.getModel().getValue()
+					body: code
 				});
 
 				if (response.ok) {
@@ -1334,12 +1336,12 @@ function initializeMinifier() {
 				} else {
 					disableDwSrCpBtn(true);
 					clearPyComplier(true);
-					minifiedSize.innerHTML = `${excir} Minification failed!`;
+					minifiedSize.innerHTML = `${addFontAwesomeIcon('fa-solid fa-circle-exclamation')} Minification failed!`;
 				}
 			} catch {
 				disableDwSrCpBtn(true);
 				clearPyComplier(true);
-				minifiedSize.innerHTML = `${excir} Minification failed!`;
+				minifiedSize.innerHTML = `${addFontAwesomeIcon('fa-solid fa-circle-exclamation')} Minification failed!`;
 			}
 			updateGraph();
 		} else {
@@ -1394,6 +1396,7 @@ function initializeMinifier() {
 		if (startIndex >= maxIndex) {
 			startIndex = 0;
 		}
+
 		if (startIndex % 5 === 0) {
 			minifyButton.classList.remove("pointer-events-none");
 			minifyAllBtn.disabled = false;
@@ -1490,7 +1493,24 @@ function animateIcon(fade, fadeClass, fadeDur) {
 	}, fadeDur);
 }
 
+function addFontAwesomeIcon(iconClass, customClasses = [], forAppend = false, id = '') {
+	const classes = `${iconClass} ${customClasses.join(' ')}`;
+
+	if (forAppend) {
+		const icon = document.createElement('i');
+		icon.className = classes;
+		if (id) {
+			icon.id = id;
+		}
+		return icon;
+	}
+
+	return `<i class="${classes}"${id ? ` id="${id}"` : ''}></i>`;
+}
+
 function handleErrorMessage(text) {
+	const classlst = ['font-bold', 'bg-red-500', 'text-white', 'py-1', 'px-2', 'rounded', 'max-w-fit', 'mt-4', 'transition', 'opacity-100'];
+
 	if (text === undefined) {
 		errorMessage.classList.add('opacity-0');
 		errorMessage.textContent = '';
@@ -1577,7 +1597,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (contentLength && parseInt(contentLength, 10) > maxFileSizeInBytes) {
 				throw new Error(`File size exceeds 400kb limit`);
 			}
-			if (sourceEditor.getModel().getValue().trim() !== '') {
+			if (sourceEditor.getModel().getValue().trim() !== '' && (sources.length < getMaxTabs() && sourcesOut.length < getMaxTabs())) {
 				addEmptyTab();
 			}
 			const data = await response.text();
@@ -1588,9 +1608,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 			sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 			updateNametoTab(fileName.trim());
+			minifiedEditor.getModel().setValue('');
 			handleAutoScroll();
+			updateGraph();
 		} catch (error) {
-			handleErrorMessage(`${exctri} ${error.message}`);
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} ${error.message}`);
 		}
 	}
 
@@ -1600,13 +1622,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (fileLinkInput.value.trim() === '' || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
 			handleErrorMessage();
 		} else if (!(/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(fileLink))) {
-			handleErrorMessage(`${exctri} Please enter a valid URL starting with "https://"`);
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Please enter a valid URL starting with "https://"`);
 		} else if (/\.(py)$/.test(fileLink.toLowerCase())) {
 			handleErrorMessage();
 			animateIcon("fade-3", "fa-fade", 1500);
 			loadFileContent(fileLink);
 		} else {
-			handleErrorMessage(`${exctri} Please enter a valid .py file link`);
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Please enter a valid .py file link`);
 		}
 	}
 
@@ -1650,18 +1672,18 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-	let content = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h2 class="text-xl lg:text-3xl text-gray-600 text-left font-bold mb-4"><i class="fa-brands fa-python text-blue-500 pr-2"></i>${articleData.article.title}</h2>`;
+	let content = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h2 class="text-xl lg:text-3xl text-gray-600 text-left font-bold mb-4">${addFontAwesomeIcon('fa-brands fa-python' ,['text-blue-500' ,'pr-2'])}${articleData.article.title}</h2>`;
 
 	articleData.article.sections.forEach((section) => {
 		if (section.section_title !== "FAQs") {
-			content += `<div class="mb-4"><h3 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4"><i class="fa-solid fa-diamond text-cyan-900 pr-2"></i>${section.section_title}</h3>`;
+			content += `<div class="mb-4"><h3 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4">${addFontAwesomeIcon('fa-solid fa-diamond' ,['text-cyan-900' ,'pr-2'])}${section.section_title}</h3>`;
 			if (section.section_content) {
 				content += `<p class="text-[13px] lg:text-[15px]">${section.section_content}</p>`;
 			}
 			if (section.sub_sections && section.sub_sections.length > 0) {
 				content += `<div class="ml-4 mb-2">`;
 				section.sub_sections.forEach((subsection) => {
-					content += `<h4 class="text-sm text-gray-500 lg:text-lg font-bold py-2"><i class="fa-solid fa-square-caret-right text-cyan-900 pr-2"></i>${subsection.subsubsection_title}</h4><p class="text-[13px] lg:text-[15px]">${subsection.subsubsection_content}</p>`;
+					content += `<h4 class="text-sm text-gray-500 lg:text-lg font-bold py-2">${addFontAwesomeIcon('fa-solid fa-square-caret-right' ,['text-cyan-900' ,'pr-2'])}${subsection.subsubsection_title}</h4><p class="text-[13px] lg:text-[15px]">${subsection.subsubsection_content}</p>`;
 				});
 				content += `</div>`;
 			}
@@ -1669,7 +1691,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		}
 	});
 
-	content += `<h3 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4"><i class="fa-solid fa-circle-question text-blue-700 pr-2"></i>FAQs</h3><ul class="list-none list-inside">`;
+	content += `<h3 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4">${addFontAwesomeIcon('fa-solid fa-circle-question' ,['text-blue-700' ,'pr-2'])}FAQs</h3><ul class="list-none list-inside">`;
 	const faqPairs = articleData.article.sections.find(section => section.section_title === "FAQs").section_content.split('\n\n');
 	faqPairs.forEach(pair => {
 		const [question, answer] = pair.split('\nA:');
@@ -1913,6 +1935,10 @@ function handleTabsOverlay(enable) {
 	btnsOverlay.classList.toggle("hidden", !enable)
 }
 
+function getMaxTabs() {
+	return isMobile() ? 10 : 20
+}
+
 function handleAutoScroll() {
 	const activeTab = fileTabs.children[currentTabIndex];
 	const tabPosition = activeTab.offsetLeft - fileTabs.offsetLeft;
@@ -1999,18 +2025,15 @@ function editTabName() {
 	var saveIcon = document.createElement('button');
 	saveIcon.className = 'save-tab-icon hover:text-green-400 text-green-500';
 	saveIcon.title = 'Save or press enter';
-	saveIcon.innerHTML = '<i class="fa-solid fa-floppy-disk px-0.5"></i>';
+	saveIcon.innerHTML = addFontAwesomeIcon('fa-solid fa-floppy-disk', ['px-0.5']);
 	saveIcon.onclick = () => {
 		updateEmptyTabInput(tabNameInput, currentTabIndex, false);
 		isTabNameEdit = false
 		saveEditorContent();
 	};
 
-	var icon = document.createElement('i');
-	icon.className = "fa-solid fa-file-code text-blue-600 pr-2";
-
 	activeTab.innerHTML = '';
-	activeTab.appendChild(icon);
+	activeTab.appendChild(addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'], true));
 	activeTab.appendChild(tabNameInput);
 	activeTab.appendChild(saveIcon);
 	tabNameInput.focus();
@@ -2044,9 +2067,7 @@ function updateTabName(tabQueryInput, fileTabs, currentTabIndex) {
 			currentTab.removeChild(existingIcon);
 		}
 
-		var icon = document.createElement('i');
-		icon.className = "fa-solid fa-file-code text-blue-600 pr-2";
-		currentTab.insertBefore(icon, currentTab.firstChild);
+		currentTab.insertBefore(addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'], true), currentTab.firstChild);
 
 		updateNametoTab(cleanedString);
 
@@ -2066,18 +2087,17 @@ function updateNametoTab(fileName, isOut = false) {
 	const tabToUpdate = fileTabsToUpdate.children[activeTabIndex];
 
 	if (tabToUpdate) {
-		tabToUpdate.innerHTML = `${codeFile}${fileName.trim()}`;
+		tabToUpdate.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'])}${fileName.trim()}`;
 	}
 }
 
 function addEmptyTab() {
-	const maxLimit = isMobile() ? 10 : 20;
 	disableTyping(true);
 
-	if (sources.length >= maxLimit && sourcesOut.length >= maxLimit) {
+	if (sources.length >= getMaxTabs() && sourcesOut.length >= getMaxTabs()) {
 		Swal.fire({
 			icon: "error",
-			html: `${exctri} You can't add more than ${maxLimit} tabs.`,
+			html: `${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} You can't add more than ${getMaxTabs()} tabs.`,
 			confirmButtonColor: "#179fff"
 		});
 		return;
@@ -2093,7 +2113,7 @@ function addEmptyTab() {
 	var newSourceId = `#PyFile-${newFileIndex + 1}`;
 	var newTab = document.createElement('li');
 	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity';
-	newTab.innerHTML = `${codeFile}File ${newFileIndex + 1}.py`;
+	newTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'])}File ${newFileIndex + 1}.py`;
 	newTab.id = `file-${newFileIndex + 1}`;
 	newTab.title = `${newFileIndex + 1}${(n => ["th", "st", "nd", "rd"][n % 100 >> 3 ^ 1 && n % 10] || "th")(newFileIndex + 1)} Tab`;
 	newTab.onclick = () => {
@@ -2106,7 +2126,7 @@ function addEmptyTab() {
 	sessionStorage.setItem(newSourceId, '');
 	sourceEditor.getModel().setValue('');
 
-	if (sources.length >= maxLimit && sourcesOut.length >= maxLimit) {
+	if (sources.length >= getMaxTabs() && sourcesOut.length >= getMaxTabs()) {
 		addNewTabBtn.classList.add("hidden");
 	}
 }
@@ -2145,7 +2165,7 @@ function updateTabStyles() {
 					editBtn.id = `editbtn-${currentTabIndex + 1}`;
 					editBtn.className = 'edit-tab-icon mr-0.5 ml-[3px] hover:text-blue-400 text-blue-600';
 					editBtn.title = 'Edit file name';
-					editBtn.innerHTML = editFileNameIcon;
+					editBtn.innerHTML = addFontAwesomeIcon('fa-solid fa-pen-to-square');
 					editBtn.onclick = () => {
 						animateIcon(`editbtn-${currentTabIndex + 1}`, "fa-bounce", 800);
 						setTimeout(() => {
@@ -2159,7 +2179,7 @@ function updateTabStyles() {
 					deleteBtn.id = `delbtn-${currentTabIndex + 1}`;
 					deleteBtn.className = 'delete-tab-icon absolute pl-[5px] right-[5px] top-2 font-bold cursor-pointer mr-0.5 ml-[3px] hover:text-red-400 text-red-500';
 					deleteBtn.title = 'Delete this tab';
-					deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+					deleteBtn.innerHTML = addFontAwesomeIcon('fa-solid fa-trash');
 					deleteBtn.onclick = () => {
 						addNewTabBtn.disabled = true;
 						animateIcon(`delbtn-${currentTabIndex + 1}`, "fa-bounce", 800);
@@ -2220,13 +2240,14 @@ function confirmDeleteFile(index) {
 		startIndex = 0;
 		Swal.fire({
 			icon: "error",
-			html: `${exctri} You can't delete this tab`,
+			html: `${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} You can't delete this tab`,
 			confirmButtonColor: "#179fff",
 			confirmButtonText: "Ok"
 		});
 		addNewTabBtn.disabled = false;
 		return;
 	}
+
 	Swal.fire({
 		html: `Are you sure you want to delete <span class="font-bold text-neutral-500 hover:underline">${tabFileName.length > 15 ? `${tabFileName.slice(0,7)}...${tabFileName.slice(-3)}` : tabFileName}</span> tab?`,
 		icon: "question",
@@ -2347,18 +2368,15 @@ function editTabNameOut() {
 	var saveIcon = document.createElement('button');
 	saveIcon.className = 'save-tab-icon hover:text-green-400 text-green-500';
 	saveIcon.title = 'Save or press enter';
-	saveIcon.innerHTML = '<i class="fa-solid fa-floppy-disk px-0.5"></i>';
+	saveIcon.innerHTML = addFontAwesomeIcon('fa-solid fa-floppy-disk', ['px-0.5']);
 	saveIcon.onclick = () => {
 		updateEmptyTabInput(tabNameInput, currentTabIndexOut, true);
 		isTabNameEditOut = false
 		saveEditorContent(true);
 	};
 
-	var icon = document.createElement('i');
-	icon.className = "fa-solid fa-file-code text-blue-600 pr-2";
-
 	activeTab.innerHTML = '';
-	activeTab.appendChild(icon);
+	activeTab.appendChild(addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'], true));
 	activeTab.appendChild(tabNameInput);
 	activeTab.appendChild(saveIcon);
 	tabNameInput.focus();
@@ -2372,7 +2390,7 @@ function addTabOut() {
 	var newSourceId = `#PyFile-out-${newFileIndexOut + 1}`;
 	var newTab = document.createElement('li');
 	newTab.className = 'file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity';
-	newTab.innerHTML = `${codeFile}File ${newFileIndexOut + 1}.py`;
+	newTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'])}File ${newFileIndexOut + 1}.py`;
 	newTab.id = `file-out-${newFileIndexOut + 1}`;
 	newTab.onclick = () => {
 		switchTabOut(newFileIndexOut);
@@ -2403,7 +2421,7 @@ function updateTabStylesOut() {
 					editBtn.id = `editbtnout-${currentTabIndexOut + 1}`;
 					editBtn.className = 'edit-tab-icon-out mr-0.5 ml-[3px] hover:text-blue-400 text-blue-600';
 					editBtn.title = 'Edit file name';
-					editBtn.innerHTML = editFileNameIcon;
+					editBtn.innerHTML = addFontAwesomeIcon('fa-solid fa-pen-to-square');
 					editBtn.onclick = () => {
 						animateIcon(`editbtnout-${currentTabIndexOut + 1}`, "fa-bounce", 800);
 						setTimeout(() => {
@@ -2417,7 +2435,7 @@ function updateTabStylesOut() {
 					deleteBtn.id = `delbtnout-${currentTabIndexOut + 1}`;
 					deleteBtn.className = 'delete-tab-icon-out absolute pl-[5px] right-[5px] top-2 font-bold cursor-pointer mr-0.5 ml-[3px] hover:text-red-400 text-red-500';
 					deleteBtn.title = 'Delete this tab';
-					deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+					deleteBtn.innerHTML = addFontAwesomeIcon('fa-solid fa-trash');
 					deleteBtn.onclick = () => {
 						addNewTabBtn.disabled = true;
 						animateIcon(`delbtnout-${currentTabIndexOut + 1}`, "fa-bounce", 800);
