@@ -62,7 +62,6 @@ const openDiffPopupBtn = document.getElementById('diffPopup');
 const closeDiffPopupBtn = document.getElementById('close-diff-popup');
 const headerMenuToggle = document.getElementById('menuToggle');
 const headerMenu = document.getElementById('menu');
-const jsonScript = document.createElement('script');
 const showOptionsContent = document.getElementById('showOptionsContent');
 var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 let errorTimeout, cpyTimeout0, cpyTimeout1, btnTimeout, typingTimeout, sourceEditor, minifiedEditor, diffEditor, darkModeEnabled, compileTime, compileData;
@@ -169,6 +168,7 @@ const schema = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+	const jsonScript = document.createElement('script');
 	jsonScript.type = 'application/ld+json';
 	jsonScript.text = JSON.stringify(schema);
 	document.head.appendChild(jsonScript);
