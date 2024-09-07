@@ -349,8 +349,15 @@
       <div id="diff-popup" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
         <div id="diff-popup-content" class="relative w-[90%] h-[90%] bg-white rounded shadow-lg overflow-hidden transform scale-90 opacity-0 transition-opacity duration-300 z-60">
           <div class="flex items-center pl-1 mx-2">
-            <div class="mb-2.5 overflow-x-auto [scrollbar-width:thin] pr-px mr-1 pt-3 inline-flex colorhandle">
+            <div class="mb-2.5 overflow-x-auto [scrollbar-width:thin] pr-px mr-1 pt-3 inline-flex text-nowrap colorhandle">
               <div class="flex cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] rounded mr-[5px] transition-opacity active" id="diff-tab"></div>
+            </div>
+            <div class="flex flex-col ml-auto">
+              <label for="diff-text-wrap" class="flex items-center self-center cursor-pointer pl-2">
+                <input type="checkbox" id="diff-text-wrap" class="sr-only peer">
+                <div class="relative w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+              </label>
+              <span class="cursor-pointer text-neutral-500 pl-2 font-medium text-center text-xs">Line Wrap</span>
             </div>
           </div>
           <div id="diff-editor" class="h-full w-full"></div>
@@ -366,19 +373,19 @@
           <p class="font-extrabold font-['Source_Code_Pro'] text-center tracking-wide uppercase colorhandle">Share it on..</p>
         </div>
         <div class="flex flex-wrap justify-center">
-          <a href="whatsapp://send?text=Check%20out%20this%20python%20minifier!!%20https://glad432.github.io/" target="_blank" rel="noopener noreferrer" class="text-green-500 icon-link mx-2 my-2" title="Share on WhatsApp">
+          <a href="whatsapp://send?text=Check%20out%20this%20python%20minifier!!%20https://glad432.github.io/" target="_blank" rel="noopener noreferrer" class="text-green-500 mx-2 my-2" title="Share on WhatsApp">
             <i class="fab fa-whatsapp fa-2x transition-transform transform hover:-translate-y-2"></i>
           </a>
-          <a href="https://telegram.me/share/url?url=https://glad432.github.io/&text=Check%20out%20this%20python%20minifier!!" target="_blank" rel="noopener noreferrer" class="text-blue-500 icon-link mx-2 my-2" title="Share on Telegram">
+          <a href="https://telegram.me/share/url?url=https://glad432.github.io/&text=Check%20out%20this%20python%20minifier!!" target="_blank" rel="noopener noreferrer" class="text-blue-500 mx-2 my-2" title="Share on Telegram">
             <i class="fab fa-telegram-plane fa-2x transition-transform transform hover:-translate-y-2"></i>
           </a>
-          <a href="https://www.facebook.com/sharer/sharer.php?u=https://glad432.github.io/" target="_blank" rel="noopener noreferrer" class="text-blue-700 icon-link mx-2 my-2" title="Share on Facebook">
+          <a href="https://www.facebook.com/sharer/sharer.php?u=https://glad432.github.io/" target="_blank" rel="noopener noreferrer" class="text-blue-700 mx-2 my-2" title="Share on Facebook">
             <i class="fab fa-facebook fa-2x transition-transform transform hover:-translate-y-2"></i>
           </a>
-          <a href="https://x.com/intent/post?url=https://glad432.github.io/&text=Check%20out%20this%20python%20minifier!!" target="_blank" rel="noopener noreferrer" class="text-slate-600 icon-link mx-2 my-2" title="Share on X">
+          <a href="https://x.com/intent/post?url=https://glad432.github.io/&text=Check%20out%20this%20python%20minifier!!" target="_blank" rel="noopener noreferrer" class="text-slate-600 mx-2 my-2" title="Share on X">
             <i class="fab fa-x-twitter fa-2x transition-transform transform hover:-translate-y-2"></i>
           </a>
-          <a href="https://www.reddit.com/submit?url=https://glad432.github.io/&title=Check%20out%20this%20python%20minifier!!" target="_blank" rel="noopener noreferrer" class="text-red-500 icon-link mx-2 my-2" title="Share on Reddit">
+          <a href="https://www.reddit.com/submit?url=https://glad432.github.io/&title=Check%20out%20this%20python%20minifier!!" target="_blank" rel="noopener noreferrer" class="text-red-500 mx-2 my-2" title="Share on Reddit">
             <i class="fab fa-reddit fa-2x transition-transform transform hover:-translate-y-2"></i>
           </a>
         </div>
@@ -408,7 +415,7 @@
       </div>
     </footer>
     <script type="module" src="js/script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.52.0/dist/apexcharts.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.53.0/dist/apexcharts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.51.0/min/vs/loader.js"></script>
   </body>
 </html>

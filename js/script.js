@@ -59,6 +59,7 @@ const diffPopupContent = document.getElementById('diff-popup-content');
 const diffTab = document.getElementById("diff-tab");
 const openDiffPopupBtn = document.getElementById('diffPopup');
 const closeDiffPopupBtn = document.getElementById('close-diff-popup');
+const diffWrapSwitch = document.getElementById('diff-text-wrap');
 const headerMenuToggle = document.getElementById('menuToggle');
 const headerMenu = document.getElementById('menu');
 const showOptionsContent = document.getElementById('showOptionsContent');
@@ -74,6 +75,7 @@ let startIndex = 0;
 let isGetLines = false;
 let isTabNameEdit = false;
 let isTabNameEditOut = false;
+let isDiffTextWrapEnabled = false;
 let graph = null;
 const defaultFilename = 'default.py';
 const defaultContent = "#Empty Python file, Enter code to minify";
@@ -195,6 +197,19 @@ function shuffleArray(array) {
 		const j = Math.floor(Math.random() * (i + 1));
 		[array[i], array[j]] = [array[j], array[i]];
 	}
+}
+
+function getOrdinalSuffix(index) {
+	const suffixes = ["th", "st", "nd", "rd"];
+	const value = index + 1;
+	const mod100 = value % 100;
+	const mod10 = value % 10;
+
+	if (mod100 >= 11 && mod100 <= 13) {
+		return value + suffixes[0];
+	}
+
+	return value + (suffixes[mod10] || suffixes[0]);
 }
 
 shuffleArray(features);
@@ -502,8 +517,8 @@ async function codeCompile() {
 		pyCompileAtTabIndex = currentTabIndex;
 		pyTerminal.classList.remove("hidden");
 		compileTime = new Date();
-		compileData = data.output;
-		terminalText.textContent = `[${compileTime.toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${data.output.trim().length === 0 ? defaultOutput : compileData}`;
+		compileData = /\r|\n/.test(data.output) || data.output.length !== 0 ? data.output : defaultOutput;
+		terminalText.textContent = `[${compileTime.toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${compileData}`;
 	} catch (error) {
 		pyTerminal.classList.remove("hidden");
 		terminalText.textContent = error || 'Error occurred while running the code. Please check your code and try again.';
@@ -526,9 +541,7 @@ codeRunBtn.addEventListener("click", () => {
 
 closeCompilerBtn.addEventListener("click", () => {
 	animateIcon("closeCompiler", "fa-fade", 1000);
-	setTimeout(() => {
-		clearPyComplier(true);
-	}, 1100)
+	setTimeout(clearPyComplier, 1100, true)
 })
 
 copyCompilertextBtn.addEventListener("click", async () => {
@@ -570,6 +583,10 @@ function updateDiffEditor() {
 			original: orginalCode,
 			modified: minifiedCode
 		});
+
+		diffEditor.updateOptions({
+			wordWrap: isDiffTextWrapEnabled ? 'on' : 'off'
+		});
 	}
 }
 
@@ -583,7 +600,7 @@ function showDiffPopup() {
 
 	if (currentTabIndex === currentTabIndexOut) {
 		diffTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2', 'relative', 'top-[5px]'])}${getCurrentTabName()}`;
-		diffTab.title = `${currentTabIndex + 1}${(n => ["th", "st", "nd", "rd"][n % 100 >> 3 ^ 1 && n % 10] || "th")(currentTabIndex + 1)} Tab`;
+		diffTab.title = `${getOrdinalSuffix(currentTabIndex)} Tab`;
 	}
 
 	setTimeout(() => {
@@ -614,6 +631,7 @@ function showDiffPopup() {
 				cursorBlinking: 'smooth',
 				cursorSmoothCaretAnimation: true,
 				cursorStyle: 'line',
+				wordWrap: isDiffTextWrapEnabled ? 'on' : 'off',
 				automaticLayout: true
 			});
 
@@ -624,8 +642,18 @@ function showDiffPopup() {
 		});
 	} else {
 		updateDiffEditor();
+		diffWrapSwitch.checked = isDiffTextWrapEnabled;
 	}
 }
+
+diffWrapSwitch.addEventListener('change', (event) => {
+	isDiffTextWrapEnabled = event.target.checked;
+	if (diffEditor) {
+		diffEditor.updateOptions({
+			wordWrap: isDiffTextWrapEnabled ? 'on' : 'off'
+		});
+	}
+});
 
 function hideDiffPopup() {
 	diffPopupContent.classList.remove('scale-100', 'opacity-100');
@@ -676,6 +704,7 @@ function validateFiles(files) {
 
 	if (invalidFiles.length > 0) {
 		handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Invalid file format. Please select only .py file(s).`);
+		fileInput.value = '';
 	}
 
 	return validFiles;
@@ -761,7 +790,7 @@ function setupFileInput() {
 	}
 }
 
-window.addEventListener('load', setupFileInput);
+window.addEventListener('DOMContentLoaded', setupFileInput);
 
 function downloadFile(content, mimeType, fileName) {
 	var blob = new Blob([content], {
@@ -2201,7 +2230,7 @@ function addEmptyTab() {
 	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity';
 	newTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'])}File ${newFileIndex + 1}.py`;
 	newTab.id = `file-${newFileIndex + 1}`;
-	newTab.title = `${newFileIndex + 1}${(n => ["th", "st", "nd", "rd"][n % 100 >> 3 ^ 1 && n % 10] || "th")(newFileIndex + 1)} Tab`;
+	newTab.title = `${getOrdinalSuffix(currentTabIndex + 1)} Tab`;
 	newTab.onclick = () => {
 		switchTab(newFileIndex);
 	};
@@ -2253,9 +2282,7 @@ function updateTabStyles() {
 					editBtn.innerHTML = addFontAwesomeIcon('fa-solid fa-pen-to-square');
 					editBtn.onclick = () => {
 						animateIcon(`editbtn-${currentTabIndex + 1}`, "fa-bounce", 800);
-						setTimeout(() => {
-							editTabName();
-						}, 800)
+						setTimeout(editTabName, 800)
 					};
 					tab.appendChild(editBtn);
 				}
@@ -2268,9 +2295,7 @@ function updateTabStyles() {
 					deleteBtn.onclick = () => {
 						addNewTabBtn.disabled = true;
 						animateIcon(`delbtn-${currentTabIndex + 1}`, "fa-bounce", 800);
-						setTimeout(() => {
-							confirmDeleteFile(currentTabIndex);
-						}, 800)
+						setTimeout(confirmDeleteFile, 800, currentTabIndex)
 					};
 					tab.appendChild(deleteBtn);
 				}
@@ -2509,9 +2534,7 @@ function updateTabStylesOut() {
 					editBtn.innerHTML = addFontAwesomeIcon('fa-solid fa-pen-to-square');
 					editBtn.onclick = () => {
 						animateIcon(`editbtnout-${currentTabIndexOut + 1}`, "fa-bounce", 800);
-						setTimeout(() => {
-							editTabNameOut();
-						}, 800)
+						setTimeout(editTabNameOut, 800)
 					};
 					tab.appendChild(editBtn);
 				}
@@ -2524,9 +2547,7 @@ function updateTabStylesOut() {
 					deleteBtn.onclick = () => {
 						addNewTabBtn.disabled = true;
 						animateIcon(`delbtnout-${currentTabIndexOut + 1}`, "fa-bounce", 800);
-						setTimeout(() => {
-							confirmDeleteFile(currentTabIndexOut);
-						}, 800)
+						setTimeout(confirmDeleteFile, 800, currentTabIndexOut)
 					};
 					tab.appendChild(deleteBtn);
 				}
