@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
+import { terser } from 'rollup-plugin-terser';
 
 export default defineConfig({
   base: 'https://glad432.github.io/',
@@ -18,4 +19,17 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      plugins: [
+        terser({
+          compress: {},
+          mangle: {},
+          format: {
+            comments: false,
+          }
+        })
+      ]
+    }
+  }
 });
