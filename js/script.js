@@ -1368,21 +1368,19 @@ function initializeMinifier() {
 	function buildQuery() {
 		var query = options.map(option => {
 			var checkbox = document.getElementById(option);
-			if (checkbox && checkbox.checked) {
-				return `${option}=true`;
-			} else {
-				return `${option}=false`;
-			}
+			return checkbox && checkbox.checked ? `${option}=true` : `${option}=false`;
 		}).join('&');
 
 		const preserveGlobalsFinal = preserveGlobals ? preserveGlobals.value.split(',').map(str => str.trim()) : [];
 		if (preserveGlobalsFinal.length > 0) {
 			query += `&preserve_globals=${encodeURIComponent(JSON.stringify(preserveGlobalsFinal))}`;
 		}
+
 		const preserveLocalsFinal = preserveLocals ? preserveLocals.value.split(',').map(str => str.trim()) : [];
 		if (preserveLocalsFinal.length > 0) {
 			query += `&preserve_locals=${encodeURIComponent(JSON.stringify(preserveLocalsFinal))}`;
 		}
+
 		return query;
 	}
 
@@ -1413,18 +1411,21 @@ function initializeMinifier() {
 		disableDwSrCpBtn(true);
 		selectallopt.disabled = true;
 		resetOpt.disabled = true;
+
 		const allOptions = [...options, "preserve_locals", "preserve_globals"];
 		allOptions.forEach(option => {
 			const checkbox = document.getElementById(option);
 			checkbox.disabled = true;
 		});
+
 		selectallopt.classList.add("cursor-not-allowed");
 		resetOpt.classList.add("cursor-not-allowed");
 		minifiedEditor.getModel().setValue('');
 		animateIcon("fade-0", "fa-fade", 1500);
 		minifiedSize.innerHTML = `${addFontAwesomeIcon('fa-solid fa-spinner fa-spin-pulse')} Loading....`;
+
 		const code = sourceEditor.getModel().getValue();
-		if (sourceEditor.getModel().getValue() !== '' && minifiedEditor.getModel().getValue() === '') {
+		if (code !== '' && minifiedEditor.getModel().getValue() === '') {
 			try {
 				const response = await fetch(`https://python-minify.vercel.app/minify?${buildQuery()}`, {
 					method: 'POST',
@@ -1455,6 +1456,7 @@ function initializeMinifier() {
 		} else {
 			minifiedSize.textContent = "Enter Code";
 		}
+
 		handleTabsOverlay(false);
 		selectallopt.disabled = false;
 		resetOpt.disabled = false;
@@ -1462,13 +1464,14 @@ function initializeMinifier() {
 			const checkbox = document.getElementById(option);
 			checkbox.disabled = false;
 		});
+
 		selectallopt.classList.remove("cursor-not-allowed");
 		resetOpt.classList.remove("cursor-not-allowed");
 		minifyButton.classList.remove("pointer-events-none");
 
 		if (minifiedEditor.getModel().getValue().trim() === "" && sourceEditor.getModel().getValue() !== "") {
 			fileTabsOut.children[currentTabIndexOut].classList.add("error");
-			document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = "Minification failed!\nRe-check the Orginal code";
+			document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = "Minification failed!\nRe-check the Original code";
 		} else {
 			fileTabsOut.children[currentTabIndexOut].classList.remove("error");
 			document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = '';
@@ -1481,6 +1484,7 @@ function initializeMinifier() {
 			copyClick();
 		}
 	});
+
 	minifyButton.classList.remove("pointer-events-none");
 	let isProcessing = false;
 
@@ -1490,9 +1494,11 @@ function initializeMinifier() {
 		animateIcon(`minifyAll`, "fa-fade", 800);
 		minifyAllBtn.disabled = true;
 		minifyButton.classList.add("pointer-events-none");
+
 		const tabs = document.querySelectorAll('.file-tab-out');
 		const maxIndex = tabs.length;
 		let endIndex = Math.min(startIndex + 5, maxIndex);
+
 		for (let i = startIndex; i < endIndex; i++) {
 			switchTabOut(i);
 			await minifyClick(true);
@@ -1509,6 +1515,7 @@ function initializeMinifier() {
 			minifyButton.classList.remove("pointer-events-none");
 			minifyAllBtn.disabled = false;
 		}
+
 		isProcessing = false;
 	});
 
@@ -1568,7 +1575,7 @@ document.getElementById('clearAll').addEventListener('click', () => {
 					sourceEditor.getModel().setValue('');
 					handleErrorMessage();
 					disableTyping();
-					clearPyComplier()
+					clearPyComplier();
 					updateNametoTab(`File ${currentTabIndex + 1}.py`);
 					minifiedSize.textContent = '0.000 kB';
 					updateGraph();
@@ -1577,7 +1584,7 @@ document.getElementById('clearAll').addEventListener('click', () => {
 					}
 				}
 			});
-		}, 200)
+		}, 200);
 	}
 });
 
@@ -1698,7 +1705,9 @@ function inputFromUrl() {
 	}, 500);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("from_url").addEventListener("click", inputFromUrl);
+
+function fileUpload() {
 	async function loadFileContent(fileUrl) {
 		try {
 			const response = await fetch(fileUrl);
@@ -1768,9 +1777,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			animateIcon("fade-7", "fa-fade", 1000);
 		}
 	});
-});
+};
 
-document.getElementById("from_url").addEventListener("click", inputFromUrl);
+document.addEventListener("DOMContentLoaded", fileUpload);
 
 function showArticle() {
 	animateIcon("rot-1", "fa-fade", 1000);
@@ -2346,20 +2355,11 @@ function deleteFile(index, isOut = false) {
 
 function confirmDeleteFile(index) {
 	const tabFileName = getCurrentTabName().replace(/\.py$/, "");
-	if (sources.length === 1) {
-		startIndex = 0;
-		Swal.fire({
-			icon: "error",
-			html: `${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} You can't delete this tab`,
-			confirmButtonColor: "#179fff",
-			confirmButtonText: "Ok"
-		});
-		addNewTabBtn.disabled = false;
-		return;
-	}
+	const fileNameDisplay = tabFileName.length > 15 ? `${tabFileName.slice(0,7)}...${tabFileName.slice(-3)}` : tabFileName;
+	const confirmationMessage = `Are you sure you want to delete <span class="font-bold text-neutral-500 hover:underline">${fileNameDisplay}</span> tab?`;
 
 	Swal.fire({
-		html: `Are you sure you want to delete <span class="font-bold text-neutral-500 hover:underline">${tabFileName.length > 15 ? `${tabFileName.slice(0,7)}...${tabFileName.slice(-3)}` : tabFileName}</span> tab?`,
+		html: confirmationMessage,
 		icon: "question",
 		allowOutsideClick: false,
 		showCancelButton: true,
@@ -2370,10 +2370,27 @@ function confirmDeleteFile(index) {
 	}).then((result) => {
 		if (result.isConfirmed) {
 			clearPyComplier();
-			deleteFile(index);
-			deleteFile(index, true);
+
+			if (sources.length === 1) {
+				startIndex = 0;
+				minifiedEditor.getModel().setValue('');
+				sourceEditor.getModel().setValue('');
+				handleErrorMessage();
+				disableTyping();
+				clearPyComplier();
+				updateNametoTab(`File ${currentTabIndex + 1}.py`);
+				minifiedSize.textContent = '0.000 kB';
+				updateGraph();
+				if (filetabOutOne.classList.contains("error") && currentTabIndex === 0 && currentTabIndexOut === 0) {
+					filetabOutOne.classList.remove("error");
+				}
+			} else {
+				deleteFile(index);
+				deleteFile(index, true);
+				fileLinkInput.value = '';
+			}
+
 			updateGraph();
-			fileLinkInput.value = '';
 		}
 		addNewTabBtn.disabled = false;
 	});
