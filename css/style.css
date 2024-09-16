@@ -40,7 +40,7 @@ input:checked + .slide:before {
   display: block;
   opacity: 1;
 }
-#diff-tab.active,
+.diff-tab.active,
 .file-tab-out.active,
 .file-tab.active {
   background-color: rgb(69 69 69 / 14%);
@@ -122,9 +122,9 @@ div:where(.swal2-container) .swal2-radio {
   #share {
     font-size: 10px;
   }
+  .diff-tab,
   .file-tab,
-  .file-tab-out,
-  #diff-tab {
+  .file-tab-out {
     font-size: 14px;
   }
   #editor,
@@ -146,13 +146,14 @@ div:where(.swal2-container) .swal2-radio {
 .dark .apexcharts-menu-item:hover {
   background: #70707080 !important;
 }
-.dark #diff-tab.active,
+.dark .diff-tab.active,
 .dark .file-tab-out.active,
 .dark .file-tab.active {
   background-color: #404040ca;
   border-color: transparent;
   border-bottom: 3px solid rgb(59 130 246);
 }
+.dark .diff-tab,
 .dark .file-tab,
 .dark .file-tab-out {
   background-color: #4040406a;
