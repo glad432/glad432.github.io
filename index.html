@@ -348,9 +348,9 @@
     </div>
     <div class="relative">
       <div id="diff-popup" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
-        <ul id="diff-popup-content" class="relative w-[90%] h-[90%] bg-white rounded shadow-lg overflow-hidden transform scale-90 opacity-0 transition-opacity duration-300 z-60">
+        <div id="diff-popup-content" class="relative w-[90%] h-[90%] bg-white rounded shadow-lg overflow-hidden transform scale-90 opacity-0 transition-opacity duration-300 z-60">
           <div class="flex items-center pl-1 mx-2">
-            <div id="diff-tabs" class="mb-2.5 overflow-x-auto [scrollbar-width:thin] pr-px mr-1 pt-3 inline-flex text-nowrap colorhandle"></div>
+            <ul id="diff-tabs" class="mb-2.5 overflow-x-auto [scrollbar-width:thin] pr-px mr-1 pt-3 inline-flex text-nowrap colorhandle"></ul>
             <div class="flex flex-col ml-auto">
               <label for="diff-text-wrap" class="flex items-center self-center cursor-pointer pl-2">
                 <input type="checkbox" id="diff-text-wrap" class="sr-only peer">
@@ -360,7 +360,7 @@
             </div>
           </div>
           <div id="diff-editor" class="h-full w-full"></div>
-        </ul>
+        </div>
       </div>
       <button id="close-diff-popup" class="fixed hidden top-4 right-4 bg-red-500 text-white rounded-full w-8 h-8 items-center justify-center text-xl cursor-pointer hover:bg-red-600 focus:outline-none z-[70]" title="Close Diff Editor">
         <i id="fade-11" class="fa-solid fa-xmark"></i>
