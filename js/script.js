@@ -56,7 +56,7 @@ const graphKbSize = document.getElementById("graphkbsize");
 const graphLines = document.getElementById("graphlines");
 const diffPopup = document.getElementById('diff-popup');
 const diffPopupContent = document.getElementById('diff-popup-content');
-const diffTab = document.getElementById("diff-tab");
+const diffTabs = document.getElementById("diff-tabs");
 const openDiffPopupBtn = document.getElementById('diffPopup');
 const closeDiffPopupBtn = document.getElementById('close-diff-popup');
 const diffWrapSwitch = document.getElementById('diff-text-wrap');
@@ -70,6 +70,7 @@ var sources = ['#PyFile-1'];
 var sourcesOut = ['#PyFile-out-1'];
 var currentTabIndex = 0;
 var currentTabIndexOut = 0;
+var currentTabIndexDiff = 0;
 var pyCompileAtTabIndex = 0;
 let startIndex = 0;
 let isGetLines = false;
@@ -368,6 +369,7 @@ function setTheme() {
 	if (localStorageDarkMode !== 'light') {
 		darkModeEnabled = localStorageDarkMode === 'true';
 	}
+
 	if (localStorageDarkMode === 'dark') {
 		darkModeEnabled = localStorageDarkMode === 'true';
 	}
@@ -561,47 +563,102 @@ copyCompilertextBtn.addEventListener("click", async () => {
 
 document.getElementById("exportCompilertext").addEventListener("click", () => {
 	animateIcon("exportCompilertext", "fa-fade", 1000);
-	const exportFlename = fileTabs.children[pyCompileAtTabIndex].textContent || fileTabsOut.children[pyCompileAtTabIndex].textContent || defaultFilename;
+	const exportFlename = getCurrentTabName(pyCompileAtTabIndex);
 	const exportOutput = compileData.length === 0 ? defaultOutput : compileData;
 
 	downloadFile(exportOutput, 'text/plain', `${exportFlename.trim().replace(/\.(py)$/,"")}-${compileTime.toLocaleString()}.txt`);
 });
 
-function updateDiffEditor() {
-	if (diffEditor) {
-		let orginalCode = monaco.editor.createModel(
-			CryptoJS.AES.decrypt(sessionStorage.getItem(sources[currentTabIndex]), newKey).toString(CryptoJS.enc.Utf8),
-			'python'
-		);
+function handleAutoScrollDiff() {
+	const activeTab = diffTabs.children[currentTabIndexDiff];
+	const tabPosition = activeTab.offsetLeft;
+	const tabEndPosition = tabPosition + activeTab.offsetWidth;
+	const leftVisible = diffTabs.scrollLeft;
+	const rightVisible = leftVisible + diffTabs.offsetWidth;
 
-		let minifiedCode = monaco.editor.createModel(
-			CryptoJS.AES.decrypt(sessionStorage.getItem(sourcesOut[currentTabIndexOut]), newKey).toString(CryptoJS.enc.Utf8),
-			'python'
-		);
+	autoMiddleSroll(activeTab);
 
-		diffEditor.setModel({
-			original: orginalCode,
-			modified: minifiedCode
-		});
-
-		diffEditor.updateOptions({
-			wordWrap: isDiffTextWrapEnabled ? 'on' : 'off'
-		});
+	if (tabPosition < leftVisible) {
+		diffTabs.scrollLeft = tabPosition;
+	} else if (tabEndPosition > rightVisible) {
+		diffTabs.scrollLeft = tabPosition + activeTab.offsetWidth - diffTabs.offsetWidth;
 	}
 }
 
+function createDiffTabs() {
+	diffTabs.innerHTML = '';
+
+	for (let index = 0; index < sourcesOut.length; index++) {
+		const isActive = index === currentTabIndexDiff;
+		const diffTab = document.createElement('li');
+		diffTab.id = `diff-tab-${index + 1}`;
+		diffTab.className = `diff-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity ${isActive ? 'active' : ''}`;
+		diffTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', [isActive ? "text-blue-600" : '', 'pr-2'])} ${getCurrentTabName(index)}`;
+		diffTab.title = `${getOrdinalSuffix(index)} Tab`;
+
+		diffTab.addEventListener('click', () => {
+			if (index === currentTabIndexDiff) return;
+			switchTabDiff(index);
+			handleAutoScrollDiff();
+		});
+
+		diffTabs.appendChild(diffTab);
+	}
+
+	if (currentTabIndexOut >= 0 && currentTabIndexOut < sourcesOut.length) {
+		switchTabDiff(currentTabIndexOut);
+		handleAutoScrollDiff();
+	}
+}
+
+function updateDiffEditor() {
+	if (!diffEditor) return;
+
+	const originalEncrypted = sessionStorage.getItem(sources[currentTabIndexDiff]);
+	const minifiedEncrypted = sessionStorage.getItem(sourcesOut[currentTabIndexDiff]);
+
+	const originalDecrypted = originalEncrypted ? CryptoJS.AES.decrypt(originalEncrypted, newKey).toString(CryptoJS.enc.Utf8) : "";
+	const originalCode = originalDecrypted.length > 0 ? originalDecrypted : "#Original code is empty!";
+
+	const minifiedDecrypted = minifiedEncrypted ? CryptoJS.AES.decrypt(minifiedEncrypted, newKey).toString(CryptoJS.enc.Utf8) : "";
+	const minifiedCode = minifiedDecrypted.length > 0 ? minifiedDecrypted : "#Not Minified!";
+
+	const originalModel = monaco.editor.createModel(originalCode, 'python');
+	const minifiedModel = monaco.editor.createModel(minifiedCode, 'python');
+
+	diffEditor.updateOptions({
+		wordWrap: isDiffTextWrapEnabled ? 'on' : 'off'
+	});
+
+	diffEditor.setModel({
+		original: originalModel,
+		modified: minifiedModel
+	});
+}
+
 function showDiffPopup() {
+	if (currentTabIndex !== currentTabIndexOut) {
+		Swal.fire({
+			text: "Diff Editor is not available, reload the page and try again!",
+			icon: "warning",
+			confirmButtonColor: "#6E7881",
+			confirmButtonText: "Close"
+		}).then((result) => {
+			if (result.isConfirmed) {
+				disableDwSrCpBtn(false);
+			}
+		});
+		return;
+	}
+
 	if (!isMobile() && (sourceEditor.getModel().getValue().trim() === '' || minifiedEditor.getModel().getValue().trim() === '')) {
 		return;
 	}
 
+	createDiffTabs();
+
 	diffPopupContent.classList.remove('scale-90', 'opacity-0');
 	diffPopupContent.classList.add('scale-100', 'opacity-100');
-
-	if (currentTabIndex === currentTabIndexOut) {
-		diffTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2', 'relative', 'top-[5px]'])}${getCurrentTabName()}`;
-		diffTab.title = `${getOrdinalSuffix(currentTabIndex)} Tab`;
-	}
 
 	setTimeout(() => {
 		diffPopup.classList.remove('hidden');
@@ -644,6 +701,8 @@ function showDiffPopup() {
 		updateDiffEditor();
 		diffWrapSwitch.checked = isDiffTextWrapEnabled;
 	}
+
+	setTimeout(handleAutoScrollDiff, 300);
 }
 
 diffWrapSwitch.addEventListener('change', (event) => {
@@ -658,8 +717,7 @@ diffWrapSwitch.addEventListener('change', (event) => {
 function hideDiffPopup() {
 	diffPopupContent.classList.remove('scale-100', 'opacity-100');
 	diffPopupContent.classList.add('scale-90', 'opacity-0');
-	diffTab.innerHTML = '';
-	diffTab.title = '';
+	switchTab(currentTabIndexDiff);
 
 	setTimeout(() => {
 		diffPopup.classList.add('hidden');
@@ -667,6 +725,8 @@ function hideDiffPopup() {
 		document.body.classList.remove("overflow-y-hidden");
 		document.body.classList.add("overflow-y-scroll");
 		closeDiffPopupBtn.classList.add('hidden');
+		diffTabs.innerHTML = '';
+
 		if (diffEditor) {
 			diffEditor.dispose();
 			diffEditor = null;
@@ -674,8 +734,48 @@ function hideDiffPopup() {
 	}, 300);
 }
 
+function switchTabDiff(index) {
+	if (index >= 0 && index < sourcesOut.length) {
+		currentTabIndexDiff = index;
+
+		handleAutoScrollDiff();
+
+		const tabs = diffTabs.querySelectorAll('li');
+		tabs.forEach((tab, i) => {
+			const icon = tab.querySelector('.fa-file-code');
+			if (i === index) {
+				updateDiffEditor();
+				animateIcon(`diff-tab-${currentTabIndexDiff + 1}`, "animate-pulse", 700);
+				tab.classList.add('active');
+				if (icon) {
+					icon.classList.add('text-blue-600');
+				}
+
+				autoMiddleSroll(tab);
+
+				const containerHeight = diffTabs.clientHeight;
+				const tabHeight = tab.clientHeight;
+				const tabTop = tab.offsetTop;
+				const tabBottom = tabTop + tabHeight;
+				const containerTop = diffTabs.scrollTop;
+				const containerBottom = containerTop + containerHeight;
+
+				if (tabTop < containerTop || tabBottom > containerBottom) {
+					diffTabs.scrollTop = tabTop - (containerHeight / 2) + (tabHeight / 2);
+				}
+
+			} else {
+				tab.classList.remove('active');
+				if (icon) {
+					icon.classList.remove('text-blue-600');
+				}
+			}
+		});
+	}
+}
+
 openDiffPopupBtn.addEventListener('click', () => {
-	if (minifiedEditor.getModel().getValue() !== "") {
+	if (minifiedEditor.getModel().getValue() !== "" && (currentTabIndex === currentTabIndexOut)) {
 		animateIcon("fade-10", "fa-fade", 500);
 		setTimeout(showDiffPopup, 400);
 		disableDwSrCpBtn(true);
@@ -1501,6 +1601,7 @@ function initializeMinifier() {
 
 		for (let i = startIndex; i < endIndex; i++) {
 			switchTabOut(i);
+			autoMiddleSroll(fileTabsOut.children[i]);
 			await minifyClick(true);
 			updateEditorContent(true);
 			await delay(100);
@@ -1796,35 +1897,96 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-	let content = `<div id="display-content" class="hidden overflow-y-auto max-h-[100%]"><h2 class="text-xl lg:text-3xl text-gray-600 text-left font-bold mb-4">${addFontAwesomeIcon('fa-brands fa-python' ,['text-blue-500' ,'pr-2'])}${articleData.article.title}</h2>`;
+	var content = '<div id="display-content" class="hidden overflow-y-auto max-h-[100%]">';
+	content += '<h2 id="article-title" class="text-xl lg:text-3xl text-gray-600 text-left font-bold mb-4 opacity-0 transition-opacity duration-1000">' +
+		addFontAwesomeIcon('fa-brands fa-python', ['text-blue-500', 'pr-2']) +
+		escapeHtml(articleData.article.title) +
+		'</h2>';
 
 	articleData.article.sections.forEach((section) => {
 		if (section.section_title !== "FAQs") {
-			content += `<div class="mb-4"><h3 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4">${addFontAwesomeIcon('fa-solid fa-diamond' ,['text-cyan-900' ,'pr-2'])}${section.section_title}</h3>`;
-			if (section.section_content) {
-				content += `<p class="text-[13px] lg:text-[15px]">${section.section_content}</p>`;
-			}
+			content += '<div class="mb-4 opacity-0 transition-opacity duration-1000">' +
+				'<h3 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4">' +
+				addFontAwesomeIcon('fa-solid fa-diamond', ['text-cyan-900', 'pr-2']) +
+				escapeHtml(section.section_title) +
+				'</h3>' +
+				'<p class="text-[13px] lg:text-[15px]">' +
+				escapeHtml(section.section_content || '') +
+				'</p>';
+
 			if (section.sub_sections && section.sub_sections.length > 0) {
-				content += `<div class="ml-4 mb-2">`;
+				content += '<div class="ml-4 mb-2">';
 				section.sub_sections.forEach((subsection) => {
-					content += `<h4 class="text-sm text-gray-500 lg:text-lg font-bold py-2">${addFontAwesomeIcon('fa-solid fa-square-caret-right' ,['text-cyan-900' ,'pr-2'])}${subsection.subsubsection_title}</h4><p class="text-[13px] lg:text-[15px]">${subsection.subsubsection_content}</p>`;
+					content += '<h4 class="text-sm text-gray-500 lg:text-lg font-bold py-2">' +
+						addFontAwesomeIcon('fa-solid fa-square-caret-right', ['text-cyan-900', 'pr-2']) +
+						escapeHtml(subsection.subsubsection_title) +
+						'</h4>' +
+						'<p class="text-[13px] lg:text-[15px]">' +
+						escapeHtml(subsection.subsubsection_content || '') +
+						'</p>';
 				});
-				content += `</div>`;
+				content += '</div>';
 			}
-			content += `</div>`;
+			content += '</div>';
 		}
 	});
 
-	content += `<h3 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4">${addFontAwesomeIcon('fa-solid fa-circle-question' ,['text-blue-700' ,'pr-2'])}FAQs</h3><ul class="list-none list-inside">`;
-	const faqPairs = articleData.article.sections.find(section => section.section_title === "FAQs").section_content.split('\n\n');
-	faqPairs.forEach(pair => {
-		const [question, answer] = pair.split('\nA:');
-		content += `<li class="text-[13px] lg:text-[15px]"><strong>${question}</strong><br/>A: ${answer}</li>`;
-	});
-	content += `</ul></div>`;
+	content += '<h3 class="text-[15px] text-gray-500 lg:text-xl font-bold py-4 opacity-0 transition-opacity duration-1000">' +
+		addFontAwesomeIcon('fa-solid fa-circle-question', ['text-blue-700', 'pr-2']) +
+		'FAQs' +
+		'</h3>' +
+		'<ul class="list-none list-inside opacity-0 transition-opacity duration-1000">';
 
+	var faqSection = articleData.article.sections.find((section) => {
+		return section.section_title === "FAQs";
+	});
+
+	if (faqSection && faqSection.section_content) {
+		var faqPairs = faqSection.section_content.split('\n\n');
+		faqPairs.forEach((pair) => {
+			var parts = pair.split('\nA:');
+			if (parts.length === 2) {
+				var question = escapeHtml(parts[0]);
+				var answer = escapeHtml(parts[1]);
+				content += '<li class="text-[13px] lg:text-[15px]">' +
+					'<strong>' + question + '</strong><br/>' +
+					'A: ' + answer +
+					'</li>';
+			}
+		});
+	}
+
+	content += '</ul></div>';
 	document.getElementById('article').innerHTML = content;
+
+	var fadeInElements = document.querySelectorAll('#display-content .opacity-0');
+
+	var observerOptions = {
+		root: null,
+		rootMargin: '0px',
+		threshold: 0.1
+	};
+
+	var observer = new IntersectionObserver((entries) => {
+		entries.forEach((entry) => {
+			if (entry.isIntersecting) {
+				entry.target.classList.remove('opacity-0');
+				entry.target.classList.add('opacity-100');
+				observer.unobserve(entry.target);
+			}
+		});
+	}, observerOptions);
+
+	fadeInElements.forEach((element) => {
+		observer.observe(element);
+	});
 });
+
+function escapeHtml(text) {
+	var element = document.createElement('div');
+	element.innerText = text;
+	return element.innerHTML;
+}
 
 function graphConfig(originalData, minifiedData, tabFileNames) {
 	return new ApexCharts(document.getElementById("line-graph"), {
@@ -2049,8 +2211,22 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 });
 
-function getCurrentTabName() {
-	return (fileTabs.children[currentTabIndex].textContent || fileTabsOut.children[currentTabIndexOut].textContent || defaultFilename).trim()
+function getCurrentTabName(index = currentTabIndex || currentTabIndexOut) {
+	if (index == null || isNaN(index)) {
+		return defaultFilename;
+	}
+
+	const fileTab = fileTabs?.children[index]?.textContent;
+	if (fileTab) {
+		return fileTab.trim();
+	}
+
+	const fileTabOut = fileTabsOut?.children[index]?.textContent;
+	if (fileTabOut) {
+		return fileTabOut.trim();
+	}
+
+	return defaultFilename.trim();
 }
 
 function handleTabsOverlay(enable) {
@@ -2092,25 +2268,19 @@ function randomKey(length) {
 const newKey = randomKey(50);
 
 function saveEditorContent(isOut = false) {
-	if (!isOut) {
-		sessionStorage.setItem(sources[currentTabIndex], CryptoJS.AES.encrypt(sourceEditor.getModel().getValue(), newKey).toString());
-	} else {
-		sessionStorage.setItem(sourcesOut[currentTabIndexOut], CryptoJS.AES.encrypt(minifiedEditor.getModel().getValue(), newKey).toString());
-	}
+	const content = (isOut ? minifiedEditor : sourceEditor).getModel().getValue();
+	const storageKey = isOut ? sourcesOut[currentTabIndexOut] : sources[currentTabIndex];
+	sessionStorage.setItem(storageKey, CryptoJS.AES.encrypt(content, newKey).toString());
 }
 
 function updateEditorContent(isOut = false) {
-	var encryptedSource;
-	if (!isOut) {
-		encryptedSource = sessionStorage.getItem(sources[currentTabIndex]);
-		if (encryptedSource && sourceEditor) {
-			sourceEditor.getModel().setValue(CryptoJS.AES.decrypt(encryptedSource, newKey).toString(CryptoJS.enc.Utf8));
-		}
-	} else {
-		encryptedSource = sessionStorage.getItem(sourcesOut[currentTabIndexOut]);
-		if (encryptedSource && minifiedEditor) {
-			minifiedEditor.getModel().setValue(CryptoJS.AES.decrypt(encryptedSource, newKey).toString(CryptoJS.enc.Utf8));
-		}
+	const storageKey = isOut ? sourcesOut[currentTabIndexOut] : sources[currentTabIndex];
+	const editor = isOut ? minifiedEditor : sourceEditor;
+
+	const encryptedSource = sessionStorage.getItem(storageKey);
+	if (encryptedSource && editor) {
+		const decryptedValue = CryptoJS.AES.decrypt(encryptedSource, newKey).toString(CryptoJS.enc.Utf8);
+		editor.getModel().setValue(decryptedValue);
 	}
 }
 
@@ -2165,40 +2335,34 @@ function editTabName() {
 }
 
 function updateTabName(tabQueryInput, fileTabs, currentTabIndex) {
-	var tabNameInput = document.querySelector(tabQueryInput);
+	const tabNameInput = document.querySelector(tabQueryInput);
 
-	if (!tabNameInput) {
+	if (!tabNameInput || currentTabIndex < 0 || currentTabIndex >= fileTabs.children.length) {
 		return;
 	}
 
-	var newName = tabNameInput.value.trim() || '';
+	const newName = tabNameInput.value.trim();
+	let baseName = newName.replace(/\.py$/, '').slice(0, 200);
 
-	var cleanedStrnopy = newName.replace(/\.py$/, '');
-	cleanedStrnopy = cleanedStrnopy.slice(0, 200);
+	if (baseName.length > 0 && !/^\s+$/.test(baseName)) {
+		const sanitizedName = baseName
+			.replace(/[^a-zA-Z0-9,\s.()]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_");
 
-	if (cleanedStrnopy.length > 0 && !/^\s+$/.test(cleanedStrnopy)) {
-		var cleanedString = cleanedStrnopy.replace(/[^a-zA-Z0-9,\s.()]|,(?![a-zA-Z])|\.(?![a-zA-Z]|py$)/g, "_");
+		const finalName = sanitizedName.endsWith('.py') ? sanitizedName : `${sanitizedName}.py`;
 
-		if (!cleanedString.endsWith('.py')) {
-			cleanedString += '.py';
-		}
+		const currentTab = fileTabs.children[currentTabIndex];
+		currentTab.textContent = finalName;
 
-		var currentTab = fileTabs.children[currentTabIndex];
-		currentTab.textContent = cleanedString;
-
-		var existingIcon = currentTab.querySelector('i');
+		const existingIcon = currentTab.querySelector('i');
 		if (existingIcon) {
 			currentTab.removeChild(existingIcon);
 		}
 
-		currentTab.insertBefore(addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'], true), currentTab.firstChild);
+		const iconElement = addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'], true);
+		currentTab.insertBefore(iconElement, currentTab.firstChild);
 
-		updateNametoTab(cleanedString);
-
-		tabNameInput.value = cleanedString;
-
-	} else if (newName.trim() === '') {
-		return;
+		updateNametoTab(finalName);
+		tabNameInput.value = finalName;
 	}
 }
 
@@ -2241,8 +2405,12 @@ function addEmptyTab() {
 	newTab.id = `file-${newFileIndex + 1}`;
 	newTab.title = `${getOrdinalSuffix(currentTabIndex + 1)} Tab`;
 	newTab.onclick = () => {
+		updateTabStyles();
+		if (newFileIndex === currentTabIndex) return;
 		switchTab(newFileIndex);
+		autoMiddleSroll(newTab);
 	};
+
 	updateTabStyles();
 	fileTabs.appendChild(newTab);
 	sources.push(newSourceId);
@@ -2431,6 +2599,7 @@ function switchTab(index, fromSwitchTabOut = false) {
 	if (!fromSwitchTabOut) {
 		switchTabOut(index);
 	}
+
 	disableTyping();
 	var previousIndex = currentTabIndex;
 	currentTabIndex = Math.max(0, Math.min(index, sources.length - 1));
@@ -2439,6 +2608,7 @@ function switchTab(index, fromSwitchTabOut = false) {
 		updateTabStyles();
 	}
 	updateEditorContent();
+
 	if (previousIndex !== currentTabIndex) {
 		if (fileTabs.children[previousIndex].querySelector('.tab-name-input')) {
 			updateTabName('.tab-name-input', fileTabs, currentTabIndex);
@@ -2448,8 +2618,18 @@ function switchTab(index, fromSwitchTabOut = false) {
 }
 
 document.getElementById("file-1").addEventListener('click', () => {
+	updateTabStyles();
+	if (0 === currentTabIndex) return;
 	switchTab(0);
 })
+
+function autoMiddleSroll(tab) {
+	tab.scrollIntoView({
+		behavior: 'smooth',
+		inline: 'center',
+		block: 'nearest'
+	});
+}
 
 function handleAutoScrollOut() {
 	handleAutoScroll();
@@ -2520,7 +2700,10 @@ function addTabOut() {
 	newTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'])}File ${newFileIndexOut + 1}.py`;
 	newTab.id = `file-out-${newFileIndexOut + 1}`;
 	newTab.onclick = () => {
+		updateTabStylesOut();
+		if (newFileIndexOut === currentTabIndexOut) return;
 		switchTabOut(newFileIndexOut);
+		autoMiddleSroll(newTab);
 	};
 
 	updateTabStylesOut();
@@ -2601,5 +2784,7 @@ function switchTabOut(index) {
 }
 
 document.getElementById("file-out-1").addEventListener('click', () => {
+	updateTabStylesOut();
+	if (0 === currentTabIndexOut) return;
 	switchTabOut(0);
 })
