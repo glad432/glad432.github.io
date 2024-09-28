@@ -5,6 +5,7 @@ import JSZip from 'jszip';
 import Typewriter from 'typewriter-effect/dist/core';
 import 'sweetalert2/src/sweetalert2.scss'
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import '../css/style.css'
 import articleData from './articleData.json';
 
 const minifyButton = document.getElementById('minify');
