@@ -3,9 +3,9 @@ import Swal from 'sweetalert2/dist/sweetalert2.js'
 import QRCode from 'qrcode-generator';
 import JSZip from 'jszip';
 import Typewriter from 'typewriter-effect/dist/core';
+import '../css/style.css'
 import 'sweetalert2/src/sweetalert2.scss'
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import '../css/style.css'
 import articleData from './articleData.json';
 
 const minifyButton = document.getElementById('minify');
@@ -577,7 +577,7 @@ function handleAutoScrollDiff() {
 	const leftVisible = diffTabs.scrollLeft;
 	const rightVisible = leftVisible + diffTabs.offsetWidth;
 
-	autoMiddleSroll(activeTab);
+	autoMiddleScroll(activeTab);
 
 	if (tabPosition < leftVisible) {
 		diffTabs.scrollLeft = tabPosition;
@@ -752,7 +752,7 @@ function switchTabDiff(index) {
 					icon.classList.add('text-blue-600');
 				}
 
-				autoMiddleSroll(tab);
+				autoMiddleScroll(tab);
 
 				const containerHeight = diffTabs.clientHeight;
 				const tabHeight = tab.clientHeight;
@@ -894,14 +894,18 @@ function setupFileInput() {
 window.addEventListener('DOMContentLoaded', setupFileInput);
 
 function downloadFile(content, mimeType, fileName) {
-	var blob = new Blob([content], {
+	const blob = new Blob([content], {
 		type: mimeType
 	});
-	var dataUri = URL.createObjectURL(blob);
-	var downloadLink = document.createElement("a");
+	const dataUri = URL.createObjectURL(blob);
+	const downloadLink = document.createElement("a");
+
 	downloadLink.href = dataUri;
 	downloadLink.download = fileName.trim();
+
+	document.body.appendChild(downloadLink);
 	downloadLink.click();
+	document.body.removeChild(downloadLink);
 	URL.revokeObjectURL(dataUri);
 }
 
@@ -1467,22 +1471,26 @@ async function compressPyFiles(isShareLink = false) {
 
 function initializeMinifier() {
 	function buildQuery() {
-		var query = options.map(option => {
-			var checkbox = document.getElementById(option);
+		const queryParts = options.map(option => {
+			const checkbox = document.getElementById(option);
 			return checkbox && checkbox.checked ? `${option}=true` : `${option}=false`;
-		}).join('&');
+		});
 
-		const preserveGlobalsFinal = preserveGlobals ? preserveGlobals.value.split(',').map(str => str.trim()) : [];
-		if (preserveGlobalsFinal.length > 0) {
-			query += `&preserve_globals=${encodeURIComponent(JSON.stringify(preserveGlobalsFinal))}`;
+		if (preserveGlobals) {
+			const preserveGlobalsFinal = preserveGlobals.value.split(',').map(str => str.trim());
+			if (preserveGlobalsFinal.length > 0) {
+				queryParts.push(`preserve_globals=${encodeURIComponent(JSON.stringify(preserveGlobalsFinal))}`);
+			}
 		}
 
-		const preserveLocalsFinal = preserveLocals ? preserveLocals.value.split(',').map(str => str.trim()) : [];
-		if (preserveLocalsFinal.length > 0) {
-			query += `&preserve_locals=${encodeURIComponent(JSON.stringify(preserveLocalsFinal))}`;
+		if (preserveLocals) {
+			const preserveLocalsFinal = preserveLocals.value.split(',').map(str => str.trim());
+			if (preserveLocalsFinal.length > 0) {
+				queryParts.push(`preserve_locals=${encodeURIComponent(JSON.stringify(preserveLocalsFinal))}`);
+			}
 		}
 
-		return query;
+		return queryParts.join('&');
 	}
 
 	async function copyClick() {
@@ -1600,18 +1608,9 @@ function initializeMinifier() {
 		const maxIndex = tabs.length;
 		let endIndex = Math.min(startIndex + 5, maxIndex);
 
-		for (let i = startIndex; i < endIndex; i++) {
-			switchTabOut(i);
-			autoMiddleSroll(fileTabsOut.children[i]);
-			await minifyClick(true);
-			updateEditorContent(true);
-			await delay(100);
-		}
+		await processTabs(startIndex, endIndex);
 
-		startIndex = endIndex;
-		if (startIndex >= maxIndex) {
-			startIndex = 0;
-		}
+		startIndex = endIndex >= maxIndex ? 0 : endIndex;
 
 		if (startIndex % 5 === 0) {
 			minifyButton.classList.remove("pointer-events-none");
@@ -1620,6 +1619,16 @@ function initializeMinifier() {
 
 		isProcessing = false;
 	});
+
+	async function processTabs(start, end) {
+		for (let i = start; i < end; i++) {
+			switchTabOut(i);
+			autoMiddleScroll(fileTabsOut.children[i]);
+			await minifyClick(true);
+			updateEditorContent(true);
+			await delay(100);
+		}
+	}
 
 	function delay(time) {
 		return new Promise(resolve => setTimeout(resolve, time));
@@ -2396,22 +2405,27 @@ function addEmptyTab() {
 	addNewTabBtn.classList.remove("hidden");
 	minifyAllBtn.disabled = false;
 	minifyAllBtn.classList.remove("hidden");
-	addTabOut();
 
-	var newFileIndex = sources.length;
-	var newSourceId = `#PyFile-${newFileIndex + 1}`;
-	var newTab = document.createElement('li');
+	const newFileIndex = sources.length;
+	const newSourceId = `#PyFile-${newFileIndex + 1}`;
+	const newTab = document.createElement('li');
 	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity';
 	newTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'])}File ${newFileIndex + 1}.py`;
 	newTab.id = `file-${newFileIndex + 1}`;
 	newTab.title = `${getOrdinalSuffix(currentTabIndex + 1)} Tab`;
-	newTab.onclick = () => {
-		updateTabStyles();
-		if (newFileIndex === currentTabIndex) return;
-		switchTab(newFileIndex);
-		autoMiddleSroll(newTab);
-	};
 
+	newTab.addEventListener("click", () => {
+		if (!isTabNameEdit) {
+			updateTabStyles();
+		}
+
+		if (newFileIndex !== currentTabIndex) {
+			switchTab(newFileIndex);
+			autoMiddleScroll(newTab);
+		}
+	});
+
+	addTabOut();
 	updateTabStyles();
 	fileTabs.appendChild(newTab);
 	sources.push(newSourceId);
@@ -2504,6 +2518,7 @@ function deleteFile(index, isOut = false) {
 		} else if (currentTabIndex > index) {
 			currentTabIndex--;
 		}
+
 		updateTabStyles();
 		switchTab(currentTabIndex);
 		updateEditorContent();
@@ -2516,6 +2531,7 @@ function deleteFile(index, isOut = false) {
 		} else if (currentTabIndexOut > index) {
 			currentTabIndexOut--;
 		}
+
 		updateTabStylesOut();
 		switchTabOut(currentTabIndexOut);
 		updateEditorContent(true);
@@ -2619,12 +2635,15 @@ function switchTab(index, fromSwitchTabOut = false) {
 }
 
 document.getElementById("file-1").addEventListener('click', () => {
-	updateTabStyles();
+	if (!isTabNameEdit) {
+		updateTabStyles();
+	}
+
 	if (0 === currentTabIndex) return;
 	switchTab(0);
 })
 
-function autoMiddleSroll(tab) {
+function autoMiddleScroll(tab) {
 	tab.scrollIntoView({
 		behavior: 'smooth',
 		inline: 'center',
@@ -2694,18 +2713,25 @@ function editTabNameOut() {
 function addTabOut() {
 	disableTyping();
 	saveEditorContent(true);
-	var newFileIndexOut = sourcesOut.length;
-	var newSourceId = `#PyFile-out-${newFileIndexOut + 1}`;
-	var newTab = document.createElement('li');
+
+	const newFileIndexOut = sourcesOut.length;
+	const newSourceId = `#PyFile-out-${newFileIndexOut + 1}`;
+
+	const newTab = document.createElement('li');
 	newTab.className = 'file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity';
 	newTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'])}File ${newFileIndexOut + 1}.py`;
 	newTab.id = `file-out-${newFileIndexOut + 1}`;
-	newTab.onclick = () => {
-		updateTabStylesOut();
-		if (newFileIndexOut === currentTabIndexOut) return;
-		switchTabOut(newFileIndexOut);
-		autoMiddleSroll(newTab);
-	};
+
+	newTab.addEventListener("click", () => {
+		if (!isTabNameEditOut) {
+			updateTabStylesOut();
+		}
+
+		if (newFileIndexOut !== currentTabIndexOut) {
+			switchTabOut(newFileIndexOut);
+			autoMiddleScroll(newTab);
+		}
+	});
 
 	updateTabStylesOut();
 	fileTabsOut.appendChild(newTab);
@@ -2785,7 +2811,10 @@ function switchTabOut(index) {
 }
 
 document.getElementById("file-out-1").addEventListener('click', () => {
-	updateTabStylesOut();
+	if (!isTabNameEditOut) {
+		updateTabStylesOut();
+	}
+
 	if (0 === currentTabIndexOut) return;
 	switchTabOut(0);
 })
