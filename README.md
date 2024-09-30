@@ -59,9 +59,9 @@ To set up and run Python Minifier:
 
 ### What You Need
 
-- Node.js (version 12.0 or newer)
+- [Node.js](https://nodejs.org/) (version 18.0 or newer)
 - npm (usually comes with Node.js)
-- Git
+- [Git](https://git-scm.com/)
 
 ### Installation
 
@@ -76,11 +76,11 @@ cd glad432.github.io
 npm install
 ```
 
+2. Remember to update the base URL in the [vite.config.js](vite.config.js) and the API URLs in [script.js](js/script.js)
+
 ### For Development
 
 To start working on the project:
-
-**Remember to update the base URL in the [vite.config.js](vite.config.js) and the API URLs in [script.js](js/script.js)!**
 
 ```
 npm run dev
