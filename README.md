@@ -76,7 +76,7 @@ cd glad432.github.io
 npm install
 ```
 
-2. Remember to update the base URL in the [vite.config.js](vite.config.js) and the API URLs in [script.js](js/script.js)
+3. Remember to update the base URL in the [vite.config.js](vite.config.js) and the API URLs in [script.js](js/script.js)
 
 ### For Development
 
