@@ -49,6 +49,11 @@ input:checked + .slide:before {
   background-color: rgb(69 69 69 / 14%);
   border-bottom: 3px solid rgb(59 130 246);
 }
+.diff-tab:hover:not(.active),
+.file-tab-out:hover:not(.active),
+.file-tab:hover:not(.active) {
+  background-color: rgba(61, 60, 60, 0.13);
+}
 .file-tab-out.error {
   border-bottom: 3px solid #b61616 !important;
 }
@@ -155,6 +160,11 @@ div:where(.swal2-container) .swal2-radio {
   background-color: #404040ca;
   border-color: transparent;
   border-bottom: 3px solid rgb(59 130 246);
+}
+.dark .diff-tab:hover:not(.active),
+.dark .file-tab-out:hover:not(.active),
+.dark .file-tab:hover:not(.active) {
+  background-color: #404040a9;
 }
 .dark .diff-tab,
 .dark .file-tab,
