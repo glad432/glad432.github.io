@@ -121,10 +121,6 @@ const features = [{
 		color: '#FF9800'
 	},
 	{
-		text: 'Speed',
-		color: '#673AB7'
-	},
-	{
 		text: 'Reliability',
 		color: '#F44336'
 	},
@@ -457,7 +453,7 @@ function updateEditorOptions() {
 	sourceEditor.onDidChangeModelContent(async () => {
 		if ((new Blob([sourceEditor.getModel().getValue()])).size / maxFileSizeInBytes > 1) {
 			sourceEditor.getModel().setValue(await truncateCode(sourceEditor.getModel().getValue()));
-			var totalLines = sourceEditor.getModel().getLineCount();
+			const totalLines = sourceEditor.getModel().getLineCount();
 			sourceEditor.setPosition({
 				lineNumber: totalLines,
 				column: sourceEditor.getModel().getLineMaxColumn(totalLines)
@@ -482,17 +478,15 @@ window.addEventListener('resize', () => {
 });
 
 async function truncateCode(content) {
-	var pyblob = new Blob([content]);
+	const pyblob = new Blob([content]);
 	if (pyblob.size > maxFileSizeInBytes) {
 		return new Promise(resolve => {
-			var pyreader = new FileReader();
-			pyreader.onloadend = () => {
-				resolve(pyreader.result);
-			};
+			const pyreader = new FileReader();
+			pyreader.onloadend = () => resolve(pyreader.result);
 			pyreader.readAsText(pyblob.slice(0, maxFileSizeInBytes));
 		});
 	}
-	return Promise.resolve(content);
+	return content;
 }
 
 async function codeCompile() {
@@ -1623,7 +1617,6 @@ function initializeMinifier() {
 	async function processTabs(start, end) {
 		for (let i = start; i < end; i++) {
 			switchTabOut(i);
-			autoMiddleScroll(fileTabsOut.children[i]);
 			await minifyClick(true);
 			updateEditorContent(true);
 			await delay(100);
@@ -1711,7 +1704,7 @@ function animateIcon(fade, fadeClass, fadeDur) {
 		clearTimeout(aniTimeout);
 	}
 
-	var aniIcon = document.getElementById(fade);
+	const aniIcon = document.getElementById(fade);
 	aniIcon.classList.add(fadeClass);
 	aniTimeout = setTimeout(() => {
 		aniIcon.classList.remove(fadeClass);
@@ -1969,15 +1962,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	content += '</ul></div>';
 	document.getElementById('article').innerHTML = content;
 
-	var fadeInElements = document.querySelectorAll('#display-content .opacity-0');
-
-	var observerOptions = {
-		root: null,
-		rootMargin: '0px',
-		threshold: 0.1
-	};
-
-	var observer = new IntersectionObserver((entries) => {
+	const observer = new IntersectionObserver((entries) => {
 		entries.forEach((entry) => {
 			if (entry.isIntersecting) {
 				entry.target.classList.remove('opacity-0');
@@ -1985,9 +1970,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 				observer.unobserve(entry.target);
 			}
 		});
-	}, observerOptions);
+	}, {
+		root: null,
+		rootMargin: '0px',
+		threshold: 0.1
+	});
 
-	fadeInElements.forEach((element) => {
+	document.querySelectorAll('#display-content .opacity-0').forEach((element) => {
 		observer.observe(element);
 	});
 });
@@ -2295,17 +2284,30 @@ function updateEditorContent(isOut = false) {
 }
 
 function updateEmptyTabInput(tabNameInput, index, isOut) {
-	let filename = (isOut ? fileTabs.children[index].textContent : fileTabsOut.children[index].textContent) || `File ${index + 1}.py`;
+	if (index < 0 || (index >= sources.length && index >= sourcesOut.length)) {
+		return;
+	}
+
+	const filename = (isOut ? fileTabs.children[index].textContent : fileTabsOut.children[index].textContent) || `File ${index + 1}.py`;
+
 	if (tabNameInput.value.trim() === '' || tabNameInput.value.trim() === '.py') {
 		updateNametoTab(filename.trim());
 	}
+
 	isTabNameEdit = false;
 	isTabNameEditOut = false;
 }
 
+function updateTab(tabNameInputElement) {
+	updateEmptyTabInput(tabNameInputElement, currentTabIndex, false);
+	updateTabName('.tab-name-input', fileTabs, currentTabIndex);
+	updateGraph();
+}
+
 function editTabName() {
-	var activeTab = fileTabs.children[currentTabIndex];
-	var tabNameInput = document.createElement('input');
+	const activeTab = fileTabs.children[currentTabIndex];
+
+	const tabNameInput = document.createElement('input');
 	tabNameInput.type = 'text';
 	tabNameInput.placeholder = "Enter:";
 	tabNameInput.value = activeTab.textContent.trim();
@@ -2313,35 +2315,39 @@ function editTabName() {
 	tabNameInput.spellcheck = false;
 	tabNameInput.className = "tab-name-input focus:outline-none bg-transparent";
 	tabNameInput.style.width = `${activeTab.offsetWidth - 90}px`;
+
 	tabNameInput.addEventListener('keypress', (event) => {
 		if (event.key === 'Enter') {
-			updateEmptyTabInput(tabNameInput, currentTabIndex, false);
-			updateTabName('.tab-name-input', fileTabs, currentTabIndex);
-			updateGraph();
+			updateTab(tabNameInput);
+			isTabNameEdit = false;
+			saveEditorContent();
 		}
 	});
+
 	tabNameInput.addEventListener('blur', () => {
-		updateEmptyTabInput(tabNameInput, currentTabIndex, false);
-		updateTabName('.tab-name-input', fileTabs, currentTabIndex);
-		updateGraph();
+		updateTab(tabNameInput);
+		isTabNameEdit = false;
+		saveEditorContent();
 	});
 
-	var saveIcon = document.createElement('button');
+	const saveIcon = document.createElement('button');
 	saveIcon.className = 'save-tab-icon hover:text-green-400 text-green-500';
 	saveIcon.title = 'Save or press enter';
 	saveIcon.innerHTML = addFontAwesomeIcon('fa-solid fa-floppy-disk', ['px-0.5']);
-	saveIcon.onclick = () => {
-		updateEmptyTabInput(tabNameInput, currentTabIndex, false);
-		isTabNameEdit = false
+
+	saveIcon.addEventListener('click', () => {
+		updateTab(tabNameInput);
+		isTabNameEdit = false;
 		saveEditorContent();
-	};
+	});
 
 	activeTab.innerHTML = '';
 	activeTab.appendChild(addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'], true));
 	activeTab.appendChild(tabNameInput);
 	activeTab.appendChild(saveIcon);
+
 	tabNameInput.focus();
-	isTabNameEdit = true
+	isTabNameEdit = true;
 }
 
 function updateTabName(tabQueryInput, fileTabs, currentTabIndex) {
@@ -2380,8 +2386,8 @@ function updateNametoTab(fileName, isOut = false) {
 	if (!isOut) {
 		updateNametoTab(fileName, true);
 	}
-	var activeTabIndex = isOut ? currentTabIndexOut : currentTabIndex;
-	var fileTabsToUpdate = isOut ? fileTabsOut : fileTabs;
+	const activeTabIndex = isOut ? currentTabIndexOut : currentTabIndex;
+	const fileTabsToUpdate = isOut ? fileTabsOut : fileTabs;
 	const tabToUpdate = fileTabsToUpdate.children[activeTabIndex];
 
 	if (tabToUpdate) {
@@ -2457,48 +2463,52 @@ function updateTabStyles() {
 		minifyAllBtn.classList.add("hidden");
 	}
 
-	var tabs = document.querySelectorAll('.file-tab');
-	if (currentTabIndex < tabs.length && currentTabIndex >= 0) {
+	const tabs = document.querySelectorAll('.file-tab');
+	if (currentTabIndex >= 0 && currentTabIndex < tabs.length) {
 		tabs.forEach((tab, index) => {
-			var icon = tab.querySelector('.fa-file-code');
-			if (index === currentTabIndex) {
+			const icon = tab.querySelector('.fa-file-code');
+			const isActive = index === currentTabIndex;
+
+			if (isActive) {
 				tab.classList.add('active');
 				icon.classList.add('text-blue-600');
-				var editBtn = tab.querySelector('.edit-tab-icon');
-				var deleteBtn = tab.querySelector('.delete-tab-icon');
-				if (!editBtn) {
-					editBtn = document.createElement('button');
+
+				if (!tab.querySelector('.edit-tab-icon')) {
+					const editBtn = document.createElement('button');
 					editBtn.id = `editbtn-${currentTabIndex + 1}`;
 					editBtn.className = 'edit-tab-icon mr-0.5 ml-[3px] hover:text-blue-400 text-blue-600';
 					editBtn.title = 'Edit file name';
 					editBtn.innerHTML = addFontAwesomeIcon('fa-solid fa-pen-to-square');
-					editBtn.onclick = () => {
-						animateIcon(`editbtn-${currentTabIndex + 1}`, "fa-bounce", 800);
-						setTimeout(editTabName, 800)
-					};
+					editBtn.addEventListener('click', () => {
+						animateIcon(editBtn.id, "fa-bounce", 800);
+						setTimeout(editTabName, 800);
+					});
 					tab.appendChild(editBtn);
 				}
-				if (index === tabs.length - 1 && !deleteBtn) {
-					deleteBtn = document.createElement('button');
+
+				if (index === tabs.length - 1 && !tab.querySelector('.delete-tab-icon')) {
+					const deleteBtn = document.createElement('button');
 					deleteBtn.id = `delbtn-${currentTabIndex + 1}`;
 					deleteBtn.className = 'delete-tab-icon absolute pl-[5px] right-[5px] top-2 font-bold cursor-pointer mr-0.5 ml-[3px] hover:text-red-400 text-red-500';
 					deleteBtn.title = 'Delete this tab';
 					deleteBtn.innerHTML = addFontAwesomeIcon('fa-solid fa-trash');
-					deleteBtn.onclick = () => {
+					deleteBtn.addEventListener('click', () => {
 						addNewTabBtn.disabled = true;
-						animateIcon(`delbtn-${currentTabIndex + 1}`, "fa-bounce", 800);
-						setTimeout(confirmDeleteFile, 800, currentTabIndex)
-					};
+						animateIcon(deleteBtn.id, "fa-bounce", 800);
+						setTimeout(confirmDeleteFile, 800, currentTabIndex);
+					});
 					tab.appendChild(deleteBtn);
 				}
 			} else {
 				tab.classList.remove('active');
 				icon.classList.remove('text-blue-600');
-				var editBtn = tab.querySelector('.edit-tab-icon');
-				var deleteBtn = tab.querySelector('.delete-tab-icon');
+
+				const editBtn = tab.querySelector('.edit-tab-icon');
+				const deleteBtn = tab.querySelector('.delete-tab-icon');
 				if (editBtn) {
 					tab.removeChild(editBtn);
 				}
+
 				if (deleteBtn) {
 					tab.removeChild(deleteBtn);
 				}
@@ -2582,24 +2592,31 @@ function confirmDeleteFile(index) {
 }
 
 function deleteAllTabs() {
-	startIndex = 0;
+	const numTabs = sources.length;
+
 	minifyAllBtn.disabled = true;
 	minifyAllBtn.classList.add("hidden");
-	fileTabsOut.children[currentTabIndexOut].classList.remove("error");
+
+	const currentTab = fileTabsOut.children[currentTabIndexOut];
+	currentTab.classList.remove("error");
 	document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = '';
-	var numTabs = sources.length;
+
 	if (numTabs > 1) {
 		for (var i = numTabs - 1; i > 0; i--) {
 			deleteFile(i);
 			deleteFile(i, true);
 		}
 	}
+
 	if (filetabOutOne.classList.contains("error")) {
 		filetabOutOne.classList.remove("error");
 	}
+
 	if (numTabs === 0) {
 		addEmptyTab();
 	}
+
+	startIndex = 0;
 }
 
 window.addEventListener('beforeunload', (e) => {
@@ -2644,6 +2661,9 @@ document.getElementById("file-1").addEventListener('click', () => {
 })
 
 function autoMiddleScroll(tab) {
+	if (!(tab instanceof HTMLElement))
+		return;
+
 	tab.scrollIntoView({
 		behavior: 'smooth',
 		inline: 'center',
@@ -2669,9 +2689,16 @@ function handleAutoScrollOut() {
 	}
 }
 
+function updateTabOut(tabNameInputElement) {
+	updateEmptyTabInput(tabNameInputElement, currentTabIndexOut, true);
+	updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut, true);
+	updateGraph();
+}
+
 function editTabNameOut() {
-	var activeTab = fileTabsOut.children[currentTabIndexOut];
-	var tabNameInput = document.createElement('input');
+	const activeTab = fileTabsOut.children[currentTabIndexOut];
+
+	const tabNameInput = document.createElement('input');
 	tabNameInput.type = 'text';
 	tabNameInput.placeholder = "Enter:";
 	tabNameInput.value = activeTab.textContent.trim();
@@ -2679,35 +2706,39 @@ function editTabNameOut() {
 	tabNameInput.spellcheck = false;
 	tabNameInput.className = "tab-name-input-out focus:outline-none bg-transparent";
 	tabNameInput.style.width = `${activeTab.offsetWidth - 90}px`;
+
 	tabNameInput.addEventListener('keypress', (event) => {
 		if (event.key === 'Enter') {
-			updateEmptyTabInput(tabNameInput, currentTabIndexOut, true);
-			updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut, true);
-			updateGraph();
+			updateTabOut(tabNameInput);
+			isTabNameEditOut = false;
+			saveEditorContent(true);
 		}
 	});
+
 	tabNameInput.addEventListener('blur', () => {
-		updateEmptyTabInput(tabNameInput, currentTabIndexOut, true);
-		updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut, true);
-		updateGraph();
+		updateTabOut(tabNameInput);
+		isTabNameEditOut = false;
+		saveEditorContent(true);
 	});
 
-	var saveIcon = document.createElement('button');
+	const saveIcon = document.createElement('button');
 	saveIcon.className = 'save-tab-icon hover:text-green-400 text-green-500';
 	saveIcon.title = 'Save or press enter';
 	saveIcon.innerHTML = addFontAwesomeIcon('fa-solid fa-floppy-disk', ['px-0.5']);
-	saveIcon.onclick = () => {
-		updateEmptyTabInput(tabNameInput, currentTabIndexOut, true);
-		isTabNameEditOut = false
+
+	saveIcon.addEventListener('click', () => {
+		updateTabOut(tabNameInput);
+		isTabNameEditOut = false;
 		saveEditorContent(true);
-	};
+	});
 
 	activeTab.innerHTML = '';
 	activeTab.appendChild(addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'], true));
 	activeTab.appendChild(tabNameInput);
 	activeTab.appendChild(saveIcon);
+
 	tabNameInput.focus();
-	isTabNameEditOut = true
+	isTabNameEditOut = true;
 }
 
 function addTabOut() {
@@ -2744,48 +2775,53 @@ function addTabOut() {
 function updateTabStylesOut() {
 	handleAutoScrollOut();
 	minifyAllBtn.title = (sourcesOut.length === 1) ? '' : 'Minify More';
-	var tabs = document.querySelectorAll('.file-tab-out');
-	if (currentTabIndexOut < tabs.length && currentTabIndexOut >= 0) {
+	const tabs = document.querySelectorAll('.file-tab-out');
+
+	if (currentTabIndexOut >= 0 && currentTabIndexOut < tabs.length) {
 		tabs.forEach((tab, index) => {
-			var icon = tab.querySelector('.fa-file-code');
-			if (index === currentTabIndexOut) {
+			const icon = tab.querySelector('.fa-file-code');
+			const isActive = index === currentTabIndexOut;
+
+			if (isActive) {
 				tab.classList.add('active');
 				icon.classList.add('text-blue-600');
-				var editBtn = tab.querySelector('.edit-tab-icon-out');
-				var deleteBtn = tab.querySelector('.delete-tab-icon-out');
-				if (!editBtn) {
-					editBtn = document.createElement('button');
+
+				if (!tab.querySelector('.edit-tab-icon-out')) {
+					const editBtn = document.createElement('button');
 					editBtn.id = `editbtnout-${currentTabIndexOut + 1}`;
 					editBtn.className = 'edit-tab-icon-out mr-0.5 ml-[3px] hover:text-blue-400 text-blue-600';
 					editBtn.title = 'Edit file name';
 					editBtn.innerHTML = addFontAwesomeIcon('fa-solid fa-pen-to-square');
-					editBtn.onclick = () => {
-						animateIcon(`editbtnout-${currentTabIndexOut + 1}`, "fa-bounce", 800);
-						setTimeout(editTabNameOut, 800)
-					};
+					editBtn.addEventListener('click', () => {
+						animateIcon(editBtn.id, "fa-bounce", 800);
+						setTimeout(editTabNameOut, 800);
+					});
 					tab.appendChild(editBtn);
 				}
-				if (index === tabs.length - 1 && !deleteBtn) {
-					deleteBtn = document.createElement('button');
+
+				if (index === tabs.length - 1 && !tab.querySelector('.delete-tab-icon-out')) {
+					const deleteBtn = document.createElement('button');
 					deleteBtn.id = `delbtnout-${currentTabIndexOut + 1}`;
 					deleteBtn.className = 'delete-tab-icon-out absolute pl-[5px] right-[5px] top-2 font-bold cursor-pointer mr-0.5 ml-[3px] hover:text-red-400 text-red-500';
 					deleteBtn.title = 'Delete this tab';
 					deleteBtn.innerHTML = addFontAwesomeIcon('fa-solid fa-trash');
-					deleteBtn.onclick = () => {
+					deleteBtn.addEventListener('click', () => {
 						addNewTabBtn.disabled = true;
-						animateIcon(`delbtnout-${currentTabIndexOut + 1}`, "fa-bounce", 800);
-						setTimeout(confirmDeleteFile, 800, currentTabIndexOut)
-					};
+						animateIcon(deleteBtn.id, "fa-bounce", 800);
+						setTimeout(confirmDeleteFile, 800, currentTabIndexOut);
+					});
 					tab.appendChild(deleteBtn);
 				}
 			} else {
 				tab.classList.remove('active');
 				icon.classList.remove('text-blue-600');
-				var editBtn = tab.querySelector('.edit-tab-icon-out');
-				var deleteBtn = tab.querySelector('.delete-tab-icon-out');
+
+				const editBtn = tab.querySelector('.edit-tab-icon-out');
+				const deleteBtn = tab.querySelector('.delete-tab-icon-out');
 				if (editBtn) {
 					tab.removeChild(editBtn);
 				}
+
 				if (deleteBtn) {
 					tab.removeChild(deleteBtn);
 				}
