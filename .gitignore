@@ -91,6 +91,8 @@ Desktop.ini
 *.bak
 *.swp
 *.swo
+*.pot
+*.pyc
 
 # Package distribution
 *.tgz
@@ -105,3 +107,18 @@ Desktop.ini
 
 # Bun
 bun.lockb
+
+# Byte-compiled files
+__pycache__/
+
+# Virtual environment
+venv/
+env/
+
+# Distribution / packaging
+.Python
+develop-eggs/
+egg-info/
+
+# Vercel
+vercel.json
