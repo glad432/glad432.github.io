@@ -143,8 +143,8 @@
         </span>
       </div>
       <div class="text-left">
-        <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Lines: 42</span>
-        <span id="text-size" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">0.992 kB</span>
+        <span id="line-count" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">Lines: 53</span>
+        <span id="text-size" class="font-bold px-4 py-2 bg-blue-500 rounded text-white">1.211 kB</span>
       </div>
       <p id="errmsg"></p>
       <div class="flex items-center">
@@ -176,7 +176,7 @@
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove Pass statements</span>
           </label>
           <label for="remove_literal_statements" class="flex items-center mb-5 cursor-pointer pl-2">
-            <input type="checkbox" id="remove_literal_statements" class="sr-only peer">
+            <input type="checkbox" checked id="remove_literal_statements" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove literal statements (docstrings)</span>
           </label>
@@ -206,7 +206,7 @@
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Convert Positional-Only to Normal Args</span>
           </label>
           <label for="preserve_shebang" class="flex items-center mb-5 cursor-pointer pl-2">
-            <input type="checkbox" id="preserve_shebang" class="sr-only peer">
+            <input type="checkbox" checked id="preserve_shebang" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Preserve any shebang line</span>
           </label>
@@ -216,12 +216,12 @@
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove assert statements</span>
           </label>
           <label for="remove_debug" class="flex items-center mb-5 cursor-pointer pl-2">
-            <input type="checkbox" id="remove_debug" class="sr-only peer">
+            <input type="checkbox" checked id="remove_debug" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove if <span class="font-bold pr-1 pl-1">__debug__</span>being True </span>
           </label>
           <label for="remove_explicit_return_none" class="flex items-center mb-5 cursor-pointer pl-2">
-            <input type="checkbox" id="remove_explicit_return_none" class="sr-only peer">
+            <input type="checkbox" checked id="remove_explicit_return_none" class="sr-only peer">
             <div class="absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
             <span class="cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10">Remove unnecessary returns</span>
           </label>
@@ -247,7 +247,7 @@
       <div class="mb-2 md:mb-4 text-center">
         <span id="minify" class="relative rounded cursor-pointer pt-5 p-4 overflow-hidden group bg-blue-500 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-blue-400 transition-all ease-out duration-300 z-0">
           <span class="absolute right-0 w-8 h-40 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
-          <span class="relative font-bold text-2xl">Minify <i id="fade-0" class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i>
+          <span class="relative font-bold text-2xl">Minify <i class="fa-solid fa-down-left-and-up-right-to-center fa-sm"></i>
           </span>
         </span>
         <button id="minifyAll" disabled class="hidden px-3 py-2 ml-2 font-bold cursor-pointer bg-blue-500 rounded-full text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 z-10"> 5+ </button>
@@ -297,7 +297,7 @@
           </div>
           <button id="diffPopup" class="hidden md:block mr-0.5 px-4 py-2 mt-2 font-bold cursor-pointer bg-orange-500 rounded text-white hover:bg-orange-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Compare <i id="fade-10" class="fa-solid fa-code-compare"></i>
           </button>
-          <button id="runCode" class="sm:w-auto px-4 py-2 font-bold cursor-pointer bg-purple-500 rounded text-white hover:bg-purple-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 mt-2">Run Code <i id="fade-9" class="fa-regular fa-circle-play"></i>
+          <button id="runCode" class="sm:w-auto px-4 py-2 font-bold cursor-pointer bg-purple-500 rounded text-white hover:bg-purple-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 mt-2">Run Code <i class="fa-regular fa-circle-play"></i>
           </button>
         </div>
         <div id="comProgress" class="hidden colorhandle mt-2 w-full sm:w-auto">

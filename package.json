@@ -34,7 +34,7 @@
     "crypto-js": "^4.2.0",
     "jszip": "^3.10.1",
     "qrcode-generator": "^1.4.4",
-    "sweetalert2": "^11.14.1",
+    "sweetalert2": "^11.14.2",
     "typewriter-effect": "^2.21.0"
   }
 }
