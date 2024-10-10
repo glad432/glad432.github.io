@@ -7,9 +7,11 @@ import '../css/style.css'
 import 'sweetalert2/src/sweetalert2.scss'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import articleData from './articleData.json';
+import sampleCode from '../python/sample.py?raw'
 
 const minifyButton = document.getElementById('minify');
 const minifyAllBtn = document.getElementById('minifyAll');
+const minifyBtnText = minifyButton.querySelector('span.relative');
 const copyButton = document.getElementById('copy');
 const aniText = document.getElementById("anitext");
 const errorMessage = document.getElementById('errmsg');
@@ -262,7 +264,8 @@ require(['vs/editor/editor.main'], () => {
 		fontWeight: 'bold',
 		formatOnPaste: true,
 		semanticHighlighting: true,
-		folding: true,
+		folding: isMobile() ? false : true,
+		fontSize: getFontSize(),
 		cursorBlinking: 'smooth',
 		cursorSmoothCaretAnimation: true,
 		cursorStyle: 'line',
@@ -284,7 +287,8 @@ require(['vs/editor/editor.main'], () => {
 		},
 		fontWeight: 'bold',
 		semanticHighlighting: true,
-		folding: true,
+		folding: isMobile() ? false : true,
+		fontSize: getFontSize(),
 		cursorBlinking: 'smooth',
 		cursorSmoothCaretAnimation: true,
 		cursorStyle: 'line',
@@ -306,7 +310,9 @@ require(['vs/editor/editor.main'], () => {
 
 	function typeInEditor() {
 		if (typingInProgress) return;
-		const typingPYcode = CryptoJS.AES.decrypt("U2FsdGVkX193pc0vAtJ5A6OWR/h1wgrCfeKfO/6qgjWA+pkCUbdIupXhCTFRoDR2n65EQf5blOu2I+RDW598wSH7M1e3zTH4XIA0Wcl8+qmoZKaiUJFKC3QaiT9gYtcEFOteoT/6uKl2b8kUNM+Dl2U+A5cezQFkURxj5xxIjCqgX1jcRLpLQY2LIOpV0IbA3GLbvaNuh1wDUUsvwnIx+vnNeYruSD2fOXKdz0Lfyn1bnYPA6BxSWrvRxbgoSXTBVAD4tlN19YxI14tUJdizCFsGAKkLvUtKecD9X72maj6ZzEhvoqVTwMwxGawFCzuUeAm8TyxTlfOrVWfVxPoQatCQ0dOsWqRUiVCY8HE+A/OiJ133mA0+l0W1wvkV9bHDqR1UzqP8VAyh8UPB2YMLYnHZVr+US3Bpgu+iczkl2vewGWtt2WJ991O+HsXGCj0tc6iWcwmPu2PaKfR8t0x1PLWYUfVo2lycMMgBCfjhQyIq61Bfhm9QHMisqlap6hE0k1QsBHZOoL9Q+yCslEM8Us0FkQP/KK07NBCKULM8H47aFac6sOBd1VxCw9k1nnA+L1gNeG8oDVu4leUf6bZjs6m0msJISL1plqZY5cCpjdhrcImSsdNGt1jqXV1p7QnwGgVMl9HuRK9AlzxLCA0YNLyXzGqQNJlbSVrzJYS2JgW0Xw0B9M6vL/0G7FygNn2FefvXfx/Pk1ImUqH1u5y6tiuEUYAnxATe7y2cGcHa1J+f4IEV7AeXTEc/zoSh3mhmze8Y6gQN23YEtD0Pxr+3+42FO1dS1zSy3Un9G4vbpgbAPdb29lP/fVUrHSVokEadqfmWDxbnNsg2kwbkb3SuCVhd95Ev+5k9b++oGzlJ4npthp7mczo0IuaYFAZv42t2dPvbI3B6noUaa1S5hXJz4AWvzXX/M5mNxTxmrTblhu1UfomDBgJPnV7Udz6f2yVsPlSsJwApJYykUiB2xPOwPaQl1Zu4j7JhsSgHo2oP2sJonUtVYV3ui1aHwdJIIDCJT0GxCajxjxlTpEVE/P5FEpWymIScnbZ6kEZiy41OagjHnDx+HsbrNn5z6hpGR6u3U8n1hIeE5mfWMBb6XXRurTGU6x1UYDWTTFviIhLCCK2u7ociPOpvYVuD499vA+MYzfKJy0Itjw4S6rd8Ftw0cGsaaY0VbETbchMMtAWN637HgCf6tssXZG0wnjcicVBHrelgKSp+v2rxjfvBtbkYRJTpKhNoT/M+lf8eMy3Ww9OP7G3W4iM71mv9PC9YCYSFehCWFCyUOaDbhslZHqnNrfCmGJSEELLFGb9nnx1EbCvuy5G5ewRtMYzFPRYk3Sf5BlF6AVbiOjgt70tExE8tToejh5gLHjaf4SAGIy24e0Q=", '4#>5p[:/v,o2q/(\\*=:6').toString(CryptoJS.enc.Utf8);
+
+		const typingPYcode = sampleCode.replace(/\r/g, '');
+
 		if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
 			typeOverlay.classList.remove('!hidden');
 			let index = 0;
@@ -465,12 +471,6 @@ function updateEditorOptions() {
 
 };
 
-window.addEventListener('load', () => {
-	if (sourceEditor && minifiedEditor) {
-		updateEditorOptions();
-	}
-});
-
 window.addEventListener('resize', () => {
 	if (sourceEditor && minifiedEditor) {
 		updateEditorOptions();
@@ -498,6 +498,9 @@ async function codeCompile() {
 	const truncatedFileName = fileName.length >= 50 ? `${fileName.slice(0, 50)}.py` : fileName;
 	const code = minifiedEditor.getModel().getValue();
 	try {
+		codeRunBtn.innerHTML = `Running... ${addFontAwesomeIcon('fa-regular fa-circle-play fa-fade')}`;
+		codeRunBtn.disabled = true;
+
 		const response = await fetch('https://python-compile.vercel.app/run', {
 			method: 'POST',
 			headers: {
@@ -512,13 +515,16 @@ async function codeCompile() {
 
 		const data = await response.json();
 		pyCompileAtTabIndex = currentTabIndex;
-		pyTerminal.classList.remove("hidden");
 		compileTime = new Date();
 		compileData = /\r|\n/.test(data.output) || data.output.length !== 0 ? data.output : defaultOutput;
 		terminalText.textContent = `[${compileTime.toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${compileData}`;
+		pyTerminal.classList.remove("hidden");
 	} catch (error) {
 		pyTerminal.classList.remove("hidden");
-		terminalText.textContent = error || 'Error occurred while running the code. Please check your code and try again.';
+		terminalText.textContent = 'Error occurred while running the code. Please check your code and try again.';
+	} finally {
+		codeRunBtn.innerHTML = `Run code ${addFontAwesomeIcon('fa-regular fa-circle-play')}`;
+		codeRunBtn.disabled = false;
 	}
 }
 
@@ -531,7 +537,6 @@ function clearPyComplier(jusDelete = false) {
 
 codeRunBtn.addEventListener("click", () => {
 	if (minifiedEditor.getModel().getValue().trim() !== "") {
-		animateIcon("fade-9", "fa-fade", 1000);
 		codeCompile();
 	}
 });
@@ -1524,12 +1529,14 @@ function initializeMinifier() {
 		selectallopt.classList.add("cursor-not-allowed");
 		resetOpt.classList.add("cursor-not-allowed");
 		minifiedEditor.getModel().setValue('');
-		animateIcon("fade-0", "fa-fade", 1500);
 		minifiedSize.innerHTML = `${addFontAwesomeIcon('fa-solid fa-spinner fa-spin-pulse')} Loading....`;
 
-		const code = sourceEditor.getModel().getValue();
+		const code = typingInProgress ? sampleCode.replace(/\r/g, '') : sourceEditor.getModel().getValue();
 		if (code !== '' && minifiedEditor.getModel().getValue() === '') {
 			try {
+				minifyBtnText.innerHTML = `Minifying ${addFontAwesomeIcon('fa-solid fa-down-left-and-up-right-to-center fa-sm fa-fade')}`;
+				minifyButton.classList.add("pointer-events-none");
+
 				const response = await fetch(`https://python-minify.vercel.app/minify?${buildQuery()}`, {
 					method: 'POST',
 					headers: {
@@ -1554,8 +1561,11 @@ function initializeMinifier() {
 				disableDwSrCpBtn(true);
 				clearPyComplier(true);
 				minifiedSize.innerHTML = `${addFontAwesomeIcon('fa-solid fa-circle-exclamation')} Minification failed!`;
+			} finally {
+				minifyBtnText.innerHTML = `Minify ${addFontAwesomeIcon('fa-solid fa-down-left-and-up-right-to-center fa-sm')}`;
+				minifyButton.classList.remove("pointer-events-none");
+				updateGraph();
 			}
-			updateGraph();
 		} else {
 			minifiedSize.textContent = "Enter Code";
 		}
@@ -1598,9 +1608,8 @@ function initializeMinifier() {
 		minifyAllBtn.disabled = true;
 		minifyButton.classList.add("pointer-events-none");
 
-		const tabs = document.querySelectorAll('.file-tab-out');
-		const maxIndex = tabs.length;
-		let endIndex = Math.min(startIndex + 5, maxIndex);
+		const maxIndex = sourcesOut.length;
+		const endIndex = Math.min(startIndex + 5, maxIndex);
 
 		await processTabs(startIndex, endIndex);
 
