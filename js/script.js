@@ -2324,6 +2324,7 @@ function editTabName() {
 	tabNameInput.spellcheck = false;
 	tabNameInput.className = "tab-name-input focus:outline-none bg-transparent";
 	tabNameInput.style.width = `${activeTab.offsetWidth - 90}px`;
+	tabNameInput.focus();
 
 	tabNameInput.addEventListener('keypress', (event) => {
 		if (event.key === 'Enter') {
@@ -2715,6 +2716,7 @@ function editTabNameOut() {
 	tabNameInput.spellcheck = false;
 	tabNameInput.className = "tab-name-input-out focus:outline-none bg-transparent";
 	tabNameInput.style.width = `${activeTab.offsetWidth - 90}px`;
+	tabNameInput.focus();
 
 	tabNameInput.addEventListener('keypress', (event) => {
 		if (event.key === 'Enter') {
