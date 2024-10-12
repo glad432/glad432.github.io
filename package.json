@@ -16,12 +16,21 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "pip-install": "pip install -r python/python-minifier/requirements.txt && pip install -r python/python-compiler/requirements.txt",
+    "replace-urls": "replace-in-file https://python-compile.vercel.app http://127.0.0.1:5000 ./js/script.js && replace-in-file https://python-minify.vercel.app http://127.0.0.1:5001 ./js/script.js && replace-in-file https://glad432.github.io/ / ./vite.config.js",
+    "minifier": "python python/python-minifier/app.py",
+    "compiler": "python python/python-compiler/app.py",
+    "start-dev": "concurrently \"npm run dev\" \"npm run minifier\" \"npm run compiler\"",
+    "start-preview": "concurrently \"npm run preview\" \"npm run minifier\" \"npm run compiler\"",
+    "check": "node --version && npm --version && python --version && pip --version || echo 'Node, npm, Python, or pip is not installed.'"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.0.1",
     "gh-pages": "^6.2.0",
     "postcss": "^8.4.47",
+    "replace-in-file": "^8.2.0",
     "rollup-plugin-terser": "^7.0.2",
     "sass": "^1.79.5",
     "tailwindcss": "^3.4.13",

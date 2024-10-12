@@ -29,10 +29,16 @@ Python Minifier is a web tool that demonstrates how various technologies collabo
 - [ApexCharts](https://apexcharts.com/) - For interactive charts
 - [CryptoJS](https://github.com/brix/crypto-js) - For cryptography tasks
 - [SweetAlert2](https://sweetalert2.github.io/) - For nice popup boxes
+- [Concurrently](https://github.com/open-cli-tools/concurrently) - For running multiple commands concurrently
+- [Replace-in-file](https://www.npmjs.com/package/replace-in-file) - For replacing text in files easily
+- [Flask](https://flask.palletsprojects.com/) - A lightweight WSGI web application framework
+- [Flask-CORS](https://pypi.org/project/Flask-Cors/) - For enabling CORS in Flask
+- [Python Minifier](https://pypi.org/project/python-minifier/) - For minifying Python code
+- [Subprocess](https://docs.python.org/3/library/subprocess.html) - For managing processes
 
 ### APIs and Services
-- [Python Minify](https://github.com/glad432/python-minifier-flask) - To make Python code smaller
-- [Python Compiler](https://github.com/glad432/python-compiler-api) - To run Python code
+- [Python Minify](python/python-minifier/) - To make Python code smaller
+- [Python Compiler](python/python-compiler/) - To run Python code
 - [File.io](https://www.file.io/) - To share files
 
 # Key Benefits of Python Minification
@@ -61,7 +67,9 @@ To set up and run Python Minifier:
 
 - [Node.js](https://nodejs.org/) (version 18.0 or newer)
 - npm (usually comes with Node.js)
-- [Git](https://git-scm.com/)
+- [Git](https://git-scm.com/) (version control system)
+- [Python](https://www.python.org/) (version 3.11 or newer)
+- [Pip](https://pip.pypa.io/en/stable/) Python package installer
 
 ### Installation
 
@@ -76,14 +84,39 @@ cd glad432.github.io
 npm install
 ```
 
-3. Remember to update the base URL in the [vite.config.js](vite.config.js) and the API URLs in [script.js](js/script.js)
+3. Remember to update the base URL in the [vite.config.js](vite.config.js) and the API URLs in [script.js](js/script.js) from the next step.
+
+### Replace URLs
+
+The `replace-urls` command updates specific URLs in your project files for local development. It uses the `replace-in-file` utility to make the following replacements:
+
+1. **In `./js/script.js`:**
+   - Replace `https://python-compile.vercel.app` with `http://127.0.0.1:5000`
+   - Replace `https://python-minify.vercel.app` with `http://127.0.0.1:5001`
+
+2. **In `./vite.config.js`:**
+   - Replace `https://glad432.github.io/` with `/`
+
+Run the command with:
+
+```bash
+npm run replace-urls
+```
+
+### Pip Install
+
+The `pip-install` command installs required Python packages from two `requirements.txt` files:
+
+```bash
+npm run pip-install
+```
 
 ### For Development
 
 To start working on the project:
 
 ```
-npm run dev
+npm run start-dev
 ```
 
 This starts the development server. Open your web browser and go to `http://localhost:5173` (or the address shown in your terminal) to see the app.
@@ -103,7 +136,7 @@ This creates optimized files in the `dist` folder.
 To see how the release version looks:
 
 ```
-npm run preview
+npm run start-preview
 ```
 
 ## License
