@@ -224,7 +224,7 @@ const checkboxesOpt = [{
 	},
 	{
 		id: "constant_folding",
-		label: "Evaluate onstant expressions",
+		label: "Evaluate constant expressions",
 		checked: true
 	}
 ];
