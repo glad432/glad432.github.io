@@ -1,19 +1,20 @@
 import subprocess
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
+from typing import Dict, Any
 
 app = Flask(__name__)
 cors = CORS(app)
 
 
 @app.route("/")
-def index():
+def index() -> str:
     return render_template("index.html")
 
 
 @app.route("/run", methods=["POST"])
-def run_code():
-    code = request.data.decode("utf-8")
+def run_code() -> Dict[str, Any]:
+    code: str = request.data.decode("utf-8")
     try:
         if not code.strip():
             return jsonify({"output": "No code provided."})

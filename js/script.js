@@ -37,8 +37,6 @@ const fileLinkInput = document.getElementById("fileLinkInput");
 const darkModeToggle = document.getElementById("darkModeToggle");
 const selectallopt = document.getElementById('selectall');
 const resetOpt = document.getElementById('resetOpt');
-const preserveGlobals = document.getElementById('preserve_globals');
-const preserveLocals = document.getElementById('preserve_locals');
 const fileTabs = document.getElementById('file-tabs');
 const fileTabsOut = document.getElementById('file-tabs-out');
 const fileTabsOverlay = document.getElementById("tabs-overlay");
@@ -66,7 +64,7 @@ const diffWrapSwitch = document.getElementById('diff-text-wrap');
 const headerMenuToggle = document.getElementById('menuToggle');
 const headerMenu = document.getElementById('menu');
 const showOptionsContent = document.getElementById('showOptionsContent');
-var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+const optionContainer = document.getElementById('minifyOptionContainer');
 let errorTimeout, cpyTimeout0, cpyTimeout1, btnTimeout, typingTimeout, sourceEditor, minifiedEditor, diffEditor, darkModeEnabled, compileTime, compileData;
 let typingInProgress = false;
 var sources = ['#PyFile-1'];
@@ -136,27 +134,115 @@ const features = [{
 	}
 ];
 
-var options = [
-	'combine_imports',
+const options = [
+	'remove_annotations',
 	'remove_pass',
 	'remove_literal_statements',
-	'remove_annotations',
+	'combine_imports',
 	'hoist_literals',
+	'remove_object_base',
 	'rename_locals',
 	'rename_globals',
 	'convert_posargs_to_args',
 	'preserve_shebang',
 	'remove_asserts',
 	'remove_debug',
-	'remove_explicit_return_none'
+	'remove_explicit_return_none',
+	'remove_builtin_exception_brackets',
+	'constant_folding',
 ];
+
+const checkboxesOpt = [{
+		id: "remove_annotations",
+		label: "Remove Annotations",
+		checked: false
+	},
+	{
+		id: "remove_pass",
+		label: "Remove Pass statements",
+		checked: false
+	},
+	{
+		id: "remove_literal_statements",
+		label: "Remove literal statements (docstrings)",
+		checked: true
+	},
+	{
+		id: "combine_imports",
+		label: "Combine Import statements",
+		checked: true
+	},
+	{
+		id: "hoist_literals",
+		label: "Hoist Literals",
+		checked: false
+	},
+	{
+		id: "remove_object_base",
+		label: "Remove Object base",
+		checked: false
+	},
+	{
+		id: "rename_locals",
+		label: "Rename Locals",
+		checked: false
+	},
+	{
+		id: "rename_globals",
+		label: "Rename Globals",
+		checked: false
+	},
+	{
+		id: "convert_posargs_to_args",
+		label: "Convert Positional-Only to Normal Args",
+		checked: true
+	},
+	{
+		id: "preserve_shebang",
+		label: "Preserve any shebang line",
+		checked: true
+	},
+	{
+		id: "remove_asserts",
+		label: "Remove assert statements",
+		checked: false
+	},
+	{
+		id: "remove_debug",
+		label: "Remove if debug being True",
+		checked: true
+	},
+	{
+		id: "remove_explicit_return_none",
+		label: "Remove unnecessary return none",
+		checked: true
+	},
+	{
+		id: "remove_builtin_exception_brackets",
+		label: "Remove builtin exception brackets",
+		checked: false
+	},
+	{
+		id: "constant_folding",
+		label: "Evaluate onstant expressions",
+		checked: true
+	}
+];
+
+const inputFields = [{
+	id: 'preserve_locals',
+	label: 'Preserved Locals:'
+}, {
+	id: 'preserve_globals',
+	label: 'Preserved Globals:'
+}];
 
 const schema = {
 	"@context": "http://schema.org",
 	"@type": "Website",
 	"url": "https://glad432.github.io",
 	"name": "Python Minifier - GLAD432",
-	"description": "Optimize your web app's performance with our Python minifier online. Python minifier remove whitespace, comments, and line breaks to compress code, optimizing script size for faster loading and improved efficiency.",
+	"description": "Optimize your python code's performance with our Python minifier online. Python minifier remove whitespace, comments, and line breaks to compress code, optimizing script size for faster loading and improved efficiency.",
 	"keywords": "Python, minifier, Python code optimization, online tool, script compression, code minification, web development, optimize Python code, improve script performance, reduce code size, web application optimization, code efficiency, code speed, streamline Python scripts",
 	"publisher": {
 		"@type": "Organization",
@@ -378,6 +464,7 @@ function setTheme() {
 	}
 
 	const vsTheme = darkModeEnabled ? 'vs-dark' : 'vs';
+
 	if (sourceEditor && minifiedEditor) {
 		sourceEditor.updateOptions({
 			theme: vsTheme
@@ -550,16 +637,19 @@ copyCompilertextBtn.addEventListener("click", async () => {
 	if (compileData.length > 0) {
 		await navigator.clipboard.writeText(compileData);
 	}
+
 	if (btnTimeout) {
 		clearTimeout(btnTimeout);
 	}
+
 	copyCompilertextBtn.textContent = "Copied";
 	animateIcon("copyCompilertext", "fa-fade", 1400);
+
 	btnTimeout = setTimeout(() => {
 		copyCompilertextBtn.textContent = "Copy";
 		btnTimeout = null;
-	}, 1500)
-})
+	}, 1500);
+});
 
 document.getElementById("exportCompilertext").addEventListener("click", () => {
 	animateIcon("exportCompilertext", "fa-fade", 1000);
@@ -1309,75 +1399,32 @@ function compressOptions(isShareLink) {
 	divCenter.appendChild(div2);
 	fragment.appendChild(divCenter);
 
-	const label2 = document.createElement('label');
-	label2.setAttribute('for', 'add-readme');
-	label2.className = 'flex justify-center flex-row items-center mb-5 cursor-pointer pl-2';
-	const checkbox1 = document.createElement('input');
-	checkbox1.type = 'checkbox';
-	checkbox1.id = 'add-readme';
-	checkbox1.name = 'add-readme';
-	checkbox1.className = 'sr-only peer';
-	checkbox1.checked = true;
-	checkbox1.setAttribute('checked', '');
+	const checkboxDiv = document.createElement('div');
+	checkboxDiv.className = 'justify-center flex flex-col items-center mb-5';
 
-	const div3 = document.createElement('div');
-	div3.className = 'relative w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600';
-	label2.appendChild(checkbox1);
-	label2.appendChild(div3);
-	const span2 = document.createElement('span');
-	span2.className = 'cursor-pointer ml-2 text-neutral-500 text-lg font-medium';
-	span2.textContent = 'Add ';
-	const innerSpan2 = document.createElement('span');
-	innerSpan2.className = 'hover:underline text-blue-500';
-	innerSpan2.title = 'It will have the list of\nminified Python Files';
-	innerSpan2.textContent = 'readme.txt';
-	span2.appendChild(innerSpan2);
-	span2.innerHTML += ' file';
-	label2.appendChild(span2);
-	fragment.appendChild(label2);
+	checkboxDiv.appendChild(checkboxField({
+		id: 'add-readme',
+		label: 'Add readme.txt file',
+		checked: true
+	}));
 
-	const label3 = document.createElement('label');
-	label3.setAttribute('for', 'fast-compression');
-	label3.className = 'flex justify-center flex-row items-center mb-5 cursor-pointer pl-2 right-2 relative';
-	const checkbox2 = document.createElement('input');
-	checkbox2.type = 'checkbox';
-	checkbox2.id = 'fast-compression';
-	checkbox2.name = 'fast-compression';
-	checkbox2.className = 'sr-only peer';
-
-	const div4 = document.createElement('div');
-	div4.className = 'relative w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600';
-	label3.appendChild(checkbox2);
-	label3.appendChild(div4);
-	const span3 = document.createElement('span');
-	span3.className = 'cursor-pointer ml-2 text-neutral-500 text-lg font-medium';
-	span3.textContent = 'Fast Compression';
-	label3.appendChild(span3);
-	fragment.appendChild(label3);
+	checkboxDiv.appendChild(checkboxField({
+		id: 'fast-compression',
+		label: 'Fast Compression',
+		checked: false,
+		labelClass: "relative right-[7px]"
+	}));
 
 	if (isShareLink) {
-		const label4 = document.createElement('label');
-		label4.setAttribute('for', 'generate-link');
-		label4.className = 'flex justify-center flex-row items-center mb-5 cursor-pointer pl-2 left-0.5 relative';
-		const checkbox3 = document.createElement('input');
-		checkbox3.type = 'checkbox';
-		checkbox3.id = 'generate-link';
-		checkbox3.name = 'generate-link';
-		checkbox3.className = 'sr-only peer';
-		checkbox3.checked = true;
-		checkbox3.setAttribute('checked', '');
-
-		const div5 = document.createElement('div');
-		div5.className = 'relative w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600';
-		label4.appendChild(checkbox3);
-		label4.appendChild(div5);
-		const span4 = document.createElement('span');
-		span4.className = 'cursor-pointer ml-2 text-neutral-500 text-lg font-medium';
-		span4.textContent = 'Generate Share Link';
-		label4.appendChild(span4);
-		fragment.appendChild(label4);
+		checkboxDiv.appendChild(checkboxField({
+			id: 'generate-link',
+			label: 'Generate Share Link',
+			checked: true,
+			labelClass: "relative left-[2px]"
+		}));
 	}
 
+	fragment.appendChild(checkboxDiv);
 	const tempDiv = document.createElement('div');
 	tempDiv.appendChild(fragment);
 
@@ -1470,20 +1517,23 @@ async function compressPyFiles(isShareLink = false) {
 
 function initializeMinifier() {
 	function buildQuery() {
+		const preserveGlobals = document.getElementById('preserve_globals');
+		const preserveLocals = document.getElementById('preserve_locals');
+
 		const queryParts = options.map(option => {
 			const checkbox = document.getElementById(option);
 			return checkbox && checkbox.checked ? `${option}=true` : `${option}=false`;
 		});
 
 		if (preserveGlobals) {
-			const preserveGlobalsFinal = preserveGlobals.value.split(',').map(str => str.trim());
+			const preserveGlobalsFinal = preserveGlobals.value.replace(/\s*,\s*|\s+/g, ',').split(',').map(str => String(str).trim()).filter(Boolean);;
 			if (preserveGlobalsFinal.length > 0) {
 				queryParts.push(`preserve_globals=${encodeURIComponent(JSON.stringify(preserveGlobalsFinal))}`);
 			}
 		}
 
 		if (preserveLocals) {
-			const preserveLocalsFinal = preserveLocals.value.split(',').map(str => str.trim());
+			const preserveLocalsFinal = preserveLocals.value.replace(/\s*,\s*|\s+/g, ',').split(',').map(str => String(str).trim()).filter(Boolean);;
 			if (preserveLocalsFinal.length > 0) {
 				queryParts.push(`preserve_locals=${encodeURIComponent(JSON.stringify(preserveLocalsFinal))}`);
 			}
@@ -1532,6 +1582,7 @@ function initializeMinifier() {
 		minifiedSize.innerHTML = `${addFontAwesomeIcon('fa-solid fa-spinner fa-spin-pulse')} Loading....`;
 
 		const code = typingInProgress ? sampleCode.replace(/\r/g, '') : sourceEditor.getModel().getValue();
+
 		if (code !== '' && minifiedEditor.getModel().getValue() === '') {
 			try {
 				minifyBtnText.innerHTML = `Minifying ${addFontAwesomeIcon('fa-solid fa-down-left-and-up-right-to-center fa-sm fa-fade')}`;
@@ -1777,6 +1828,73 @@ function handleErrorMessage(text) {
 	}
 }
 
+function checkboxField({
+	id,
+	label,
+	checked = false,
+	inputClass = '',
+	labelClass = '',
+	divClass = ''
+}) {
+	const labelElement = document.createElement('label');
+	labelElement.setAttribute('for', id);
+	labelElement.className = `flex items-center mb-5 cursor-pointer pl-2 ${labelClass}`;
+
+	const input = document.createElement('input');
+	input.type = 'checkbox';
+	input.id = id;
+	input.className = `sr-only peer ${inputClass} ${checked ? 'checked' : ''}`;
+	input.checked = checked;
+
+	if (checked) {
+		input.setAttribute("checked", "");
+	}
+
+	const div = document.createElement('div');
+	div.className = `absolute w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600 ${divClass}`;
+
+	const span = document.createElement('span');
+	span.className = "cursor-pointer ml-2 text-neutral-500 text-lg font-medium pl-10";
+	span.innerHTML = label;
+
+	labelElement.appendChild(input);
+	labelElement.appendChild(div);
+	labelElement.appendChild(span);
+	return labelElement;
+}
+
+function inputField(id, labelText) {
+	const container = document.createElement('div');
+	container.className = "relative mb-3";
+
+	const input = document.createElement('input');
+	input.type = 'text';
+	input.id = id;
+	input.className = "block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 peer";
+	input.placeholder = " ";
+	input.spellcheck = false;
+
+	const label = document.createElement('label');
+	label.setAttribute('for', id);
+	label.className = "absolute cursor-text text-bold text-gray-500 duration-200 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto";
+	label.textContent = labelText;
+
+	container.appendChild(input);
+	container.appendChild(label);
+	return container;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	checkboxesOpt.forEach(option => {
+		optionContainer.appendChild(checkboxField(option));
+
+		if (option.id === 'rename_locals' || option.id === 'rename_globals') {
+			const index = option.id === 'rename_locals' ? 0 : 1;
+			optionContainer.appendChild(inputField(inputFields[index].id, inputFields[index].label));
+		}
+	});
+});
+
 function showMinifyOptions() {
 	animateIcon("showOptions", "fa-fade", 1000);
 	if (showOptionsContent.style.maxHeight) {
@@ -1790,20 +1908,20 @@ document.getElementById('showOptions').addEventListener('click', showMinifyOptio
 
 function tickAllOptions() {
 	animateIcon("selectall", "fa-fade", 800);
-	checkboxes.forEach((checkbox) => {
-		checkbox.checked = true;
-	});
+	optionContainer.querySelectorAll('#showOptionsContent input').forEach(input => input.checked = true);
 }
 
 selectallopt.addEventListener('click', tickAllOptions);
 
 function resetOptions() {
 	animateIcon("resetOpt", "fa-fade", 800);
-	checkboxes.forEach((checkbox) => {
-		checkbox.checked = false;
+	inputFields.forEach((inputField) => {
+		const preserve = document.getElementById(inputField.id);
+		if (preserve) {
+			preserve.value = '';
+		}
 	});
-	preserveLocals.value = ''
-	preserveGlobals.value = '';
+	optionContainer.querySelectorAll('#showOptionsContent input').forEach(input => input.checked = false);
 }
 
 resetOpt.addEventListener('click', resetOptions);
@@ -2857,7 +2975,7 @@ function switchTabOut(index) {
 	}
 }
 
-document.getElementById("file-out-1").addEventListener('click', () => {
+filetabOutOne.addEventListener('click', () => {
 	if (!isTabNameEditOut) {
 		updateTabStylesOut();
 	}
