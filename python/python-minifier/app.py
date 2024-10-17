@@ -10,7 +10,7 @@ MAX_INPUT_SIZE_KB = 420
 
 @app.route("/", methods=["GET"])
 def index() -> str:
-    return render_template("out.html")
+    return render_template("index.html")
 
 @app.route("/minify", methods=["POST"])
 def minify_post() -> Any:
@@ -36,9 +36,9 @@ def extract_options(params: Dict[str, str]) -> Dict[str, Any]:
     options: Dict[str, Any] = {
         'filename': None,
         'remove_annotations': python_minifier.RemoveAnnotationsOptions(
-            remove_variable_annotations=True,
-            remove_return_annotations=True,
-            remove_argument_annotations=True,
+            remove_variable_annotations=False,
+            remove_return_annotations=False,
+            remove_argument_annotations=False,
             remove_class_attribute_annotations=False
         ),
         'remove_pass': True,
@@ -63,12 +63,20 @@ def extract_options(params: Dict[str, str]) -> Dict[str, Any]:
         if key in ['preserve_globals', 'preserve_locals']:
             options[key] = value.strip('[]').replace('"', '').split(',')
         elif key == 'remove_annotations':
-            options['remove_annotations'] = python_minifier.RemoveAnnotationsOptions(
-                remove_variable_annotations=params.get('remove_variable_annotations', 'true').lower() == 'true',
-                remove_return_annotations=params.get('remove_return_annotations', 'true').lower() == 'true',
-                remove_argument_annotations=params.get('remove_argument_annotations', 'true').lower() == 'true',
-                remove_class_attribute_annotations=params.get('remove_class_attribute_annotations', 'false').lower() == 'true'
-            )
+            if value.lower() == 'true':
+                options['remove_annotations'] = python_minifier.RemoveAnnotationsOptions(
+                    remove_variable_annotations=True,
+                    remove_return_annotations=True,
+                    remove_argument_annotations=True,
+                    remove_class_attribute_annotations=False
+                )
+            else:
+                options['remove_annotations'] = python_minifier.RemoveAnnotationsOptions(
+                    remove_variable_annotations=False,
+                    remove_return_annotations=False,
+                    remove_argument_annotations=False,
+                    remove_class_attribute_annotations=False
+                )
         else:
             options[key] = value.lower() == 'true'
 
@@ -83,4 +91,3 @@ def minify_code(input_code: str, options: Dict[str, Any]) -> str:
 
 if __name__ == "__main__":
     app.run(debug=False, port=5001)
-
