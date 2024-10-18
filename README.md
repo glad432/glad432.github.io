@@ -35,6 +35,8 @@ Python Minifier is a web tool that demonstrates how various technologies collabo
 - [Flask-CORS](https://pypi.org/project/Flask-Cors/) - For enabling CORS in Flask
 - [Python Minifier](https://pypi.org/project/python-minifier/) - For minifying Python code
 - [Subprocess](https://docs.python.org/3/library/subprocess.html) - For managing processes
+- [Re](https://docs.python.org/3/library/re.html) - For working with regular expressions in Python
+- [Typing](https://docs.python.org/3/library/typing.html) - Provides type hints and static type checking
 
 ### APIs and Services
 - [Python Minify](python/python-minifier/) - To make Python code smaller
