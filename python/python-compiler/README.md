@@ -40,6 +40,7 @@ CORS (Cross-Origin Resource Sharing) is configured to allow requests from specif
 - Flask-CORS: A Flask extension for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible.
 - Subprocess: The subprocess module in Python facilitates spawning new processes, managing their input/output, and handling return codes.
 - Typing: A standard library module for type hints, enabling static type checking in Python.
+- Re: A module for regular expressions, allowing string searching and manipulation.
 
 ## Contributing:
 
