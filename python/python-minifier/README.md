@@ -33,3 +33,4 @@ CORS (Cross-Origin Resource Sharing) is configured to allow requests from specif
 - Flask: A lightweight WSGI web application framework for Python.
 - Flask-CORS: A Flask extension for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible.
 - Python_minifier: Minifies Python source code, reducing it to its smallest form.
+- Typing: A standard library module for type hints, enabling static type checking in Python.
