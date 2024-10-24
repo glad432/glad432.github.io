@@ -32,8 +32,8 @@ input:checked + .slide:before {
   width: 200px;
   padding: 1rem;
   border: 1px solid #ddd;
-  -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0 2px 4px #0000001a;
+  box-shadow: 0 2px 4px #0000001a;
   z-index: 10;
   -webkit-transition: opacity 0.5s ease-in-out;
   -o-transition: opacity 0.5s ease-in-out;
@@ -46,19 +46,38 @@ input:checked + .slide:before {
 .diff-tab.active,
 .file-tab-out.active,
 .file-tab.active {
-  background-color: rgb(69 69 69 / 14%);
-  border-bottom: 3px solid rgb(59 130 246);
+  background-color: #45454524;
+  border-bottom: 3px solid #3b82f6;
 }
 .diff-tab:hover:not(.active),
 .file-tab-out:hover:not(.active),
 .file-tab:hover:not(.active) {
-  background-color: rgba(61, 60, 60, 0.13);
+  background-color: #3d3c3c21;
+  border-bottom: 3px solid #3d3c3c3d;
 }
-.file-tab-out.error {
-  border-bottom: 3px solid #b61616 !important;
+.file-item {
+  padding-left: 20%;
+}
+.file-item:hover {
+  background-color: #68686821;
+}
+.diff-tab.error.active,
+.file-tab-out.error.active {
+  border-bottom: 3px solid #ef4444 !important;
+}
+.file-tab-out.error.active:hover {
+  border-bottom: 3px solid #ef4444;
+}
+.diff-tab.active.error i.fa-python,
+.file-tab-out.active.error i.fa-python,
+.file-tab-out.active.error > .edit-tab-icon-out {
+  color: #ef4444;
+}
+.file-tab-out.active.error > .edit-tab-icon-out:hover {
+  color: #f87171;
 }
 .sticky-line-number {
-  background: rgb(69 69 69 / 7%) !important;
+  background: #45454512 !important;
 }
 .margin-view-overlays {
   -webkit-user-select: none;
@@ -67,7 +86,7 @@ input:checked + .slide:before {
   user-select: none;
   font-size: small;
   width: 68px !important;
-  background: rgb(69 69 69 / 7%);
+  background: #45454512;
 }
 .line-numbers {
   left: 8px !important;
@@ -99,7 +118,7 @@ div:where(.swal2-container) .swal2-radio {
 }
 #terminaltext {
   color: #424242;
-  background: rgb(200 200 200 / 14%);
+  background: #c8c8c824;
 }
 #preserve_globals:focus,
 #preserve_locals:focus {
@@ -143,6 +162,14 @@ div:where(.swal2-container) .swal2-radio {
     margin-left: 4rem !important;
     margin-right: 4rem !important;
   }
+  .file-item {
+    padding-left: 14dvw;
+  }
+}
+@media (max-width: 480px) {
+  .file-item {
+    padding-left: 6dvw;
+  }
 }
 .dark .apexcharts-menu {
   background: #404040 !important;
@@ -159,17 +186,30 @@ div:where(.swal2-container) .swal2-radio {
 .dark .file-tab.active {
   background-color: #404040ca;
   border-color: transparent;
-  border-bottom: 3px solid rgb(59 130 246);
+  border-bottom: 3px solid #3b82f6;
 }
 .dark .diff-tab:hover:not(.active),
 .dark .file-tab-out:hover:not(.active),
 .dark .file-tab:hover:not(.active) {
   background-color: #404040a9;
+  border-bottom: 3px solid #8989892d;
+}
+.dark .file-item:hover {
+  background-color: #393838a9;
 }
 .dark .diff-tab,
 .dark .file-tab,
 .dark .file-tab-out {
   background-color: #4040406a;
+  border-color: transparent;
+}
+.dark .file-item {
+  background-color: #363636;
+  border-color: #444343;
+  color: #e8e8e8;
+}
+.dark .popup-box {
+  background-color: #3d3d3e;
   border-color: transparent;
 }
 .dark div:where(.swal2-container) div:where(.swal2-popup) {
@@ -179,11 +219,11 @@ div:where(.swal2-container) .swal2-radio {
 .dark #editor,
 .dark #minified {
   border-color: #3e4446;
-  border-left: 6px solid rgba(0, 83, 159, 0.65);
+  border-left: 6px solid #00539fa6;
   overflow: hidden;
 }
 .dark #terminaltext {
-  color: rgb(72 228 72) !important;
+  color: #48e448 !important;
   background: #202020;
 }
 .dark html {
@@ -196,7 +236,7 @@ div:where(.swal2-container) .swal2-radio {
   color: #e8e6e3;
 }
 .dark .monaco-diff-editor .diffOverview {
-  background: rgba(0, 0, 0, 0.64) !important;
+  background: #000000a3 !important;
 }
 .dark #diff-popup {
   background: #3938388c;
