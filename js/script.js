@@ -683,8 +683,14 @@ function createDiffTabs() {
 		const diffTab = document.createElement('li');
 		diffTab.id = `diff-tab-${index + 1}`;
 		diffTab.className = `diff-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity ${isActive ? 'active' : ''}`;
-		diffTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', [isActive ? "text-blue-600" : '', 'pr-2'])} ${getCurrentTabName(index)}`;
-		diffTab.title = `${getOrdinalSuffix(index)} Tab`;
+		diffTab.innerHTML = `${addFontAwesomeIcon('fa-brands fa-python', [isActive ? "text-blue-600" : '', 'pr-2'])} ${getCurrentTabName(index)}`;
+
+		if (fileTabsOut.children[index] && fileTabsOut.children[index].classList.contains('error')) {
+			diffTab.classList.add("error");
+			diffTab.title = `Minification failed at ${getOrdinalSuffix(index)} Tab`;
+		} else {
+			diffTab.title = `${getOrdinalSuffix(index)} Tab`;
+		}
 
 		diffTab.addEventListener('click', () => {
 			if (index === currentTabIndexDiff) return;
@@ -832,7 +838,7 @@ function switchTabDiff(index) {
 
 		const tabs = diffTabs.querySelectorAll('li');
 		tabs.forEach((tab, i) => {
-			const icon = tab.querySelector('.fa-file-code');
+			const icon = tab.querySelector('.fa-python');
 			if (i === index) {
 				updateDiffEditor();
 				animateIcon(`diff-tab-${currentTabIndexDiff + 1}`, "animate-pulse", 700);
@@ -1348,8 +1354,37 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 	}, 600);
 }
 
+async function filterFileNames() {
+	const fileTabsOutArray = [];
+	const tabFileNamesFiltered = [];
+	const minifiedData = [];
+	const minifierFilesContent = [];
+
+	Object.keys(sessionStorage).forEach(key => {
+		if (key.startsWith("#PyFile-out")) {
+			minifierFilesContent.push(key);
+		}
+	});
+
+	const numericalSort = (a, b) => parseInt(a.match(/\d+/)[0]) - parseInt(b.match(/\d+/)[0]);
+	minifierFilesContent.sort(numericalSort);
+
+	await decryptAndPush(minifierFilesContent, minifiedData, false);
+
+	if (fileTabsOut) {
+		Array.from(fileTabsOut.children).forEach(child => {
+			fileTabsOutArray.push(child.textContent.trim());
+		});
+	}
+
+	tabFileNamesFiltered.push(...fileTabsOutArray.filter((_, index) => minifiedData[index] > 0));
+
+	return tabFileNamesFiltered;
+}
+
 function compressOptions(isShareLink) {
 	const fragment = document.createDocumentFragment();
+
 	const div1 = document.createElement('div');
 	div1.className = 'justify-center flex flex-row my-5';
 	['ZIP', 'RAR', '7z'].forEach(labelText => {
@@ -1431,6 +1466,40 @@ function compressOptions(isShareLink) {
 	return tempDiv.innerHTML;
 }
 
+async function showMinifiedFilesPopup(isShareLink) {
+	const ul = document.createElement("ul");
+	ul.className = "max-h-60 overflow-y-auto overflow-x-hidden list-none p-4 text-center colorhandle [scrollbar-width:thin]";
+
+	const finalMinifiedTabs = await filterFileNames();
+
+	finalMinifiedTabs.forEach((file) => {
+		const li = document.createElement("li");
+		li.className = "flex items-center justify-start py-2 border-2 rounded-lg shadow hover:shadow-md transition-shadow transition-transform duration-200 transform hover:scale-105 file-item";
+
+		const tabFileName = file.replace(/\.py$/, '');
+		const displayName = tabFileName.length > 25 ? `${tabFileName.slice(0, 11)}...${tabFileName.slice(-12)}.py` : `${tabFileName}.py`;
+
+		li.appendChild(addFontAwesomeIcon('fa-brands fa-python', ["text-blue-600", "mr-2"], true));
+		li.appendChild(document.createTextNode(displayName));
+		ul.appendChild(li);
+	});
+
+	const {
+		isConfirmed
+	} = await Swal.fire({
+		title: `${minifiedTabs()} Minified Files`,
+		html: `<div class="popup-box py-4 border rounded-lg">${ul.outerHTML}</div>`,
+		confirmButtonText: "Back",
+		allowOutsideClick: false,
+	});
+
+	if (isConfirmed) {
+		disableDwSrCpBtn(false);
+		handleTabsOverlay(false);
+		compressPyFiles(isShareLink);
+	}
+}
+
 async function compressPyFiles(isShareLink = false) {
 	const sortedKeys = Object.keys(sessionStorage)
 		.filter(key => key.startsWith("#PyFile-out-"))
@@ -1463,7 +1532,8 @@ async function compressPyFiles(isShareLink = false) {
 
 	const {
 		value,
-		dismiss
+		isDismissed,
+		isDenied
 	} = await Swal.fire({
 		html: compressOptions(isShareLink),
 		inputValidator: (value) => {
@@ -1477,6 +1547,9 @@ async function compressPyFiles(isShareLink = false) {
 		showCancelButton: true,
 		cancelButtonText: 'Cancel',
 		cancelButtonColor: "#d33",
+		showDenyButton: true,
+		denyButtonText: 'View Files',
+		denyButtonColor: "#22C55E",
 
 		preConfirm: () => {
 			const enteredFileName = document.getElementById('file-name-input').value.trim().slice(0, 256);
@@ -1497,9 +1570,12 @@ async function compressPyFiles(isShareLink = false) {
 		}
 	});
 
-	if (dismiss === Swal.DismissReason.cancel) {
+	if (isDismissed) {
 		disableDwSrCpBtn(false);
 		handleTabsOverlay(false);
+		return;
+	} else if (isDenied) {
+		await showMinifiedFilesPopup(isShareLink);
 		return;
 	}
 
@@ -1635,10 +1711,10 @@ function initializeMinifier() {
 
 		if (minifiedEditor.getModel().getValue().trim() === "" && sourceEditor.getModel().getValue() !== "") {
 			fileTabsOut.children[currentTabIndexOut].classList.add("error");
-			document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = "Minification failed!\nRe-check the Original code";
+			fileTabsOut.children[currentTabIndexOut].title = `Minification failed at ${getOrdinalSuffix(currentTabIndexOut)} Tab`;
 		} else {
 			fileTabsOut.children[currentTabIndexOut].classList.remove("error");
-			document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = '';
+			fileTabsOut.children[currentTabIndexOut].title = `${getOrdinalSuffix(currentTabIndexOut)} Tab`;
 		}
 	}
 
@@ -1973,7 +2049,7 @@ function fileUpload() {
 
 	function loadFile() {
 		disableTyping();
-		var fileLink = fileLinkInput.value.trim();
+		const fileLink = fileLinkInput.value.trim();
 		if (fileLinkInput.value.trim() === '' || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
 			handleErrorMessage();
 		} else if (!(/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(fileLink))) {
@@ -2109,7 +2185,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function escapeHtml(text) {
-	var element = document.createElement('div');
+	const element = document.createElement('div');
 	element.innerText = text;
 	return element.innerHTML;
 }
@@ -2470,7 +2546,7 @@ function editTabName() {
 	});
 
 	activeTab.innerHTML = '';
-	activeTab.appendChild(addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'], true));
+	activeTab.appendChild(addFontAwesomeIcon('fa-brands fa-python', ['text-blue-600', 'pr-2'], true));
 	activeTab.appendChild(tabNameInput);
 	activeTab.appendChild(saveIcon);
 
@@ -2485,8 +2561,7 @@ function updateTabName(tabQueryInput, fileTabs, currentTabIndex) {
 		return;
 	}
 
-	const newName = tabNameInput.value.trim();
-	let baseName = newName.replace(/\.py$/, '').slice(0, 200);
+	const baseName = tabNameInput.value.trim().replace(/\.py$/, '').slice(0, 200);
 
 	if (baseName.length > 0 && !/^\s+$/.test(baseName)) {
 		const sanitizedName = baseName
@@ -2502,8 +2577,7 @@ function updateTabName(tabQueryInput, fileTabs, currentTabIndex) {
 			currentTab.removeChild(existingIcon);
 		}
 
-		const iconElement = addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'], true);
-		currentTab.insertBefore(iconElement, currentTab.firstChild);
+		currentTab.insertBefore(addFontAwesomeIcon('fa-brands fa-python', ['text-blue-600', 'pr-2'], true), currentTab.firstChild);
 
 		updateNametoTab(finalName);
 		tabNameInput.value = finalName;
@@ -2519,7 +2593,7 @@ function updateNametoTab(fileName, isOut = false) {
 	const tabToUpdate = fileTabsToUpdate.children[activeTabIndex];
 
 	if (tabToUpdate) {
-		tabToUpdate.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'])}${fileName.trim()}`;
+		tabToUpdate.innerHTML = `${addFontAwesomeIcon('fa-brands fa-python', ['text-blue-600', 'pr-2'])}${fileName.trim()}`;
 	}
 }
 
@@ -2544,9 +2618,9 @@ function addEmptyTab() {
 	const newSourceId = `#PyFile-${newFileIndex + 1}`;
 	const newTab = document.createElement('li');
 	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity';
-	newTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'])}File ${newFileIndex + 1}.py`;
+	newTab.innerHTML = `${addFontAwesomeIcon('fa-brands fa-python', ['text-blue-600', 'pr-2'])}File ${newFileIndex + 1}.py`;
 	newTab.id = `file-${newFileIndex + 1}`;
-	newTab.title = `${getOrdinalSuffix(currentTabIndex + 1)} Tab`;
+	newTab.title = `${getOrdinalSuffix(newFileIndex)} Tab`;
 
 	newTab.addEventListener("click", () => {
 		if (!isTabNameEdit) {
@@ -2594,7 +2668,7 @@ function updateTabStyles() {
 	const tabs = document.querySelectorAll('.file-tab');
 	if (currentTabIndex >= 0 && currentTabIndex < tabs.length) {
 		tabs.forEach((tab, index) => {
-			const icon = tab.querySelector('.fa-file-code');
+			const icon = tab.querySelector('.fa-python');
 			const isActive = index === currentTabIndex;
 
 			if (isActive) {
@@ -2727,7 +2801,12 @@ function deleteAllTabs() {
 
 	const currentTab = fileTabsOut.children[currentTabIndexOut];
 	currentTab.classList.remove("error");
-	document.getElementById(`file-out-${currentTabIndexOut + 1}`).title = '';
+
+	if (fileTabsOut.children[currentTabIndexOut] && fileTabsOut.children[currentTabIndexOut].classList.contains('error')) {
+		fileTabsOut.children[currentTabIndexOut].title = `Minification failed at ${getOrdinalSuffix(currentTabIndexOut)} Tab`;
+	} else {
+		fileTabsOut.children[currentTabIndexOut].title = `${getOrdinalSuffix(currentTabIndexOut)} Tab`;
+	}
 
 	if (numTabs > 1) {
 		for (var i = numTabs - 1; i > 0; i--) {
@@ -2763,12 +2842,14 @@ function switchTab(index, fromSwitchTabOut = false) {
 	}
 
 	disableTyping();
-	var previousIndex = currentTabIndex;
+	const previousIndex = currentTabIndex;
 	currentTabIndex = Math.max(0, Math.min(index, sources.length - 1));
+
 	if (!isTabNameEdit) {
 		animateIcon(`file-${currentTabIndex + 1}`, "animate-pulse", 700);
 		updateTabStyles();
 	}
+
 	updateEditorContent();
 
 	if (previousIndex !== currentTabIndex) {
@@ -2862,7 +2943,7 @@ function editTabNameOut() {
 	});
 
 	activeTab.innerHTML = '';
-	activeTab.appendChild(addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'], true));
+	activeTab.appendChild(addFontAwesomeIcon('fa-brands fa-python', ['text-blue-600', 'pr-2'], true));
 	activeTab.appendChild(tabNameInput);
 	activeTab.appendChild(saveIcon);
 
@@ -2879,8 +2960,9 @@ function addTabOut() {
 
 	const newTab = document.createElement('li');
 	newTab.className = 'file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity';
-	newTab.innerHTML = `${addFontAwesomeIcon('fa-solid fa-file-code', ['text-blue-600', 'pr-2'])}File ${newFileIndexOut + 1}.py`;
+	newTab.innerHTML = `${addFontAwesomeIcon('fa-brands fa-python', ['text-blue-600', 'pr-2'])}File ${newFileIndexOut + 1}.py`;
 	newTab.id = `file-out-${newFileIndexOut + 1}`;
+	newTab.title = `${getOrdinalSuffix(newFileIndexOut)} Tab`;
 
 	newTab.addEventListener("click", () => {
 		if (!isTabNameEditOut) {
@@ -2908,7 +2990,7 @@ function updateTabStylesOut() {
 
 	if (currentTabIndexOut >= 0 && currentTabIndexOut < tabs.length) {
 		tabs.forEach((tab, index) => {
-			const icon = tab.querySelector('.fa-file-code');
+			const icon = tab.querySelector('.fa-python');
 			const isActive = index === currentTabIndexOut;
 
 			if (isActive) {
@@ -2961,13 +3043,16 @@ function updateTabStylesOut() {
 
 function switchTabOut(index) {
 	switchTab(index, true);
-	var previousIndexOut = currentTabIndexOut;
+	const previousIndexOut = currentTabIndexOut;
 	currentTabIndexOut = Math.max(0, Math.min(index, sourcesOut.length - 1));
+
 	if (!isTabNameEditOut) {
 		animateIcon(`file-out-${currentTabIndexOut + 1}`, "animate-pulse", 700);
 		updateTabStylesOut();
 	}
+
 	updateEditorContent(true);
+
 	if (previousIndexOut !== currentTabIndexOut) {
 		if (fileTabsOut.children[previousIndexOut].querySelector('.tab-name-input-out')) {
 			updateTabName('.tab-name-input-out', fileTabsOut, currentTabIndexOut, true);
