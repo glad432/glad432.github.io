@@ -44,18 +44,25 @@
       gtag('config', 'G-HDTEFZ9987');
     </script>
     <script>
-      document.addEventListener("DOMContentLoaded", function() {
-        let e = document.getElementById("darkModeToggle"),
-          t = localStorage.getItem("darkMode") !== "true";
-        e.addEventListener("change", function() {
-          let t = !document.documentElement.classList.contains("dark");
-          document.documentElement.classList.toggle("dark", t);
-          document.documentElement.classList.toggle("light", !t);
-          localStorage.setItem("darkMode", t.toString());
+      (() => {
+        const isDarkMode = localStorage.getItem("darkMode") === "true";
+        document.documentElement.classList.toggle("dark", isDarkMode);
+        document.documentElement.classList.toggle("light", !isDarkMode);
+      })();
+      document.addEventListener("DOMContentLoaded", () => {
+        const toggleElement = document.getElementById("darkModeToggle");
+        const isDarkMode = localStorage.getItem("darkMode") === "true";
+        document.documentElement.classList.toggle("dark", isDarkMode);
+        document.documentElement.classList.toggle("light", !isDarkMode);
+        toggleElement.checked = isDarkMode;
+        const updateTheme = (isDark) => {
+          document.documentElement.classList.toggle("dark", isDark);
+          document.documentElement.classList.toggle("light", !isDark);
+          localStorage.setItem("darkMode", isDark.toString());
+        };
+        toggleElement.addEventListener("change", () => {
+          updateTheme(toggleElement.checked);
         });
-        document.documentElement.classList.toggle("dark", !t);
-        document.documentElement.classList.toggle("light", t);
-        e.checked = !t;
       });
     </script>
   </head>
@@ -139,7 +146,7 @@
         </div>
       </div>
       <input class="hidden" type="file" id="fileInput" accept=".py" multiple />
-      <div id="dropArea" class="cursor-pointer rounded-xl border-dashed border-4 border-gray-300 colorhandle text-center bg-white p-4 md:p-8 m-5">Drag and drop <span class="font-bold pr-1">.py files</span>here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
+      <div id="dropArea" class="colorhandle cursor-pointer rounded-xl border-dashed border-4 border-gray-300 text-center bg-white p-4 md:p-8 m-5 transition-transform duration-300 ease-in-out">Drag and drop <span class="font-bold pr-1">.py files</span>here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
         </span>
       </div>
       <div class="text-left">
@@ -157,7 +164,11 @@
           <i class="fa-solid fa-circle-plus fa-xl text-gray-700"></i>
         </button>
       </div>
-      <div id="editor" class="w-auto h-[300px] mt-0.5 rounded overflow-hidden border border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]">
+      <div id="loading-editor" class="flex items-center justify-center w-auto h-[300px]">
+        <div class="text-xl font-bold text-gray-700">Loading <i class="fa-solid fa-spinner fa-spin-pulse fa-sm"></i>
+        </div>
+      </div>
+      <div id="editor" class="hidden w-auto h-[300px] mt-0.5 rounded overflow-hidden border border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]">
         <div id="type-overlay" class="md:md:cursor-default md:absolute md:h-[300px] md:z-10 md:left-[10vh] md:right-[10vh] md:bg-transparent"></div>
       </div>
       <button id="clearAll" class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
@@ -193,7 +204,7 @@
           </div>
           <div id="help-msg" class="help-container text-left" oncontextmenu="return false"></div>
           <span id="scantocopy"></span>
-          <div id="qrCode" oncontextmenu="return false;"></div>
+          <div id="qrCode" class="hidden" oncontextmenu="return false;"></div>
           <div class="flex flex-col">
             <button id="downloadLinkurl" download class="hidden self-center w-fit px-4 py-2 mt-2 font-bold bg-green-500 rounded-lg text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100"></button>
             <button id="closePopup" class="hidden px-4 py-2 self-center mt-5 font-bold bg-red-500 rounded-full w-fit text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Close</button>
@@ -213,7 +224,11 @@
           </li>
         </ul>
       </div>
-      <div id="minified" class="w-auto h-[300px] mt-0.5 rounded overflow-hidden border border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]"></div>
+      <div id="loading-minified" class="flex items-center justify-center w-auto h-[300px]">
+        <div class="text-xl font-bold text-gray-700">Loading <i class="fa-solid fa-spinner fa-spin-pulse fa-sm"></i>
+        </div>
+      </div>
+      <div id="minified" class="hidden w-auto h-[300px] mt-0.5 rounded overflow-hidden border border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]"></div>
       <div id="btns-overlay" class="hidden cursor-default absolute h-28 z-10 left-[1vh] right-[1vh] bg-transparent"></div>
       <div class="flex flex-col mb-2 md:mb-4">
         <div class="flex flex-wrap justify-center lg:justify-start gap-0.5 mt-3">
@@ -301,19 +316,19 @@
           <p class="font-extrabold font-['Source_Code_Pro'] text-center tracking-wide uppercase colorhandle">Share it on..</p>
         </div>
         <div class="flex flex-wrap justify-center">
-          <a href="whatsapp://send?text=Check%20out%20this%20python%20minifier!!%20https://glad432.github.io/" target="_blank" rel="noopener noreferrer" class="text-green-500 mx-2 my-2" title="Share on WhatsApp">
+          <a href="whatsapp://send?text=Check%20out%20this%20python%20minifier!!%20https://glad432.github.io/" target="_blank" rel="noopener noreferrer" class="text-green-500 mx-2 my-2" title="Share on WhatsApp" aria-label="Share on WhatsApp">
             <i class="fab fa-whatsapp fa-2x transition-transform transform hover:-translate-y-2"></i>
           </a>
-          <a href="https://telegram.me/share/url?url=https://glad432.github.io/&text=Check%20out%20this%20python%20minifier!!" target="_blank" rel="noopener noreferrer" class="text-blue-500 mx-2 my-2" title="Share on Telegram">
+          <a href="https://telegram.me/share/url?url=https://glad432.github.io/&text=Check%20out%20this%20python%20minifier!!" target="_blank" rel="noopener noreferrer" class="text-blue-500 mx-2 my-2" title="Share on Telegram" aria-label="Share on Telegram">
             <i class="fab fa-telegram-plane fa-2x transition-transform transform hover:-translate-y-2"></i>
           </a>
-          <a href="https://www.facebook.com/sharer/sharer.php?u=https://glad432.github.io/" target="_blank" rel="noopener noreferrer" class="text-blue-700 mx-2 my-2" title="Share on Facebook">
+          <a href="https://www.facebook.com/sharer/sharer.php?u=https://glad432.github.io/" target="_blank" rel="noopener noreferrer" class="text-blue-700 mx-2 my-2" title="Share on Facebook" aria-label="Share on Facebook">
             <i class="fab fa-facebook fa-2x transition-transform transform hover:-translate-y-2"></i>
           </a>
-          <a href="https://x.com/intent/post?url=https://glad432.github.io/&text=Check%20out%20this%20python%20minifier!!" target="_blank" rel="noopener noreferrer" class="text-slate-600 mx-2 my-2" title="Share on X">
+          <a href="https://x.com/intent/post?url=https://glad432.github.io/&text=Check%20out%20this%20python%20minifier!!" target="_blank" rel="noopener noreferrer" class="text-slate-600 mx-2 my-2" title="Share on X" aria-label="Share on X">
             <i class="fab fa-x-twitter fa-2x transition-transform transform hover:-translate-y-2"></i>
           </a>
-          <a href="https://www.reddit.com/submit?url=https://glad432.github.io/&title=Check%20out%20this%20python%20minifier!!" target="_blank" rel="noopener noreferrer" class="text-red-500 mx-2 my-2" title="Share on Reddit">
+          <a href="https://www.reddit.com/submit?url=https://glad432.github.io/&title=Check%20out%20this%20python%20minifier!!" target="_blank" rel="noopener noreferrer" class="text-red-500 mx-2 my-2" title="Share on Reddit" aria-label="Share on Reddit">
             <i class="fab fa-reddit fa-2x transition-transform transform hover:-translate-y-2"></i>
           </a>
         </div>
@@ -326,14 +341,14 @@
     <article id="article" class="font-['Source_Code_Pro'] colorhandle select-text mx-4 md:mx-auto md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-4 md:p-8 mt-8 mb-8 transition-all duration-100 ease-in-out"></article>
     <footer class="bg-black text-xs md:text-sm text-center text-white">
       <div class="pt-9">
-        <div class="mb-9 flex justify-center">
-          <a href="https://gladw-in.github.io/" target="_blank" rel="noopener noreferrer" class="mr-9 text-neutral-200 hover:text-blue-700">
+        <div class="mb-9 flex justify-center" role="navigation" aria-label="Social Media Links">
+          <a href="https://gladw-in.github.io/" target="_blank" rel="noopener noreferrer" class="mr-9 text-neutral-200 hover:text-blue-700" aria-label="Portfolio">
             <i class="fa-solid fa-globe fa-xl"></i>
           </a>
-          <a href="https://www.linkedin.com/in/glad432/" target="_blank" rel="noopener noreferrer" class="mr-9 text-neutral-200 hover:text-blue-700">
+          <a href="https://www.linkedin.com/in/glad432/" target="_blank" rel="noopener noreferrer" class="mr-9 text-neutral-200 hover:text-blue-700" aria-label="LinkedIn">
             <i class="fa-brands fa-linkedin fa-xl"></i>
           </a>
-          <a href="https://github.com/gladw-in" target="_blank" rel="noopener noreferrer" class="text-neutral-200 hover:text-blue-700">
+          <a href="https://github.com/gladw-in" target="_blank" rel="noopener noreferrer" class="text-neutral-200 hover:text-blue-700" aria-label="GitHub">
             <i class="fa-brands fa-github fa-xl"></i>
           </a>
         </div>
@@ -343,7 +358,6 @@
       </div>
     </footer>
     <script type="module" src="js/script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.51.0/min/vs/loader.js"></script>
   </body>
 </html>

@@ -1,7 +1,4 @@
 import CryptoJS from 'crypto-js';
-import Swal from 'sweetalert2/dist/sweetalert2.js'
-import QRCode from 'qrcode-generator';
-import JSZip from 'jszip';
 import Typewriter from 'typewriter-effect/dist/core';
 import '../css/style.css'
 import 'sweetalert2/src/sweetalert2.scss'
@@ -21,6 +18,10 @@ const dropArea = document.getElementById('dropArea');
 const fileInput = document.getElementById('fileInput');
 const minifiedSize = document.getElementById('minified-size');
 const fileLinkLoad = document.getElementById("fileLink-load");
+const sourceEditorDiv = document.getElementById("editor");
+const minifiedEditorDiv = document.getElementById("minified");
+const loadingEditor = document.getElementById("loading-editor");
+const loadingMinified = document.getElementById("loading-minified");
 const qrCode = document.getElementById("qrCode");
 const copyMsg = document.getElementById('copy-msg');
 const fileShareLink = document.getElementById("fileLink");
@@ -334,7 +335,7 @@ require.config({
 });
 
 require(['vs/editor/editor.main'], () => {
-	sourceEditor = monaco.editor.create(document.getElementById('editor'), {
+	sourceEditor = monaco.editor.create(sourceEditorDiv, {
 		language: 'python',
 		minimap: {
 			enabled: false
@@ -358,7 +359,7 @@ require(['vs/editor/editor.main'], () => {
 		automaticLayout: true
 	});
 
-	minifiedEditor = monaco.editor.create(document.getElementById('minified'), {
+	minifiedEditor = monaco.editor.create(minifiedEditorDiv, {
 		language: 'python',
 		minimap: {
 			enabled: false
@@ -381,6 +382,14 @@ require(['vs/editor/editor.main'], () => {
 		readOnly: true,
 		automaticLayout: true
 	});
+
+	setTimeout(() => {
+		loadingMinified.classList.add("hidden");
+		loadingEditor.classList.add("hidden");
+		sourceEditorDiv.classList.remove("hidden");
+		minifiedEditorDiv.classList.remove("hidden");
+
+	}, 300)
 
 	sourceEditor.onDidChangeModelContent(() => {
 		saveEditorContent();
@@ -427,6 +436,11 @@ require(['vs/editor/editor.main'], () => {
 
 function disableTyping() {
 	clearTimeout(typingTimeout);
+
+	if (typingInProgress) {
+		sourceEditor.getModel().setValue('');
+	}
+
 	typingInProgress = false;
 	typeOverlay.classList.add('!hidden');
 }
@@ -574,6 +588,25 @@ async function truncateCode(content) {
 		});
 	}
 	return content;
+}
+
+async function showSweetAlert(options) {
+	const Swal = (await import('sweetalert2/dist/sweetalert2.esm.js')).default;
+
+	return Swal.fire({
+		...options,
+		didOpen: () => {
+			if (options.didOpen) {
+				options.didOpen(Swal);
+			}
+		},
+		preConfirm: async () => {
+			if (options.preConfirm) {
+				return await options.preConfirm(Swal);
+			}
+			return undefined;
+		}
+	});
 }
 
 async function codeCompile() {
@@ -734,7 +767,7 @@ function updateDiffEditor() {
 
 function showDiffPopup() {
 	if (currentTabIndex !== currentTabIndexOut) {
-		Swal.fire({
+		showSweetAlert({
 			text: "Diff Editor is not available, reload the page and try again!",
 			icon: "warning",
 			confirmButtonColor: "#6E7881",
@@ -924,11 +957,7 @@ function setupFileInput() {
 	fileInput.addEventListener('change', (event) => {
 		disableTyping();
 		const pyFiles = [...event.target.files].filter(file => file.name.trim().toLowerCase().endsWith('.py'));
-		if (pyFiles.length !== event.target.files.length) {
-			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Invalid file format. Please select only .py file(s).`);
-		} else {
-			handleFiles(pyFiles);
-		}
+		handleFiles(pyFiles);
 		fileInput.value = '';
 	});
 
@@ -940,6 +969,16 @@ function setupFileInput() {
 		event.preventDefault();
 	});
 
+	dropArea.addEventListener('dragover', (event) => {
+		event.preventDefault();
+		dropArea.classList.add('!bg-blue-100/[.2]', '!border-blue-400/[.2]', 'scale-x-105', 'scale-y-110');
+	});
+
+	dropArea.addEventListener('dragleave', (event) => {
+		event.preventDefault();
+		dropArea.classList.remove('!bg-blue-100/[.2]', '!border-blue-400/[.2]', 'scale-x-105', 'scale-y-110');
+	});
+
 	document.addEventListener('drop', (event) => {
 		event.preventDefault();
 		dragpy(event);
@@ -947,7 +986,7 @@ function setupFileInput() {
 
 	dropArea.addEventListener('drop', (event) => {
 		event.preventDefault();
-		dragpy(event);
+		dropArea.classList.remove('!bg-blue-100/[.2]', '!border-blue-400/[.2]', 'scale-x-105', 'scale-y-110');
 	});
 
 	function handleFiles(files) {
@@ -1038,7 +1077,7 @@ dwButton.addEventListener('click', () => {
 			return;
 		}
 
-		Swal.fire({
+		showSweetAlert({
 			title: "Download",
 			showDenyButton: true,
 			showCancelButton: true,
@@ -1047,6 +1086,10 @@ dwButton.addEventListener('click', () => {
 			denyButtonText: `All minified files`,
 			cancelButtonText: "Close",
 			denyButtonColor: '#22C55E',
+			didOpen: (Swal) => {
+				const confirmButton = Swal.getConfirmButton();
+				confirmButton.title = tabFileName.trim();
+			},
 			preConfirm: () => {
 				downloadFile(content, "text/x-python", getCurrentTabName());
 				return false;
@@ -1102,6 +1145,9 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 			fileShareLink.classList.add('hidden');
 			copyMsg.textContent = '';
 			helpMsg.innerHTML = '';
+
+			displayQRCode(fileLink);
+
 			setTimeout(() => {
 				copyMsg.innerHTML = `Tap to copy ${addFontAwesomeIcon('fa-solid fa-copy')}`;
 				linkNewtab.href = fileLink;
@@ -1116,9 +1162,9 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 				closePopupOverlay.classList.remove('hidden');
 				qrCode.title = "Double Click to zoom-in and zoom-out";
 				qrCode.classList.add('!bg-white', 'rounded-lg', 'border-2', 'border-dashed', 'border-black', 'w-36', 'ml-12', 'p-3', 'mr-12', 'mt-2');
+				qrCode.classList.remove('hidden');
 				fileShareLink.classList.remove('hidden');
 				fileLinkLoad.innerHTML = '';
-				displayQRCode(fileLink);
 				qrCode.classList.remove('inline');
 				fileShareLink.href = fileLink;
 				fileShareLink.value = fileLink;
@@ -1136,7 +1182,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 			throw new Error('Failed to create share link');
 		}
 	}).catch(error => {
-		Swal.fire({
+		showSweetAlert({
 			html: `${addFontAwesomeIcon('fa-solid fa-circle-exclamation')} ${error.message}, try again later`,
 			icon: "error",
 			confirmButtonColor: "#179fff"
@@ -1165,7 +1211,7 @@ shareButton.addEventListener('click', () => {
 			return;
 		}
 
-		Swal.fire({
+		showSweetAlert({
 			title: "Share",
 			showDenyButton: true,
 			showCancelButton: true,
@@ -1174,6 +1220,10 @@ shareButton.addEventListener('click', () => {
 			denyButtonText: `All minified files`,
 			cancelButtonText: "Close",
 			denyButtonColor: '#22C55E',
+			didOpen: (Swal) => {
+				const confirmButton = Swal.getConfirmButton();
+				confirmButton.title = tabFileName.trim();
+			},
 			preConfirm: () => {
 				shareLink(content, getCurrentTabName(), false, 'python');
 			}
@@ -1198,7 +1248,11 @@ function createFormData(content, fileName) {
 	return formData;
 }
 
-function displayQRCode(fileLink) {
+async function displayQRCode(fileLink) {
+	const {
+		default: QRCode
+	} = await import('qrcode-generator');
+
 	const qr = QRCode(10, 'M');
 	qr.addData(fileLink.trim());
 	qr.make();
@@ -1220,6 +1274,7 @@ function closePopup() {
 		popup.classList.add("hidden");
 		document.body.classList.remove("overflow-y-hidden");
 		document.body.classList.add("overflow-y-scroll");
+		qrCode.classList.add('hidden');
 		qrCode.innerHTML = '';
 		qrCode.title = '';
 		fileLinkLoad.innerHTML = '';
@@ -1251,7 +1306,11 @@ async function copyfilelink() {
 fileShareLink.addEventListener('click', copyfilelink);
 
 async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, fileFormat, addReadme, fastCompress, generateLink) {
-	let comPress = new JSZip();
+	const {
+		default: JSZip
+	} = await import('jszip');
+
+	const zipArchive = new JSZip();
 	let nonEmptyFilesCount = 0;
 	let fileOccurrences = {};
 	let fileNamesList = 'The list of the python files minified:\n\n';
@@ -1298,7 +1357,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 			const decryptedCode = CryptoJS.AES.decrypt(sessionStorage.getItem(fileKey), newKey).toString(CryptoJS.enc.Utf8);
 
 			if (decryptedCode.trim() !== '') {
-				comPress.file(fileName, decryptedCode);
+				zipArchive.file(fileName, decryptedCode);
 				addReadme && (fileNamesList += `${(nonEmptyFilesCount + 1).toString().padStart(2, '0')}. ${fileName}\n`);
 				nonEmptyFilesCount++;
 				let totalCompressProgress = ((nonEmptyFilesCount / maxLength) * 100);
@@ -1313,7 +1372,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 
 	if (nonEmptyFilesCount > 0 && addReadme) {
 		fileNamesList += `\n${fileFormatFinal} File Created on: ${new Date().toLocaleString()}\nhttps://glad432.github.io`;
-		comPress.file('readme.txt', fileNamesList);
+		zipArchive.file('readme.txt', fileNamesList);
 	}
 
 	compressProgressBar.value = 100;
@@ -1322,7 +1381,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 		compressProgress.classList.add('hidden');
 	}, 500);
 
-	const compressedBlob = await comPress.generateAsync({
+	const compressedBlob = await zipArchive.generateAsync({
 		type: 'blob',
 		compression: 'DEFLATE'
 	});
@@ -1330,12 +1389,12 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 	setTimeout(() => {
 		if (!generateLink) {
 			if (compressedBlob) {
-				Swal.fire({
-					title: `Download ${fileFormatFinal}`,
-					html: '<button id="download-btn" class="swal2-confirm swal2-styled bg-red-500 rounded text-white hover:bg-red-600">Download</button><button id="close-btn" class="swal2-cancel swal2-styled">Close</button>',
+				showSweetAlert({
+					title: `Download`,
+					html: `<p class="pb-3 font-bold text-neutral-500 hover:underline" title="${fileName}.${fileFormat}">${fileName.length > 25 ? `${fileName.slice(0, 11)}...${fileName.slice(-12)}.${fileFormat}` : `${fileName}.${fileFormat}`}</p><button id="download-btn" class="swal2-confirm swal2-styled bg-red-500 rounded text-white hover:bg-red-600">Download</button><button id="close-btn" class="swal2-cancel swal2-styled">Close</button>`,
 					showConfirmButton: false,
 					allowOutsideClick: false,
-					didOpen: () => {
+					didOpen: (Swal) => {
 						Swal.getPopup().querySelector('#download-btn').addEventListener('click', () => {
 							downloadFile(compressedBlob, getCompressMimetype(fileFormat), `${fileName.trim()}.${fileFormat.trim().toLowerCase()}`);
 						});
@@ -1479,6 +1538,7 @@ async function showMinifiedFilesPopup(isShareLink) {
 		const tabFileName = file.replace(/\.py$/, '');
 		const displayName = tabFileName.length > 25 ? `${tabFileName.slice(0, 11)}...${tabFileName.slice(-12)}.py` : `${tabFileName}.py`;
 
+		li.title = tabFileName.trim();
 		li.appendChild(addFontAwesomeIcon('fa-brands fa-python', ["text-blue-600", "mr-2"], true));
 		li.appendChild(document.createTextNode(displayName));
 		ul.appendChild(li);
@@ -1486,7 +1546,7 @@ async function showMinifiedFilesPopup(isShareLink) {
 
 	const {
 		isConfirmed
-	} = await Swal.fire({
+	} = await showSweetAlert({
 		title: `${minifiedTabs()} Minified Files`,
 		html: `<div class="popup-box py-4 border rounded-lg">${ul.outerHTML}</div>`,
 		confirmButtonText: "Back",
@@ -1518,15 +1578,6 @@ async function compressPyFiles(isShareLink = false) {
 	const relevantTabs = tabContents.filter(tab => tab.content !== '');
 	const selectedIndices = relevantTabs.map(tab => tab.index);
 
-	if (selectedIndices.length < 2 || maxLength < 2) {
-		Swal.fire({
-			text: "Switch to a minified tab and have at least 2 minified files for compression.",
-			icon: "info",
-			confirmButtonColor: "#179fff"
-		});
-		return;
-	}
-
 	handleTabsOverlay(true);
 	shareButton.disabled = true;
 
@@ -1534,7 +1585,7 @@ async function compressPyFiles(isShareLink = false) {
 		value,
 		isDismissed,
 		isDenied
-	} = await Swal.fire({
+	} = await showSweetAlert({
 		html: compressOptions(isShareLink),
 		inputValidator: (value) => {
 			if (!value.fileFormat) {
@@ -1788,7 +1839,7 @@ document.getElementById('clearAll').addEventListener('click', () => {
 	} else if (sources.length > 1 && sourcesOut.length > 1) {
 		animateIcon("fade-5", "fa-fade", 500);
 		setTimeout(() => {
-			Swal.fire({
+			showSweetAlert({
 				title: "Are you sure?",
 				text: "You won't be able to revert this!",
 				icon: "warning",
@@ -1803,7 +1854,7 @@ document.getElementById('clearAll').addEventListener('click', () => {
 			}).then((result) => {
 				if (result.isConfirmed) {
 					clearSource();
-					Swal.fire({
+					showSweetAlert({
 						title: "Cleared!",
 						text: "All the tabs are Cleared.",
 						icon: "success",
@@ -2190,7 +2241,11 @@ function escapeHtml(text) {
 	return element.innerHTML;
 }
 
-function graphConfig(originalData, minifiedData, tabFileNames) {
+async function graphConfig(originalData, minifiedData, tabFileNames) {
+	const {
+		default: ApexCharts
+	} = await import('apexcharts/dist/apexcharts.esm.js');
+
 	return new ApexCharts(document.getElementById("line-graph"), {
 		chart: {
 			height: "250vh",
@@ -2382,7 +2437,7 @@ async function updateGraph() {
 				}
 			}, true);
 		} else {
-			graph = graphConfig(originalData, minifiedData, tabFileNames);
+			graph = await graphConfig(originalData, minifiedData, tabFileNames);
 			graph.render();
 			setGraphTheme();
 		}
@@ -2601,7 +2656,7 @@ function addEmptyTab() {
 	disableTyping(true);
 
 	if (sources.length >= getMaxTabs() && sourcesOut.length >= getMaxTabs()) {
-		Swal.fire({
+		showSweetAlert({
 			icon: "error",
 			html: `${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} You can't add more than ${getMaxTabs()} tabs.`,
 			confirmButtonColor: "#179fff"
@@ -2753,9 +2808,9 @@ function deleteFile(index, isOut = false) {
 function confirmDeleteFile(index) {
 	const tabFileName = getCurrentTabName().replace(/\.py$/, "");
 	const fileNameDisplay = tabFileName.length > 15 ? `${tabFileName.slice(0,7)}...${tabFileName.slice(-3)}` : tabFileName;
-	const confirmationMessage = `Are you sure you want to delete <span class="font-bold text-neutral-500 hover:underline">${fileNameDisplay}</span> tab?`;
+	const confirmationMessage = `Are you sure you want to delete <span class="font-bold text-neutral-500 hover:underline" title="${tabFileName.trim()}">${fileNameDisplay}</span> tab?`;
 
-	Swal.fire({
+	showSweetAlert({
 		html: confirmationMessage,
 		icon: "question",
 		allowOutsideClick: false,
