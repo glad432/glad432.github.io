@@ -45,20 +45,21 @@
     </script>
     <script>
       (() => {
-        const isDarkMode = localStorage.getItem("darkMode") === "true";
+        const isDarkMode = JSON.parse(localStorage.getItem("darkMode")) ?? false;
         document.documentElement.classList.toggle("dark", isDarkMode);
         document.documentElement.classList.toggle("light", !isDarkMode);
       })();
       document.addEventListener("DOMContentLoaded", () => {
         const toggleElement = document.getElementById("darkModeToggle");
-        const isDarkMode = localStorage.getItem("darkMode") === "true";
+        if (!toggleElement) return;
+        const isDarkMode = JSON.parse(localStorage.getItem("darkMode")) ?? false;
         document.documentElement.classList.toggle("dark", isDarkMode);
         document.documentElement.classList.toggle("light", !isDarkMode);
         toggleElement.checked = isDarkMode;
         const updateTheme = (isDark) => {
           document.documentElement.classList.toggle("dark", isDark);
           document.documentElement.classList.toggle("light", !isDark);
-          localStorage.setItem("darkMode", isDark.toString());
+          localStorage.setItem("darkMode", JSON.stringify(isDark));
         };
         toggleElement.addEventListener("change", () => {
           updateTheme(toggleElement.checked);
@@ -146,7 +147,7 @@
         </div>
       </div>
       <input class="hidden" type="file" id="fileInput" accept=".py" multiple />
-      <div id="dropArea" class="colorhandle cursor-pointer rounded-xl border-dashed border-4 border-gray-300 text-center bg-white p-4 md:p-8 m-5 transition-transform duration-300 ease-in-out">Drag and drop <span class="font-bold pr-1">.py files</span>here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
+      <div id="dropArea" class="colorhandle cursor-pointer rounded-xl border-dashed border-4 border-gray-300 text-center bg-white p-4 md:p-8 m-5 transition-transform duration-300 ease-in-out hover:scale-x-[.99]">Drag and drop <span class="font-bold pr-1">.py files</span>here or click to <span class="text-blue-600 font-bold hover:underline">browse <i class="fa-solid fa-file-arrow-up"></i>
         </span>
       </div>
       <div class="text-left">
@@ -165,7 +166,7 @@
         </button>
       </div>
       <div id="loading-editor" class="flex items-center justify-center w-auto h-[300px]">
-        <div class="text-xl font-bold text-gray-700">Loading <i class="fa-solid fa-spinner fa-spin-pulse fa-sm"></i>
+        <div class="text-sm sm:text-xs md:text-xs lg:text-sm font-bold text-gray-700">Loading <i class="fa-solid fa-spinner fa-spin-pulse fa-sm"></i>
         </div>
       </div>
       <div id="editor" class="hidden w-auto h-[300px] mt-0.5 rounded overflow-hidden border border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]">
@@ -174,7 +175,7 @@
       <button id="clearAll" class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100">Clear <i id="fade-5" class="fa-solid fa-trash fa-xs"></i>
       </button>
       <div class="text-left w-[500px] my-10 p-4 rounded border-t-[5px] border-solid border-blue-500 blue_big_box md:mx-auto md:p-8">
-        <p id="showOptions" class="cursor-pointer underline underline-offset-3 decoration-8 decoration-blue-600 pb-4 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">Options:</p>
+        <p id="showOptions" class="cursor-pointer underline underline-offset-3 decoration-8 decoration-blue-600 pb-4 mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 hover:text-gray-700 md:text-5xl lg:text-6xl">Options:</p>
         <div id="showOptionsContent" class="max-h-[0] overflow-hidden relative [transition:max-height_0.6s_ease-in-out]">
           <div id="minifyOptionContainer"></div>
           <a class="text-blue-500 text-base hover:underline hover:text-blue-600" href="https://dflook.github.io/python-minifier/transforms" target="_blank" rel="noopener noreferrer">Learn More <i class="fa-solid fa-arrow-up-right-from-square fa-sm"></i>
@@ -194,7 +195,7 @@
         <button id="minifyAll" disabled class="hidden px-3 py-2 ml-2 font-bold cursor-pointer bg-blue-500 rounded-full text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 z-10"> 5+ </button>
       </div>
       <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 hidden transition-opacity duration-2000"></div>
-      <div id="popup" class="fixed top-1/2 left-1/2 colorhandle transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded shadow-md z-50 hidden transition-transform duration-2000">
+      <div id="popup" class="fixed top-1/2 left-1/2 p-8 colorhandle bg-white rounded custom-shadow z-50 transition-transform duration-200 transform -translate-x-1/2 -translate-y-1/2 hidden hover:scale-[1.02]">
         <div id="downloadLink" class="text-center">
           <span id="fileLink-load"></span>
           <label id="copy-msg" for="fileLink" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium"></label>
@@ -219,13 +220,13 @@
       <div class="flex items-center">
         <div id="tabs-overlay-out" class="hidden cursor-default absolute h-20 z-10 left-[1vh] right-[1vh] bg-transparent"></div>
         <ul id="file-tabs-out" class="list-none pr-px mr-1 [scrollbar-width:thin] pt-3 whitespace-nowrap inline-flex overflow-x-auto colorhandle">
-          <li class="file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity active" id="file-out-1">
+          <li class="file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity active" id="file-out-1" title="1st Tab">
             <i class="fa-brands fa-python text-blue-600 pr-2"></i>File 1.py
           </li>
         </ul>
       </div>
       <div id="loading-minified" class="flex items-center justify-center w-auto h-[300px]">
-        <div class="text-xl font-bold text-gray-700">Loading <i class="fa-solid fa-spinner fa-spin-pulse fa-sm"></i>
+        <div class="text-sm sm:text-xs md:text-xs lg:text-sm font-bold text-gray-700">Loading <i class="fa-solid fa-spinner fa-spin-pulse fa-sm"></i>
         </div>
       </div>
       <div id="minified" class="hidden w-auto h-[300px] mt-0.5 rounded overflow-hidden border border-solid border-[#cccccc8f] [border-left:6px_solid_rgba(0,_83,_159,_0.65)]"></div>
@@ -311,7 +312,7 @@
       </button>
     </div>
     <div class="flex justify-center items-center pb-[25px]">
-      <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row md:items-center">
+      <div class="bg-white rounded-lg p-6 flex flex-col md:flex-row md:items-center transition-transform custom-shadow hover:scale-x-[1.02]">
         <div class="mb-6 md:mb-0 md:mr-6">
           <p class="font-extrabold font-['Source_Code_Pro'] text-center tracking-wide uppercase colorhandle">Share it on..</p>
         </div>
@@ -343,13 +344,13 @@
       <div class="pt-9">
         <div class="mb-9 flex justify-center" role="navigation" aria-label="Social Media Links">
           <a href="https://gladw-in.github.io/" target="_blank" rel="noopener noreferrer" class="mr-9 text-neutral-200 hover:text-blue-700" aria-label="Portfolio">
-            <i class="fa-solid fa-globe fa-xl"></i>
+            <i class="fa-solid fa-globe fa-xl transition-transform transform hover:-translate-y-1"></i>
           </a>
           <a href="https://www.linkedin.com/in/glad432/" target="_blank" rel="noopener noreferrer" class="mr-9 text-neutral-200 hover:text-blue-700" aria-label="LinkedIn">
-            <i class="fa-brands fa-linkedin fa-xl"></i>
+            <i class="fa-brands fa-linkedin fa-xl transition-transform transform hover:-translate-y-1"></i>
           </a>
           <a href="https://github.com/gladw-in" target="_blank" rel="noopener noreferrer" class="text-neutral-200 hover:text-blue-700" aria-label="GitHub">
-            <i class="fa-brands fa-github fa-xl"></i>
+            <i class="fa-brands fa-github fa-xl transition-transform transform hover:-translate-y-1"></i>
           </a>
         </div>
       </div>

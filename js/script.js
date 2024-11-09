@@ -957,8 +957,13 @@ function setupFileInput() {
 	fileInput.addEventListener('change', (event) => {
 		disableTyping();
 		const pyFiles = [...event.target.files].filter(file => file.name.trim().toLowerCase().endsWith('.py'));
-		handleFiles(pyFiles);
-		fileInput.value = '';
+
+		if (pyFiles.length === 0) {
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Invalid file format. Please select only .py file(s).`);
+		} else {
+			handleFiles(pyFiles);
+			fileInput.value = '';
+		}
 	});
 
 	dropArea.addEventListener('click', () => {
@@ -1305,14 +1310,14 @@ async function copyfilelink() {
 
 fileShareLink.addEventListener('click', copyfilelink);
 
-async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, fileFormat, addReadme, fastCompress, generateLink) {
+async function compressFiles(selectedIndices, sortedKeys, maxLength, baseFileName, fileFormat, addReadme, fastCompress, generateLink) {
 	const {
 		default: JSZip
 	} = await import('jszip');
 
 	const zipArchive = new JSZip();
+	const fileOccurrences = {};
 	let nonEmptyFilesCount = 0;
-	let fileOccurrences = {};
 	let fileNamesList = 'The list of the python files minified:\n\n';
 	const fileFormatFinal = fileFormat.trim().toLowerCase() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim();
 
@@ -1330,11 +1335,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 	const finalFileNames = selectedIndices.map(index => {
 		const fileNameOut = getFileNameFromTabId(`file-out-${index + 1}`);
 		const fileNameIn = getFileNameFromTabId(`file-${index + 1}`);
-		let finalFileName = fileNameOut || fileNameIn;
-
-		if (!finalFileName) {
-			finalFileName = defaultFilename;
-		}
+		const finalFileName = fileNameOut || fileNameIn || baseFileName;
 
 		const occurrence = (fileOccurrences[finalFileName] || 0) + 1;
 		fileOccurrences[finalFileName] = occurrence;
@@ -1349,18 +1350,21 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 		return finalFileName;
 	});
 
-	for (let i = 0; i < selectedIndices.length; i++) {
-		const fileKey = sortedKeys[selectedIndices[i]];
-		const fileName = finalFileNames[i];
+	for (const index of selectedIndices) {
+		const fileKey = sortedKeys[index];
+		const fileName = finalFileNames[selectedIndices.indexOf(index)];
 
 		if (fileName) {
 			const decryptedCode = CryptoJS.AES.decrypt(sessionStorage.getItem(fileKey), newKey).toString(CryptoJS.enc.Utf8);
 
 			if (decryptedCode.trim() !== '') {
 				zipArchive.file(fileName, decryptedCode);
-				addReadme && (fileNamesList += `${(nonEmptyFilesCount + 1).toString().padStart(2, '0')}. ${fileName}\n`);
+				if (addReadme) {
+					fileNamesList += `${(nonEmptyFilesCount + 1).toString().padStart(2, '0')}. ${fileName}\n`;
+				}
 				nonEmptyFilesCount++;
-				let totalCompressProgress = ((nonEmptyFilesCount / maxLength) * 100);
+
+				const totalCompressProgress = ((nonEmptyFilesCount / maxLength) * 100);
 				compressProgressBar.value = totalCompressProgress;
 				compressProgressStatus.innerText = `Compressing... ${totalCompressProgress.toFixed(2)}%`;
 				compressProgress.classList.remove('hidden');
@@ -1391,12 +1395,12 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 			if (compressedBlob) {
 				showSweetAlert({
 					title: `Download`,
-					html: `<p class="pb-3 font-bold text-neutral-500 hover:underline" title="${fileName}.${fileFormat}">${fileName.length > 25 ? `${fileName.slice(0, 11)}...${fileName.slice(-12)}.${fileFormat}` : `${fileName}.${fileFormat}`}</p><button id="download-btn" class="swal2-confirm swal2-styled bg-red-500 rounded text-white hover:bg-red-600">Download</button><button id="close-btn" class="swal2-cancel swal2-styled">Close</button>`,
+					html: `<p class="pb-3 font-bold text-neutral-500 hover:underline" title="${baseFileName}.${fileFormat}">${baseFileName.length > 25 ? `${baseFileName.slice(0, 11)}...${baseFileName.slice(-12)}.${fileFormat}` : `${baseFileName}.${fileFormat}`}</p><button id="download-btn" class="swal2-confirm swal2-styled bg-red-500 rounded text-white hover:bg-red-600">Download</button><button id="close-btn" class="swal2-cancel swal2-styled">Close</button>`,
 					showConfirmButton: false,
 					allowOutsideClick: false,
 					didOpen: (Swal) => {
 						Swal.getPopup().querySelector('#download-btn').addEventListener('click', () => {
-							downloadFile(compressedBlob, getCompressMimetype(fileFormat), `${fileName.trim()}.${fileFormat.trim().toLowerCase()}`);
+							downloadFile(compressedBlob, getCompressMimetype(fileFormat), `${baseFileName.trim()}.${fileFormat.trim().toLowerCase()}`);
 						});
 						Swal.getPopup().querySelector('#close-btn').addEventListener('click', () => {
 							disableDwSrCpBtn(false);
@@ -1406,7 +1410,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, fileName, f
 				});
 			}
 		} else {
-			shareLink(compressedBlob, `${fileName.trim()}.${fileFormat.trim().toLowerCase()}`, true, fileFormat);
+			shareLink(compressedBlob, `${baseFileName.trim()}.${fileFormat.trim().toLowerCase()}`, true, fileFormat);
 		}
 
 		handleTabsOverlay(false);
@@ -1652,19 +1656,22 @@ function initializeMinifier() {
 			return checkbox && checkbox.checked ? `${option}=true` : `${option}=false`;
 		});
 
-		if (preserveGlobals) {
-			const preserveGlobalsFinal = preserveGlobals.value.replace(/\s*,\s*|\s+/g, ',').split(',').map(str => String(str).trim()).filter(Boolean);;
-			if (preserveGlobalsFinal.length > 0) {
-				queryParts.push(`preserve_globals=${encodeURIComponent(JSON.stringify(preserveGlobalsFinal))}`);
+		function processPreserveInput(inputElement, key) {
+			if (inputElement) {
+				const processedValues = inputElement.value
+					.replace(/\s*,\s*|\s+/g, ',')
+					.split(',')
+					.map(str => str.trim())
+					.filter(Boolean);
+
+				if (processedValues.length > 0) {
+					queryParts.push(`${key}=${encodeURIComponent(JSON.stringify(processedValues))}`);
+				}
 			}
 		}
 
-		if (preserveLocals) {
-			const preserveLocalsFinal = preserveLocals.value.replace(/\s*,\s*|\s+/g, ',').split(',').map(str => String(str).trim()).filter(Boolean);;
-			if (preserveLocalsFinal.length > 0) {
-				queryParts.push(`preserve_locals=${encodeURIComponent(JSON.stringify(preserveLocalsFinal))}`);
-			}
-		}
+		processPreserveInput(preserveGlobals, 'preserve_globals');
+		processPreserveInput(preserveLocals, 'preserve_locals');
 
 		return queryParts.join('&');
 	}
@@ -1909,16 +1916,18 @@ function addFontAwesomeIcon(iconClass, customClasses = [], forAppend = false, id
 
 	const allClasses = [...validIconClasses, ...validCustomClasses].filter(Boolean).join(' ');
 
+	const validId = id && typeof id === 'string' ? ` id="${id}"` : '';
+
 	if (forAppend) {
 		const icon = document.createElement('i');
 		icon.className = allClasses;
-		if (id) {
+		if (validId) {
 			icon.id = id;
 		}
 		return icon;
 	}
 
-	return `<i class="${allClasses}"${id ? ` id="${id}"` : ''}></i>`;
+	return `<i class="${allClasses}"${validId}></i>`;
 }
 
 function handleErrorMessage(text) {
@@ -2387,9 +2396,9 @@ async function updateGraph() {
 	}
 
 	for (let i = 0; i < Math.max(fileTabsArray.length, fileTabsOutArray.length); i++) {
-		let tabNameA = fileTabsArray[i] || '';
-		let tabNameB = fileTabsOutArray[i] || '';
-		let chosenName = tabNameA || tabNameB || defaultFilename;
+		const tabNameA = fileTabsArray[i] || '';
+		const tabNameB = fileTabsOutArray[i] || '';
+		const chosenName = tabNameA || tabNameB || defaultFilename;
 		tabFileNames.push(chosenName.trim());
 	}
 
@@ -2447,10 +2456,6 @@ async function updateGraph() {
 		graphContainer.classList.add("hidden");
 	}
 }
-
-document.addEventListener("load", () => {
-	updateGraph();
-});
 
 document.addEventListener('DOMContentLoaded', () => {
 	if (graphKbSize) {
