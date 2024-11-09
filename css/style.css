@@ -3,15 +3,27 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #454545;
+  --background-color: #fff;
+  --text-color: #333;
+  --border-color: #d3d3d3;
+  --transition-duration: 0.3s;
+  --box-shadow-color: #999;
+  --hover-bg-color: #3d3c3c21;
+  --error-color: #ef4444;
+  --highlight-color: #3b82f6;
+}
 .switch input {
   display: none;
 }
 .blue_big_box {
-  -webkit-box-shadow: 0 1px 3px #999;
-  box-shadow: 0 1px 3px #999;
+  -webkit-box-shadow: 0 1px 3px var(--box-shadow-color);
+  box-shadow: 0 1px 3px var(--box-shadow-color);
 }
 .simp_border {
-  border-color: #d3d3d3;
+  border-color: var(--border-color);
 }
 .help-container {
   position: absolute;
@@ -25,7 +37,7 @@ input:checked + .slide:before {
   left: 8px;
 }
 .help-content {
-  background-color: #fff;
+  background-color: var(--background-color);
   display: none;
   top: 100%;
   left: 0;
@@ -47,12 +59,12 @@ input:checked + .slide:before {
 .file-tab-out.active,
 .file-tab.active {
   background-color: #45454524;
-  border-bottom: 3px solid #3b82f6;
+  border-bottom: 3px solid var(--primary-color);
 }
 .diff-tab:hover:not(.active),
 .file-tab-out:hover:not(.active),
 .file-tab:hover:not(.active) {
-  background-color: #3d3c3c21;
+  background-color: var(--hover-bg-color);
   border-bottom: 3px solid #3d3c3c3d;
 }
 .file-item {
@@ -63,15 +75,15 @@ input:checked + .slide:before {
 }
 .diff-tab.error.active,
 .file-tab-out.error.active {
-  border-bottom: 3px solid #ef4444 !important;
+  border-bottom: 3px solid var(--error-color) !important;
 }
 .file-tab-out.error.active:hover {
-  border-bottom: 3px solid #ef4444;
+  border-bottom: 3px solid var(--error-color);
 }
 .diff-tab.active.error i.fa-python,
 .file-tab-out.active.error i.fa-python,
 .file-tab-out.active.error > .edit-tab-icon-out {
-  color: #ef4444;
+  color: var(--error-color);
 }
 .file-tab-out.active.error > .edit-tab-icon-out:hover {
   color: #f87171;
@@ -123,6 +135,9 @@ div:where(.swal2-container) .swal2-radio {
 #preserve_globals:focus,
 #preserve_locals:focus {
   border-color: #2563eb !important;
+}
+.custom-shadow {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 @media only screen and (max-width: 768px) {
   #errmsg,
@@ -186,7 +201,7 @@ div:where(.swal2-container) .swal2-radio {
 .dark .file-tab.active {
   background-color: #404040ca;
   border-color: transparent;
-  border-bottom: 3px solid #3b82f6;
+  border-bottom: 3px solid var(--primary-color);
 }
 .dark .diff-tab:hover:not(.active),
 .dark .file-tab-out:hover:not(.active),
@@ -212,9 +227,14 @@ div:where(.swal2-container) .swal2-radio {
   background-color: #3d3d3e;
   border-color: transparent;
 }
+.dark #popup,
 .dark div:where(.swal2-container) div:where(.swal2-popup) {
   background: #333;
   color: #e8e6e3;
+}
+.dark .custom-shadow {
+  box-shadow: 0 10px 15px -3px rgba(8, 8, 8, 0.3),
+    0 4px 6px -4px rgba(8, 8, 8, 0.2);
 }
 .dark #editor,
 .dark #minified {
@@ -308,6 +328,9 @@ div:where(.swal2-container) .swal2-radio {
 }
 .dark .text-neutral-500 {
   color: #9f978b;
+}
+.dark .hover\:text-gray-700:hover {
+  color: rgb(171 171 171);
 }
 .dark .hover\:ring-2:hover {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
