@@ -1,4 +1,3 @@
-import CryptoJS from 'crypto-js';
 import Typewriter from 'typewriter-effect/dist/core';
 import '../css/style.css'
 import 'sweetalert2/src/sweetalert2.scss'
@@ -35,6 +34,7 @@ const helpMsg = document.getElementById('help-msg');
 const linkNewtab = document.getElementById("new_tab");
 const inputContainer = document.getElementById("inputContainer");
 const fileLinkInput = document.getElementById("fileLinkInput");
+const loadFileBtn = document.getElementById("load_File");
 const darkModeToggle = document.getElementById("darkModeToggle");
 const selectallopt = document.getElementById('selectall');
 const resetOpt = document.getElementById('resetOpt');
@@ -80,10 +80,11 @@ let isTabNameEdit = false;
 let isTabNameEditOut = false;
 let isDiffTextWrapEnabled = false;
 let graph = null;
+let tempStorage = {};
 const defaultFilename = 'default.py';
 const defaultContent = "#Empty Python file, Enter code to minify";
 const defaultOutput = "Compiled but no output!";
-const maxFileSizeInBytes = 1 * 400 * 1024;
+const maxFileSizeInBytes = 800 * 1024;
 
 const sentences = [
 	"A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks.",
@@ -277,6 +278,18 @@ document.addEventListener('DOMContentLoaded', () => {
 			headerMenu.classList.remove('flex');
 		}
 	});
+
+	if (!darkModeToggle) return;
+	const isDarkMode = JSON.parse(localStorage.getItem("darkMode")) ?? false;
+	document.documentElement.classList.toggle("dark", isDarkMode);
+	darkModeToggle.checked = isDarkMode;
+	const updateTheme = (isDark) => {
+		document.documentElement.classList.toggle("dark", isDark);
+		localStorage.setItem("darkMode", JSON.stringify(isDark));
+	};
+	darkModeToggle.addEventListener("change", () => {
+		updateTheme(darkModeToggle.checked);
+	});
 });
 
 function shuffleArray(array) {
@@ -381,6 +394,19 @@ require(['vs/editor/editor.main'], () => {
 		cursorStyle: 'line',
 		readOnly: true,
 		automaticLayout: true
+	});
+
+	sourceEditor.onDidChangeModelContent(async () => {
+		if ((new Blob([sourceEditor.getModel().getValue()])).size / maxFileSizeInBytes > 1) {
+			sourceEditor.getModel().setValue(await truncateCode(sourceEditor.getModel().getValue()));
+			const totalLines = sourceEditor.getModel().getLineCount();
+			sourceEditor.setPosition({
+				lineNumber: totalLines,
+				column: sourceEditor.getModel().getLineMaxColumn(totalLines)
+			});
+			sourceEditor.revealLineInCenter(Math.max(totalLines - 5, 1));
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Maximum Size limit (${maxFileSizeInBytes / 1024} KB) reached!`);
+		}
 	});
 
 	setTimeout(() => {
@@ -556,20 +582,6 @@ function updateEditorOptions() {
 			folding: true
 		});
 	}
-
-	sourceEditor.onDidChangeModelContent(async () => {
-		if ((new Blob([sourceEditor.getModel().getValue()])).size / maxFileSizeInBytes > 1) {
-			sourceEditor.getModel().setValue(await truncateCode(sourceEditor.getModel().getValue()));
-			const totalLines = sourceEditor.getModel().getLineCount();
-			sourceEditor.setPosition({
-				lineNumber: totalLines,
-				column: sourceEditor.getModel().getLineMaxColumn(totalLines)
-			});
-			sourceEditor.revealLineInCenter(Math.max(totalLines - 5, 1));
-			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Maximum Size limit (400kB) reached!`);
-		}
-	});
-
 };
 
 window.addEventListener('resize', () => {
@@ -639,7 +651,7 @@ async function codeCompile() {
 		compileData = /\r|\n/.test(data.output) || data.output.length !== 0 ? data.output : defaultOutput;
 		terminalText.textContent = `[${compileTime.toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${compileData}`;
 		pyTerminal.classList.remove("hidden");
-	} catch (error) {
+	} catch {
 		pyTerminal.classList.remove("hidden");
 		terminalText.textContent = 'Error occurred while running the code. Please check your code and try again.';
 	} finally {
@@ -743,25 +755,22 @@ function createDiffTabs() {
 function updateDiffEditor() {
 	if (!diffEditor) return;
 
-	const originalEncrypted = sessionStorage.getItem(sources[currentTabIndexDiff]);
-	const minifiedEncrypted = sessionStorage.getItem(sourcesOut[currentTabIndexDiff]);
+	const originalContent = tempStorage[sources[currentTabIndexDiff]];
+	const minifiedContent = tempStorage[sourcesOut[currentTabIndexDiff]];
 
-	const originalDecrypted = originalEncrypted ? CryptoJS.AES.decrypt(originalEncrypted, newKey).toString(CryptoJS.enc.Utf8) : "";
-	const originalCode = originalDecrypted.length > 0 ? originalDecrypted : "#Original code is empty!";
+	const originalSource = originalContent && originalContent.length > 0 ? originalContent : "#Original code is empty!";
+	const minifiedSource = minifiedContent && minifiedContent.length > 0 ? minifiedContent : "#Not Minified!";
 
-	const minifiedDecrypted = minifiedEncrypted ? CryptoJS.AES.decrypt(minifiedEncrypted, newKey).toString(CryptoJS.enc.Utf8) : "";
-	const minifiedCode = minifiedDecrypted.length > 0 ? minifiedDecrypted : "#Not Minified!";
-
-	const originalModel = monaco.editor.createModel(originalCode, 'python');
-	const minifiedModel = monaco.editor.createModel(minifiedCode, 'python');
+	const originalEditorModel = monaco.editor.createModel(originalSource, 'python');
+	const minifiedEditorModel = monaco.editor.createModel(minifiedSource, 'python');
 
 	diffEditor.updateOptions({
 		wordWrap: isDiffTextWrapEnabled ? 'on' : 'off'
 	});
 
 	diffEditor.setModel({
-		original: originalModel,
-		modified: minifiedModel
+		original: originalEditorModel,
+		modified: minifiedEditorModel
 	});
 }
 
@@ -1024,7 +1033,7 @@ function setupFileInput() {
 			};
 			reader.readAsText(file);
 		} else {
-			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} File size exceeds 400kb. Please select a smaller file.`);
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} File size exceeds ${maxFileSizeInBytes / 1024} KB. Please select a smaller file.`);
 			fileInput.value = '';
 		}
 	}
@@ -1049,7 +1058,7 @@ function downloadFile(content, mimeType, fileName) {
 }
 
 function minifiedTabs() {
-	const sortedKeys = Object.keys(sessionStorage)
+	const sortedKeys = Object.keys(tempStorage)
 		.filter(key => key.startsWith("#PyFile-out-"))
 		.sort((a, b) => {
 			const aNum = parseInt(a.split("-")[2], 10);
@@ -1058,8 +1067,8 @@ function minifiedTabs() {
 		});
 
 	const nonEmptyCount = sortedKeys.reduce((count, key) => {
-		const decryptedValue = CryptoJS.AES.decrypt(sessionStorage.getItem(key), newKey).toString(CryptoJS.enc.Utf8).trim();
-		if (decryptedValue !== "") {
+		const value = (tempStorage[key]?.trim()) || "";
+		if (value !== "") {
 			count++;
 		}
 
@@ -1069,57 +1078,16 @@ function minifiedTabs() {
 	return nonEmptyCount;
 }
 
-dwButton.addEventListener('click', () => {
-	if (minifiedEditor.getModel().getValue() !== "") {
-		const tabFileName = getCurrentTabName().replace(/\.py$/, "");
-		const content = minifiedEditor.getModel().getValue();
-		disableDwSrCpBtn(true);
-		animateIcon("fade-1", "fa-fade", 3000);
-
-		if (minifiedTabs() === 1) {
-			downloadFile(content, "text/x-python", getCurrentTabName());
-			disableDwSrCpBtn(false);
-			return;
-		}
-
-		showSweetAlert({
-			title: "Download",
-			showDenyButton: true,
-			showCancelButton: true,
-			allowOutsideClick: false,
-			confirmButtonText: `${tabFileName.length > 20 ? `${tabFileName.slice(0,7)}...${tabFileName.slice(-3)}` : tabFileName}.py`,
-			denyButtonText: `All minified files`,
-			cancelButtonText: "Close",
-			denyButtonColor: '#22C55E',
-			didOpen: (Swal) => {
-				const confirmButton = Swal.getConfirmButton();
-				confirmButton.title = tabFileName.trim();
-			},
-			preConfirm: () => {
-				downloadFile(content, "text/x-python", getCurrentTabName());
-				return false;
-			}
-		}).then((result) => {
-			if (result.isDenied) {
-				compressPyFiles(false);
-			} else if (result.isDismissed) {
-				disableDwSrCpBtn(false);
-			}
-		});
-	}
-});
+dwButton.addEventListener('click', () => shareOrDownload('download'));
 
 async function createShareLink(file, filename) {
-	try {
-		const response = await fetch('https://file.io/?expires=2d', {
-			method: 'POST',
-			body: createFormData(file, filename)
-		});
-		const result = await response.json();
-		return result;
-	} catch (error) {
-		throw error;
-	}
+	const response = await fetch('https://file.io/?expires=2d', {
+		method: 'POST',
+		body: createFormData(file, filename)
+	});
+
+	const result = await response.json();
+	return result;
 }
 
 function getCompressMimetype(fileFormat) {
@@ -1143,6 +1111,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 			const fileLink = result.link;
 			const finalFileFormat = fileFormat.trim().toLowerCase() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim();
 			const expTime = `${isCompressed ? finalFileFormat + ' File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span>`;
+
 			shareOverlay.classList.remove("hidden");
 			popup.classList.remove("hidden");
 			document.body.classList.add("overflow-y-hidden");
@@ -1154,7 +1123,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 			displayQRCode(fileLink);
 
 			setTimeout(() => {
-				copyMsg.innerHTML = `Tap to copy ${addFontAwesomeIcon('fa-solid fa-copy')}`;
+				copyMsg.innerHTML = `Tap to copy ${addFontAwesomeIcon('fa-solid fa-copy',['hover:text-blue-600'])}`;
 				linkNewtab.href = fileLink;
 				linkNewtab.classList.add('text-white', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5', 'bg-blue-600', 'hover:bg-blue-700');
 				linkNewtab.innerHTML = addFontAwesomeIcon('fa-solid fa-up-right-from-square');
@@ -1162,7 +1131,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 				linkNewtab.title = 'Open in new tab';
 				orScan.innerHTML = `or Scan ${addFontAwesomeIcon('fa-solid fa-expand')}`;
 				downloadLinkUrl.classList.remove('hidden');
-				helpMsg.innerHTML = `${addFontAwesomeIcon('fa-solid fa-question-circle' ,['text-blue-500' ,'text-2xl'])}<div class="help-content rounded-lg"><p class="text-sm text-center text-gray-700">${expTime}</span></p></div>`;
+				helpMsg.innerHTML = `${addFontAwesomeIcon('fa-solid fa-question-circle' ,['text-blue-500' ,'text-2xl'])}<div class="help-content rounded-lg"><p class="text-sm text-center">${expTime}</span></p></div>`;
 				orScan.classList.add('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
 				closePopupOverlay.classList.remove('hidden');
 				qrCode.title = "Double Click to zoom-in and zoom-out";
@@ -1174,6 +1143,7 @@ function shareLink(content, filename, isCompressed, fileFormat) {
 				fileShareLink.href = fileLink;
 				fileShareLink.value = fileLink;
 				downloadLinkUrl.innerHTML = `Download ${finalFileFormat} ${addFontAwesomeIcon('fa-solid fa-file-zipper')}`
+
 				if (isCompressed) {
 					downloadLinkUrl.onclick = () => {
 						downloadFile(content, getCompressMimetype(fileFormat), filename.trim());
@@ -1204,43 +1174,61 @@ qrCode.addEventListener('dblclick', () => {
 	}, 400)
 });
 
-shareButton.addEventListener('click', () => {
-	if (minifiedEditor.getModel().getValue() !== "") {
-		const tabFileName = getCurrentTabName().replace(/\.py$/, "");
-		const content = minifiedEditor.getModel().getValue();
-		animateIcon("fade-2", "fa-fade", 2000);
-		disableDwSrCpBtn(true);
+function shareOrDownload(type) {
+	const content = minifiedEditor.getModel().getValue();
+	const tabFileName = getCurrentTabName().replace(/\.py$/, "");
 
-		if (minifiedTabs() === 1) {
+	if (content === "") return;
+
+	disableDwSrCpBtn(true);
+	animateIcon(type === 'download' ? "fade-1" : "fade-2", "fa-fade", 3000);
+
+	if (minifiedTabs() === 1) {
+		if (type === 'download') {
+			downloadFile(content, "text/x-python", getCurrentTabName());
+		} else if (type === 'share') {
 			shareLink(content, getCurrentTabName(), false, 'python');
-			return;
 		}
+		disableDwSrCpBtn(false);
+		return;
+	}
 
-		showSweetAlert({
-			title: "Share",
-			showDenyButton: true,
-			showCancelButton: true,
-			allowOutsideClick: false,
-			confirmButtonText: `${tabFileName.length > 20 ? `${tabFileName.slice(0,7)}...${tabFileName.slice(-3)}` : tabFileName}.py`,
-			denyButtonText: `All minified files`,
-			cancelButtonText: "Close",
-			denyButtonColor: '#22C55E',
-			didOpen: (Swal) => {
-				const confirmButton = Swal.getConfirmButton();
-				confirmButton.title = tabFileName.trim();
-			},
-			preConfirm: () => {
+	showSweetAlert({
+		title: type === 'download' ? "Download" : "Share",
+		showDenyButton: true,
+		showCancelButton: true,
+		allowOutsideClick: false,
+		confirmButtonText: `${tabFileName.length > 20 ? `${tabFileName.slice(0, 7)}...${tabFileName.slice(-3)}` : tabFileName}.py`,
+		denyButtonText: `All minified files`,
+		cancelButtonText: "Close",
+		denyButtonColor: '#22C55E',
+		didOpen: (Swal) => {
+			const confirmButton = Swal.getConfirmButton();
+			confirmButton.title = tabFileName.trim();
+		},
+		preConfirm: () => {
+			if (type === 'download') {
+				downloadFile(content, "text/x-python", getCurrentTabName());
+				return false;
+			} else if (type === 'share') {
 				shareLink(content, getCurrentTabName(), false, 'python');
 			}
-		}).then((result) => {
-			if (result.isDenied) {
+			disableDwSrCpBtn(false);
+		}
+	}).then((result) => {
+		if (result.isDenied) {
+			if (type === 'download') {
+				compressPyFiles(false);
+			} else if (type === 'share') {
 				compressPyFiles(true);
-			} else if (result.isDismissed) {
-				disableDwSrCpBtn(false);
 			}
-		});
-	}
-});
+		} else if (result.isDismissed) {
+			disableDwSrCpBtn(false);
+		}
+	});
+}
+
+shareButton.addEventListener('click', () => shareOrDownload('share'));
 
 function createFormData(content, fileName) {
 	shuffleArray(sentences);
@@ -1248,6 +1236,7 @@ function createFormData(content, fileName) {
 	const blob = new Blob([content], {
 		type: 'application/x-python'
 	});
+
 	formData.append('file', blob, fileName);
 	formData.append('description', `Python Minifier - Glad432 (glad432.github.io)\n${sentences[0]}`);
 	return formData;
@@ -1335,7 +1324,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, baseFileNam
 	const finalFileNames = selectedIndices.map(index => {
 		const fileNameOut = getFileNameFromTabId(`file-out-${index + 1}`);
 		const fileNameIn = getFileNameFromTabId(`file-${index + 1}`);
-		const finalFileName = fileNameOut || fileNameIn || baseFileName;
+		let finalFileName = fileNameOut || fileNameIn || baseFileName;
 
 		const occurrence = (fileOccurrences[finalFileName] || 0) + 1;
 		fileOccurrences[finalFileName] = occurrence;
@@ -1344,7 +1333,7 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, baseFileNam
 			const extensionIndex = finalFileName.lastIndexOf('.');
 			const basename = extensionIndex === -1 ? finalFileName : finalFileName.slice(0, extensionIndex);
 			const extension = extensionIndex === -1 ? '' : finalFileName.slice(extensionIndex);
-			finalFileName = `${basename}-${occurrence}${extension}`;
+			finalFileName = `${basename}-${occurrence - 1}${extension}`;
 		}
 
 		return finalFileName;
@@ -1355,10 +1344,10 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, baseFileNam
 		const fileName = finalFileNames[selectedIndices.indexOf(index)];
 
 		if (fileName) {
-			const decryptedCode = CryptoJS.AES.decrypt(sessionStorage.getItem(fileKey), newKey).toString(CryptoJS.enc.Utf8);
+			const minifiedCode = tempStorage[fileKey] || "";
 
-			if (decryptedCode.trim() !== '') {
-				zipArchive.file(fileName, decryptedCode);
+			if (minifiedCode.trim() !== '') {
+				zipArchive.file(fileName, minifiedCode);
 				if (addReadme) {
 					fileNamesList += `${(nonEmptyFilesCount + 1).toString().padStart(2, '0')}. ${fileName}\n`;
 				}
@@ -1423,7 +1412,7 @@ async function filterFileNames() {
 	const minifiedData = [];
 	const minifierFilesContent = [];
 
-	Object.keys(sessionStorage).forEach(key => {
+	Object.keys(tempStorage).forEach(key => {
 		if (key.startsWith("#PyFile-out")) {
 			minifierFilesContent.push(key);
 		}
@@ -1432,7 +1421,7 @@ async function filterFileNames() {
 	const numericalSort = (a, b) => parseInt(a.match(/\d+/)[0]) - parseInt(b.match(/\d+/)[0]);
 	minifierFilesContent.sort(numericalSort);
 
-	await decryptAndPush(minifierFilesContent, minifiedData, false);
+	await processAndPush(minifierFilesContent, minifiedData, false);
 
 	if (fileTabsOut) {
 		Array.from(fileTabsOut.children).forEach(child => {
@@ -1480,13 +1469,13 @@ function compressOptions(isShareLink) {
 	fragment.appendChild(div1);
 
 	const divCenter = document.createElement('div');
-	divCenter.className = 'justify-center flex mb-5 colorhandle';
+	divCenter.className = 'justify-center flex mb-5 dark:[color-scheme:dark] dark:border-[#736b5e] dark:text-[#e8e6e3]';
 	const div2 = document.createElement('div');
 	div2.className = 'relative';
 	const input2 = document.createElement('input');
 	input2.type = 'text';
 	input2.id = 'file-name-input';
-	input2.className = 'block rounded-lg px-2.5 pb-2.5 pt-5 text-sm text-gray-900 w-64 border border-solid border-gray-400 appearance-none focus:outline-none focus:ring-0 peer';
+	input2.className = 'block rounded-lg px-2.5 pb-2.5 pt-5 text-sm text-gray-900 w-64 border border-solid border-gray-400 appearance-none focus:outline-none focus:ring-0 peer dark:text-[#d6d3cd]';
 	input2.placeholder = ' ';
 	const label1 = document.createElement('label');
 	label1.setAttribute('for', 'file-name-input');
@@ -1531,13 +1520,13 @@ function compressOptions(isShareLink) {
 
 async function showMinifiedFilesPopup(isShareLink) {
 	const ul = document.createElement("ul");
-	ul.className = "max-h-60 overflow-y-auto overflow-x-hidden list-none p-4 text-center colorhandle [scrollbar-width:thin]";
+	ul.className = "max-h-60 overflow-y-auto overflow-x-hidden list-none p-4 text-center [scrollbar-width:thin] dark:[color-scheme:dark] dark:border-[#736b5e] dark:text-[#e8e6e3]";
 
 	const finalMinifiedTabs = await filterFileNames();
 
 	finalMinifiedTabs.forEach((file) => {
 		const li = document.createElement("li");
-		li.className = "flex items-center justify-start py-2 border-2 rounded-lg shadow hover:shadow-md transition-shadow transition-transform duration-200 transform hover:scale-105 file-item";
+		li.className = "flex items-center justify-start py-2 border-2 rounded-lg shadow hover:shadow-md transition-shadow transition-transform duration-200 transform hover:scale-105 file-item pl-[20%] hover:bg-[#68686821] hover:border-[#82828221] dark:bg-[#363636] dark:border-[#444343] dark:text-[#e8e8e8] dark:hover:bg-[#393838a9]";
 
 		const tabFileName = file.replace(/\.py$/, '');
 		const displayName = tabFileName.length > 25 ? `${tabFileName.slice(0, 11)}...${tabFileName.slice(-12)}.py` : `${tabFileName}.py`;
@@ -1552,7 +1541,7 @@ async function showMinifiedFilesPopup(isShareLink) {
 		isConfirmed
 	} = await showSweetAlert({
 		title: `${minifiedTabs()} Minified Files`,
-		html: `<div class="popup-box py-4 border rounded-lg">${ul.outerHTML}</div>`,
+		html: `<div class="py-4 border rounded-lg dark:bg-[#3d3d3e] dark:border-transparent">${ul.outerHTML}</div>`,
 		confirmButtonText: "Back",
 		allowOutsideClick: false,
 	});
@@ -1565,16 +1554,21 @@ async function showMinifiedFilesPopup(isShareLink) {
 }
 
 async function compressPyFiles(isShareLink = false) {
-	const sortedKeys = Object.keys(sessionStorage)
+	const sortedKeys = Object.keys(tempStorage)
 		.filter(key => key.startsWith("#PyFile-out-"))
-		.sort((a, b) => parseInt(a.split("-")[2]) - parseInt(b.split("-")[2]));
+		.sort((a, b) => {
+			const aNum = parseInt(a.split("-")[2], 10);
+			const bNum = parseInt(b.split("-")[2], 10);
+			return aNum - bNum;
+		});
+
 
 	const maxLength = sortedKeys.filter(key => {
-		return CryptoJS.AES.decrypt(sessionStorage.getItem(key), newKey).toString(CryptoJS.enc.Utf8).trim() !== "";
+		return (tempStorage[key]?.trim() !== "");
 	}).length;
 
 	const tabContents = Array.from(fileTabsOut.children)
-		.map((tab, index) => ({
+		.map((_, index) => ({
 			index: index,
 			content: minifiedEditor.getModel().getValue()
 		}));
@@ -2006,7 +2000,7 @@ function inputField(id, labelText) {
 	const input = document.createElement('input');
 	input.type = 'text';
 	input.id = id;
-	input.className = "block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm text-gray-900 bg-gray-50 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 peer";
+	input.className = "block rounded-lg px-2.5 pb-2.5 pt-5 w-full text-sm bg-gray-50 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 peer focus:!border-[#2563eb] dark:bg-[#333] dark:border-[#3c4143]";
 	input.placeholder = " ";
 	input.spellcheck = false;
 
@@ -2075,72 +2069,129 @@ function inputFromUrl() {
 document.getElementById("from_url").addEventListener("click", inputFromUrl);
 
 function fileUpload() {
+	let lastLoadedUrl = '';
+
 	async function loadFileContent(fileUrl) {
 		try {
+			loadFileBtn.innerHTML = `Loading ${addFontAwesomeIcon('fa-solid fa-spinner fa-spin')}`;
+			loadFileBtn.disabled = true;
+
 			const response = await fetch(fileUrl);
+
 			if (!response.ok) {
-				sourceEditor.getModel().setValue('');
+				if (response.status === 404) {
+					throw new Error("File not found (404).");
+				} else if (response.status === 500) {
+					throw new Error("Server error (500). Please try again later.");
+				} else {
+					throw new Error(`Unexpected error: ${response.statusText}`);
+				}
 			}
+
 			const contentDisposition = response.headers.get("content-disposition");
 			const fileNameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"/);
 			const fileName = fileNameMatch ? fileNameMatch[1] : fileUrl.split('/').pop();
+
 			const contentLength = response.headers.get("content-length");
 			if (contentLength && parseInt(contentLength, 10) > maxFileSizeInBytes) {
-				throw new Error(`File size exceeds 400kb limit`);
+				lastLoadedUrl = "";
+				throw new Error(`File size exceeds ${maxFileSizeInBytes / 1024} KB limit`);
 			}
+
 			if (sourceEditor.getModel().getValue().trim() !== '' && (sources.length < getMaxTabs() && sourcesOut.length < getMaxTabs())) {
 				addEmptyTab();
 			}
+
 			const data = await response.text();
+
 			if (data.length === 0) {
 				sourceEditor.getModel().setValue(defaultContent);
 			} else {
 				sourceEditor.getModel().setValue(data);
 			}
+
 			sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
 			updateNametoTab(fileName.trim());
 			minifiedEditor.getModel().setValue('');
+
 			handleAutoScroll();
 			updateGraph();
+
 		} catch (error) {
 			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} ${error.message}`);
+		} finally {
+			loadFileBtn.innerHTML = `Load ${addFontAwesomeIcon('fa-solid fa-cloud-arrow-down', [], false, 'fade-3')}`;
+			loadFileBtn.disabled = false;
 		}
 	}
 
 	function loadFile() {
 		disableTyping();
 		const fileLink = fileLinkInput.value.trim();
-		if (fileLinkInput.value.trim() === '' || ((/^[^\s\d]+$/.test(fileLink)) && !(/\.[a-zA-Z]{2,}$/.test(fileLink)))) {
-			handleErrorMessage();
-		} else if (!(/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(fileLink))) {
-			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Please enter a valid URL starting with "https://"`);
-		} else if (/\.(py)$/.test(fileLink.toLowerCase())) {
-			handleErrorMessage();
-			animateIcon("fade-3", "fa-fade", 1500);
+
+		if (fileLink === '') {
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} URL cannot be empty.`);
+			return;
+		}
+
+		try {
+			new URL(fileLink);
+		} catch {
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Invalid URL.`);
+			return;
+		}
+
+		if (!/\.(py)$/.test(fileLink.toLowerCase())) {
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Please enter a valid .py file link.`);
+			return;
+		}
+
+		if (fileLink !== lastLoadedUrl) {
 			loadFileContent(fileLink);
+			lastLoadedUrl = fileLink;
 		} else {
-			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} Please enter a valid .py file link`);
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} File already loaded.`);
 		}
 	}
 
-	document.getElementById("load_File").addEventListener("click", loadFile);
-	document.getElementById("sample_link").addEventListener("click", () => {
-		const githubrawlink = "https:\/\/gist.githubusercontent.com\/glad432\/4d1935413e012cd54130a1fc6f31b4bf\/raw\/5f3aaae4b9a360b64a1146e6540804af4a91b7b1\/sample.py";
-		if (fileLinkInput.value !== githubrawlink) {
-			animateIcon("fade-6", "fa-bounce", 1000);
-			fileLinkInput.value = githubrawlink;
-			loadFile();
+	document.getElementById("load_File").addEventListener("click", () => {
+		const currentUrl = fileLinkInput.value.trim();
+
+		if (currentUrl !== lastLoadedUrl) {
+			loadFile(currentUrl);
+		} else {
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} File already loaded.`);
 		}
 	});
+
+	document.getElementById("sample_link").addEventListener("click", () => {
+		const githubrawlink = "https:\\/\\/gist.githubusercontent.com\\/glad432\\/4d1935413e012cd54130a1fc6f31b4bf\\/raw\\/5f3aaae4b9a360b64a1146e6540804af4a91b7b1\\/sample.py";
+
+		fileLinkInput.value = githubrawlink;
+
+		if (githubrawlink === lastLoadedUrl) {
+			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} File already loaded.`);
+		} else {
+			loadFileContent(githubrawlink);
+			lastLoadedUrl = githubrawlink;
+		}
+	});
+
 	fileLinkInput.addEventListener("keyup", (event) => {
 		if (event.key === "Enter") {
-			loadFile();
+			const currentUrl = fileLinkInput.value.trim();
+			if (currentUrl !== lastLoadedUrl) {
+				loadFile(currentUrl);
+			} else {
+				handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} File already loaded.`);
+			}
 		}
-	})
+	});
 
 	document.getElementById("clear_link").addEventListener("click", () => {
 		if (fileLinkInput.value !== '') {
 			fileLinkInput.value = '';
+			lastLoadedUrl = '';
 			animateIcon("fade-7", "fa-fade", 1000);
 		}
 	});
@@ -2331,25 +2382,26 @@ async function graphConfig(originalData, minifiedData, tabFileNames) {
 			min: 0,
 			labels: {
 				show: false,
+				formatter: (value) => {
+					if (isGetLines) {
+						return Math.round(value);
+					}
+					return value;
+				}
 			},
 		},
 	});
 }
 
-async function decryptAndPush(list, dataArray, isGetLines) {
+async function processAndPush(list, dataArray, isGetLines) {
 	for (let key of list) {
-		const encryptedData = sessionStorage.getItem(key);
-		if (!encryptedData) {
-			continue;
-		}
-
-		const decryptedVal = CryptoJS.AES.decrypt(encryptedData, newKey).toString(CryptoJS.enc.Utf8);
+		const value = tempStorage[key] || "";
 
 		if (isGetLines) {
-			const lineCount = decryptedVal.split("\n").length;
+			const lineCount = value.split("\n").length;
 			dataArray.push(lineCount);
 		} else {
-			const sizeKB = (decryptedVal.length / 1024).toFixed(3);
+			const sizeKB = (value.length / 1024).toFixed(3);
 			dataArray.push(sizeKB);
 		}
 	}
@@ -2368,7 +2420,7 @@ async function updateGraph() {
 	const fileTabsArray = [];
 	const fileTabsOutArray = [];
 
-	Object.keys(sessionStorage).forEach(key => {
+	Object.keys(tempStorage).forEach(key => {
 		if (key.startsWith("#PyFile-out")) {
 			pycodeOutList.push(key);
 		} else if (key.startsWith("#PyFile")) {
@@ -2380,8 +2432,8 @@ async function updateGraph() {
 	pycodeList.sort(numericalSort);
 	pycodeOutList.sort(numericalSort);
 
-	await decryptAndPush(pycodeOutList, minifiedData, isGetLines);
-	await decryptAndPush(pycodeList, originalData, isGetLines);
+	await processAndPush(pycodeOutList, minifiedData, isGetLines);
+	await processAndPush(pycodeList, originalData, isGetLines);
 
 	if (fileTabs) {
 		Array.from(fileTabs.children).forEach(child => {
@@ -2399,11 +2451,15 @@ async function updateGraph() {
 		const tabNameA = fileTabsArray[i] || '';
 		const tabNameB = fileTabsOutArray[i] || '';
 		const chosenName = tabNameA || tabNameB || defaultFilename;
-		tabFileNames.push(chosenName.trim());
+		const baseName = chosenName.replace(/\.py$/, '');
+		const displayName = baseName.length > 20 ?
+			`${baseName.slice(0, 11)}...${baseName.slice(-12)}` :
+			baseName;
+		tabFileNames.push(displayName);
 	}
 
 	minifiedDataFiltered.push(...minifiedData.filter(value => value > 0));
-	originalDataFiltered.push(...originalData.filter((value, index) => minifiedData[index] > 0));
+	originalDataFiltered.push(...originalData.filter((_, index) => minifiedData[index] > 0));
 	tabFileNamesFiltered.push(...tabFileNames.filter((_, index) => minifiedData[index] > 0));
 
 	if (minifiedDataFiltered.length > 1) {
@@ -2518,31 +2574,25 @@ function handleAutoScroll() {
 	}
 }
 
-function randomKey(length) {
-	let key = "";
-	for (let i = 0; i < length; i++) {
-		const randomIndex = Math.floor(CryptoJS.lib.WordArray.random(1).words[0] / (0xffffffff + 1) * 95) + 32;
-		key += String.fromCharCode(randomIndex);
-	}
-	return key;
-}
-
-const newKey = randomKey(50);
-
 function saveEditorContent(isOut = false) {
 	const content = (isOut ? minifiedEditor : sourceEditor).getModel().getValue();
 	const storageKey = isOut ? sourcesOut[currentTabIndexOut] : sources[currentTabIndex];
-	sessionStorage.setItem(storageKey, CryptoJS.AES.encrypt(content, newKey).toString());
+
+	tempStorage[storageKey] = content.length === 0 ? "" : content;
 }
 
 function updateEditorContent(isOut = false) {
 	const storageKey = isOut ? sourcesOut[currentTabIndexOut] : sources[currentTabIndex];
 	const editor = isOut ? minifiedEditor : sourceEditor;
 
-	const encryptedSource = sessionStorage.getItem(storageKey);
-	if (encryptedSource && editor) {
-		const decryptedValue = CryptoJS.AES.decrypt(encryptedSource, newKey).toString(CryptoJS.enc.Utf8);
-		editor.getModel().setValue(decryptedValue);
+	let storedContent = tempStorage[storageKey];
+
+	if (storedContent === undefined || storedContent.length === 0) {
+		storedContent = "";
+	}
+
+	if (editor) {
+		editor.getModel().setValue(storedContent);
 	}
 }
 
@@ -2698,7 +2748,7 @@ function addEmptyTab() {
 	fileTabs.appendChild(newTab);
 	sources.push(newSourceId);
 	switchTab(newFileIndex);
-	sessionStorage.setItem(newSourceId, '');
+	tempStorage[newSourceId] = '';
 	sourceEditor.getModel().setValue('');
 
 	if (sources.length >= getMaxTabs() && sourcesOut.length >= getMaxTabs()) {
@@ -2782,7 +2832,7 @@ function updateTabStyles() {
 function deleteFile(index, isOut = false) {
 	if (!isOut) {
 		addNewTabBtn.classList.remove("hidden");
-		sessionStorage.removeItem(sources[index]);
+		delete tempStorage[sources[index]];
 		sources.splice(index, 1);
 		fileTabs.removeChild(fileTabs.children[index]);
 		if (currentTabIndex >= sources.length) {
@@ -2795,7 +2845,7 @@ function deleteFile(index, isOut = false) {
 		switchTab(currentTabIndex);
 		updateEditorContent();
 	} else {
-		sessionStorage.removeItem(sourcesOut[index]);
+		delete tempStorage[sourcesOut[index]];
 		sourcesOut.splice(index, 1);
 		fileTabsOut.removeChild(fileTabsOut.children[index]);
 		if (currentTabIndexOut >= sourcesOut.length) {
@@ -2893,7 +2943,7 @@ window.addEventListener('beforeunload', (e) => {
 });
 
 window.addEventListener('load', () => {
-	sessionStorage.clear();
+	tempStorage = {};
 });
 
 function switchTab(index, fromSwitchTabOut = false) {
@@ -3039,7 +3089,7 @@ function addTabOut() {
 	fileTabsOut.appendChild(newTab);
 	sourcesOut.push(newSourceId);
 	switchTabOut(newFileIndexOut);
-	sessionStorage.setItem(newSourceId, '');
+	tempStorage[newSourceId] = '';
 	minifiedEditor.getModel().setValue('');
 }
 

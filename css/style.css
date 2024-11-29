@@ -5,25 +5,12 @@
 
 :root {
   --primary-color: #3b82f6;
-  --secondary-color: #454545;
   --background-color: #fff;
-  --text-color: #333;
-  --border-color: #d3d3d3;
-  --transition-duration: 0.3s;
-  --box-shadow-color: #999;
   --hover-bg-color: #3d3c3c21;
   --error-color: #ef4444;
-  --highlight-color: #3b82f6;
 }
 .switch input {
   display: none;
-}
-.blue_big_box {
-  -webkit-box-shadow: 0 1px 3px var(--box-shadow-color);
-  box-shadow: 0 1px 3px var(--box-shadow-color);
-}
-.simp_border {
-  border-color: var(--border-color);
 }
 .help-container {
   position: absolute;
@@ -66,12 +53,6 @@ input:checked + .slide:before {
 .file-tab:hover:not(.active) {
   background-color: var(--hover-bg-color);
   border-bottom: 3px solid #3d3c3c3d;
-}
-.file-item {
-  padding-left: 20%;
-}
-.file-item:hover {
-  background-color: #68686821;
 }
 .diff-tab.error.active,
 .file-tab-out.error.active {
@@ -127,17 +108,6 @@ div:where(.swal2-container) .swal2-radio {
 }
 .apexcharts-menu-item:hover {
   border-radius: 5px;
-}
-#terminaltext {
-  color: #424242;
-  background: #c8c8c824;
-}
-#preserve_globals:focus,
-#preserve_locals:focus {
-  border-color: #2563eb !important;
-}
-.custom-shadow {
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 @media only screen and (max-width: 768px) {
   #errmsg,
@@ -209,158 +179,25 @@ div:where(.swal2-container) .swal2-radio {
   background-color: #404040a9;
   border-bottom: 3px solid #8989892d;
 }
-.dark .file-item:hover {
-  background-color: #393838a9;
-}
 .dark .diff-tab,
 .dark .file-tab,
 .dark .file-tab-out {
   background-color: #4040406a;
   border-color: transparent;
 }
-.dark .file-item {
-  background-color: #363636;
-  border-color: #444343;
-  color: #e8e8e8;
-}
-.dark .popup-box {
-  background-color: #3d3d3e;
-  border-color: transparent;
-}
-.dark #popup,
 .dark div:where(.swal2-container) div:where(.swal2-popup) {
   background: #333;
-  color: #e8e6e3;
-}
-.dark .custom-shadow {
-  box-shadow: 0 10px 15px -3px rgba(8, 8, 8, 0.3),
-    0 4px 6px -4px rgba(8, 8, 8, 0.2);
-}
-.dark #editor,
-.dark #minified {
-  border-color: #3e4446;
-  border-left: 6px solid #00539fa6;
-  overflow: hidden;
-}
-.dark #terminaltext {
-  color: #48e448 !important;
-  background: #202020;
-}
-.dark html {
-  background-color: #181a1b !important;
-  color-scheme: dark !important;
-}
-.dark .colorhandle {
-  color-scheme: dark;
-  border-color: #736b5e;
   color: #e8e6e3;
 }
 .dark .monaco-diff-editor .diffOverview {
   background: #000000a3 !important;
 }
-.dark #diff-popup {
-  background: #3938388c;
-}
-.dark ::-webkit-input-placeholder {
-  color: #b2aba1;
-}
-.dark ::-moz-placeholder {
-  color: #b2aba1;
-}
-.dark :-ms-input-placeholder {
-  color: #b2aba1;
-}
-.dark ::-ms-input-placeholder {
-  color: #b2aba1;
-}
-.dark ::placeholder {
-  color: #b2aba1;
-}
-.dark ::-webkit-scrollbar {
-  background-color: #202324;
-  color: #aba499;
-}
-.dark ::-webkit-scrollbar-thumb {
-  background-color: #454a4d;
-}
-.dark ::-webkit-scrollbar-thumb:hover {
-  background-color: #575e62;
-}
-.dark ::-webkit-scrollbar-thumb:active {
-  background-color: #484e51;
-}
-.dark ::-webkit-scrollbar-corner {
-  background-color: #181a1b;
-}
 .dark .help-content {
-  background: #181a1b;
+  background: #181a1b !important;
   color: #d8d4cf;
-  border-color: #736b5e;
-}
-.dark .blue_big_box {
-  -webkit-box-shadow: #52585c 0 1px 3px;
-  box-shadow: #52585c 0 1px 3px;
-  border-top-color: #0f3c9f;
-}
-.dark .simp_border {
-  border-color: #3c4144;
-}
-.dark .bg-gray-100 {
-  background-color: #1e2022;
-}
-.dark .bg-blue-500 {
-  background-color: #0844a6;
-}
-.dark .bg-green-500 {
-  background-color: #1b9e4b;
-}
-.dark .bg-red-500 {
-  background-color: #9f0e0e;
-}
-.dark .text-blue-600 {
-  color: #388fed;
-}
-.dark .text-gray-700 {
-  color: #bdb7af;
-}
-.dark .text-gray-900 {
-  color: #d6d3cd;
-}
-.dark .text-neutral-500 {
-  color: #9f978b;
-}
-.dark .hover\:text-gray-700:hover {
-  color: rgb(171 171 171);
+  border-color: #6d6d6d;
 }
 .dark .hover\:ring-2:hover {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
     var(--tw-ring-offset-width) #131516 !important;
-}
-.dark .hover\:to-blue-400:hover {
-  --tw-gradient-to: #2a62a7 var(--tw-gradient-to-position);
-}
-.dark .hover\:from-blue-500:hover {
-  --tw-gradient-from: #2a62a7 var(--tw-gradient-from-position);
-}
-.dark .hover\:bg-blue-600:hover {
-  background-color: #1043b2;
-}
-.dark .hover\:bg-green-600:hover {
-  background-color: #12823b;
-}
-.dark .hover\:bg-red-600:hover {
-  background-color: #ae1c1c;
-}
-.dark .focus\:border-blue-500:focus {
-  border-color: #07409c;
-}
-.dark .bg-white {
-  background-color: #181a1b;
-}
-.dark .border-gray-300 {
-  background-color: #333;
-  border-color: #3c4143;
-}
-.dark .text-gray-600 {
-  color: #707070;
 }

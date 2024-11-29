@@ -4,6 +4,8 @@
 
 Python Minifier is a web tool that demonstrates how various technologies collaborate for code minification, execution, and sharing. This project incorporates Python, HTML, CSS, and JavaScript, along with modern frameworks and libraries.
 
+![Lines of code](https://sloc.xyz/github/glad432/glad432.github.io)
+
 ![Python Minifier - Glad432](/public/img/screenshots/image.png)
 
 ## Technologies Used
@@ -27,7 +29,6 @@ Python Minifier is a web tool that demonstrates how various technologies collabo
 - [Terser](https://terser.org/) - For JavaScript mangler and compressor  
 - [Typewriterjs](https://github.com/tameemsafi/typewriterjs/) - For typing effects
 - [ApexCharts](https://apexcharts.com/) - For interactive charts
-- [CryptoJS](https://github.com/brix/crypto-js) - For cryptography tasks
 - [SweetAlert2](https://sweetalert2.github.io/) - For nice popup boxes
 - [Concurrently](https://github.com/open-cli-tools/concurrently) - For running multiple commands concurrently
 - [Replace-in-file](https://www.npmjs.com/package/replace-in-file) - For replacing text in files easily
