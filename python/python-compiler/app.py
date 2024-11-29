@@ -101,7 +101,7 @@ def run_code() -> Dict[str, Any]:
         )
 
         try:
-            stdout, stderr = process.communicate(input=code, timeout=5)
+            stdout, stderr = process.communicate(input=code, timeout=60)
         except subprocess.TimeoutExpired:
             process.kill()
             stdout, stderr = process.communicate()

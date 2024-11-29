@@ -6,7 +6,7 @@ from typing import Dict, Any
 app = Flask(__name__)
 cors = CORS(app)
 
-MAX_INPUT_SIZE_KB = 420
+MAX_INPUT_SIZE_KB = 1024
 
 @app.route("/", methods=["GET"])
 def index() -> str:
