@@ -2165,7 +2165,7 @@ function fileUpload() {
 	});
 
 	document.getElementById("sample_link").addEventListener("click", () => {
-		const githubrawlink = "https:\\/\\/gist.githubusercontent.com\\/glad432\\/4d1935413e012cd54130a1fc6f31b4bf\\/raw\\/5f3aaae4b9a360b64a1146e6540804af4a91b7b1\\/sample.py";
+		const githubrawlink = "https://gist.githubusercontent.com/glad432/4d1935413e012cd54130a1fc6f31b4bf/raw/5f3aaae4b9a360b64a1146e6540804af4a91b7b1/sample.py";
 
 		fileLinkInput.value = githubrawlink;
 
