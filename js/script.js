@@ -1080,6 +1080,13 @@ function minifiedTabs() {
 
 dwButton.addEventListener('click', () => shareOrDownload('download'));
 
+document.addEventListener("keydown", (event) => {
+	if ((event.ctrlKey || event.metaKey) && event.key === "s") {
+		event.preventDefault();
+		shareOrDownload('download')
+	}
+});
+
 async function createShareLink(file, filename) {
 	const response = await fetch('https://file.io/?expires=2d', {
 		method: 'POST',
