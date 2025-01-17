@@ -180,24 +180,6 @@
         </span>
         <button id="minifyAll" disabled class="hidden px-3 py-2 ml-2 font-bold cursor-pointer bg-blue-500 rounded-full text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 z-10 dark:bg-[#0844a6]"> 5+ </button>
       </div>
-      <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 hidden transition-opacity duration-2000"></div>
-      <div id="popup" class="fixed top-1/2 left-1/2 p-8 bg-white rounded [box-shadow:0_10px_15px_-3px_rgb(0_0_0_/_0.1),_0_4px_6px_-4px_rgb(0_0_0_/_0.1)] z-50 transition-transform duration-200 transform -translate-x-1/2 -translate-y-1/2 hidden hover:scale-[1.02] dark:bg-[#333] dark:[color-scheme:dark] dark:border-[#736b5e] dark:text-[#e8e6e3]">
-        <div id="downloadLink" class="text-center">
-          <span id="fileLink-load"></span>
-          <label id="copy-msg" for="fileLink" class="cursor-pointer block mb-2 text-lg text-neutral-500 font-medium dark:text-neutral-300"></label>
-          <div class="relative flex justify-center items-center">
-            <input type="text" id="fileLink" class="cursor-text border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-51 p-2.5 mr-1 dark:focus:outline-none dark:border-gray-600 dark:bg-[#1e2022] dark:text-white dark:focus:ring-blue-400" readonly>
-            <a id="new_tab"></a>
-          </div>
-          <div id="help-msg" class="help-container text-left" oncontextmenu="return false"></div>
-          <span id="scantocopy"></span>
-          <div id="qrCode" class="hidden" oncontextmenu="return false;"></div>
-          <div class="flex flex-col">
-            <button id="downloadLinkurl" download class="hidden self-center w-fit px-4 py-2 mt-2 font-bold bg-green-500 rounded-lg text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 dark:bg-green-600 dark:text-white"></button>
-            <button id="closePopup" class="hidden px-4 py-2 self-center mt-5 font-bold bg-red-500 rounded-full w-fit text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 dark:bg-red-600 dark:text-white">Close</button>
-          </div>
-        </div>
-      </div>
       <h2 class="relative text-2xl font-bold mt-8 mb-5 text-white bg-black block rounded py-6 pl-[15px] [box-shadow:0_0_2px_rgb(0_0_0/30%)] [border-left:5px_solid_#ef4444]">Minified Code</h2>
       <div class="text-left">
         <span id="line-count-out" class="font-bold px-4 py-2 bg-red-500 rounded text-white dark:bg-red-600">Lines: 1</span>
@@ -222,9 +204,7 @@
           <div class="flex flex-wrap justify-center gap-[3px] md:gap-1">
             <button id="dw" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-red-500 rounded text-white hover:bg-red-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 dark:bg-red-600 dark:text-white dark:hover:bg-red-700">Download <i id="fade-1" class="fa-solid fa-download"></i>
             </button>
-            <button id="copy" disabled class="px-4 py-2 mt-2 font-bold cursor-pointer bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 dark:bg-green-600 dark:text-white dark:hover:bg-green-700">Copy <i class="fa-solid fa-clipboard"></i>
-            </button>
-            <button id="share" disabled class="px-4 py-2 mt-2 mr-0.5 font-bold cursor-pointer bg-blue-500 rounded text-white hover:bg-blue-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700">Share <i id="fade-2" class="fa-solid fa-share-from-square"></i>
+            <button id="copy" disabled class="px-4 py-2 mt-2 mr-0.5 font-bold cursor-pointer bg-green-500 rounded text-white hover:bg-green-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 dark:bg-green-600 dark:text-white dark:hover:bg-green-700">Copy <i class="fa-solid fa-clipboard"></i>
             </button>
           </div>
           <button id="diffPopup" class="hidden md:block mr-0.5 px-4 py-2 mt-2 font-bold cursor-pointer bg-orange-500 rounded text-white hover:bg-orange-600 ease-out overflow-hidden transform md:hover:scale-x-105 md:hover:scale-y-100 dark:bg-orange-600 dark:text-white">Compare <i id="fade-10" class="fa-solid fa-code-compare"></i>
@@ -300,7 +280,7 @@
     <div class="flex justify-center items-center pb-[25px]">
       <div class="bg-white rounded-lg p-6 flex flex-col md:flex-row md:items-center transition-transform hover:scale-x-[1.02] [box-shadow:0_10px_15px_-3px_#0000001a,_0_4px_6px_-4px_#0000001a] dark:bg-[#181a1b] dark:[box-shadow:0_10px_15px_-3px_rgba(8,_8,_8,_0.3),_0_4px_6px_-4px_rgba(8,_8,_8,_0.2)]">
         <div class="mb-6 md:mb-0 md:mr-6">
-          <p class="font-extrabold font-['Source_Code_Pro'] text-center tracking-wide uppercase  dark:[color-scheme:dark] dark:border-[#736b5e] dark:text-[#e8e6e3]">Share it on..</p>
+          <p class="font-extrabold font-['Source_Code_Pro'] text-center tracking-wide uppercase dark:[color-scheme:dark] dark:border-[#736b5e] dark:text-[#e8e6e3]">Share it on..</p>
         </div>
         <div class="flex flex-wrap justify-center">
           <a href="whatsapp://send?text=Check%20out%20this%20python%20minifier!!%20https://glad432.github.io/" target="_blank" rel="noopener noreferrer" class="text-green-500 mx-2 my-2" title="Share on WhatsApp" aria-label="Share on WhatsApp">
