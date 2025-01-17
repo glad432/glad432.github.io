@@ -2,7 +2,7 @@
 
 ## Overview
 
-Python Minifier is a web tool that demonstrates how various technologies collaborate for code minification, execution, and sharing. This project incorporates Python, HTML, CSS, and JavaScript, along with modern frameworks and libraries.
+Python Minifier is a web tool that demonstrates how various technologies collaborate for code minification, execution, and downloading. This project incorporates Python, HTML, CSS, and JavaScript, along with modern frameworks and libraries.
 
 ![Lines of code](https://sloc.xyz/github/glad432/glad432.github.io)
 
@@ -21,7 +21,6 @@ Python Minifier is a web tool that demonstrates how various technologies collabo
 - [Vitejs](https://vitejs.dev/) - For modern front-end development
 - [Monaco Editor](https://microsoft.github.io/monaco-editor/) - For code editing
 - [Font Awesome](https://fontawesome.com/) - For icons
-- [QRCode](https://kazuhikoarase.github.io/qrcode-generator/) - To make QR codes
 - [JSZip](https://stuk.github.io/jszip/) - To compress files in the browser
 - [Autoprefixer](https://github.com/postcss/autoprefixer) - For automatically adding vendor prefixes  
 - [PostCSS](https://postcss.org/) - For transforming CSS with plugins  
@@ -42,7 +41,6 @@ Python Minifier is a web tool that demonstrates how various technologies collabo
 ### APIs and Services
 - [Python Minify](python/python-minifier/) - To make Python code smaller
 - [Python Compiler](python/python-compiler/) - To run Python code
-- [File.io](https://www.file.io/) - To share files
 
 # Key Benefits of Python Minification
 
@@ -68,7 +66,7 @@ To set up and run Python Minifier:
 
 ### What You Need
 
-- [Node.js](https://nodejs.org/) (version 18.0 or newer)
+- [Node.js](https://nodejs.org/) (version 20.0 or newer)
 - npm (usually comes with Node.js)
 - [Git](https://git-scm.com/) (version control system)
 - [Python](https://www.python.org/) (version 3.11 or newer)

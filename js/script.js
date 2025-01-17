@@ -12,26 +12,14 @@ const copyButton = document.getElementById('copy');
 const aniText = document.getElementById("anitext");
 const errorMessage = document.getElementById('errmsg');
 const dwButton = document.getElementById('dw');
-const shareButton = document.getElementById("share");
 const dropArea = document.getElementById('dropArea');
 const fileInput = document.getElementById('fileInput');
 const minifiedSize = document.getElementById('minified-size');
-const fileLinkLoad = document.getElementById("fileLink-load");
 const sourceEditorDiv = document.getElementById("editor");
 const minifiedEditorDiv = document.getElementById("minified");
 const loadingEditor = document.getElementById("loading-editor");
 const loadingMinified = document.getElementById("loading-minified");
-const qrCode = document.getElementById("qrCode");
-const copyMsg = document.getElementById('copy-msg');
-const fileShareLink = document.getElementById("fileLink");
-const closePopupOverlay = document.getElementById('closePopup');
-const popup = document.getElementById("popup");
-const shareOverlay = document.getElementById("overlay");
 const typeOverlay = document.getElementById("type-overlay");
-const orScan = document.getElementById('scantocopy');
-const downloadLinkUrl = document.getElementById('downloadLinkurl');
-const helpMsg = document.getElementById('help-msg');
-const linkNewtab = document.getElementById("new_tab");
 const inputContainer = document.getElementById("inputContainer");
 const fileLinkInput = document.getElementById("fileLinkInput");
 const loadFileBtn = document.getElementById("load_File");
@@ -66,7 +54,7 @@ const headerMenuToggle = document.getElementById('menuToggle');
 const headerMenu = document.getElementById('menu');
 const showOptionsContent = document.getElementById('showOptionsContent');
 const optionContainer = document.getElementById('minifyOptionContainer');
-let errorTimeout, cpyTimeout0, cpyTimeout1, btnTimeout, typingTimeout, sourceEditor, minifiedEditor, diffEditor, darkModeEnabled, compileTime, compileData;
+let errorTimeout, cpyTimeout0, btnTimeout, typingTimeout, sourceEditor, minifiedEditor, diffEditor, darkModeEnabled, compileTime, compileData;
 let typingInProgress = false;
 var sources = ['#PyFile-1'];
 var sourcesOut = ['#PyFile-out-1'];
@@ -85,24 +73,6 @@ const defaultFilename = 'default.py';
 const defaultContent = "#Empty Python file, Enter code to minify";
 const defaultOutput = "Compiled but no output!";
 const maxFileSizeInBytes = 800 * 1024;
-
-const sentences = [
-	"A Python minifier is a tool used to shrink Python code size by eliminating unnecessary elements like white spaces, comments, and line breaks.",
-	"Its primary purpose is to enhance the loading speed of Python scripts, particularly beneficial for web applications.",
-	"By reducing the overall size of the code, the minifier contributes to faster script loading times, optimizing web performance.",
-	"The process of minification streamlines code readability without affecting its functionality or logic.",
-	"Minified code is more efficiently transmitted and executed across various platforms, aiding developers in delivering smoother user experiences.",
-	"Minification is a standard practice for web optimization, mitigating download and execution times of scripts to create a more responsive environment."
-];
-
-const dateformat = {
-	year: 'numeric',
-	month: '2-digit',
-	day: '2-digit',
-	hour: '2-digit',
-	minute: '2-digit',
-	timeZoneName: 'short'
-};
 
 const fontSizeMap = {
 	pc: 14,
@@ -758,11 +728,16 @@ function updateDiffEditor() {
 	const originalContent = tempStorage[sources[currentTabIndexDiff]];
 	const minifiedContent = tempStorage[sourcesOut[currentTabIndexDiff]];
 
-	const originalSource = originalContent && originalContent.length > 0 ? originalContent : "#Original code is empty!";
+	const originalSource = typingInProgress ? sampleCode : ((originalContent && originalContent.length) > 0 ? originalContent : "#Original code is empty!");
 	const minifiedSource = minifiedContent && minifiedContent.length > 0 ? minifiedContent : "#Not Minified!";
 
 	const originalEditorModel = monaco.editor.createModel(originalSource, 'python');
 	const minifiedEditorModel = monaco.editor.createModel(minifiedSource, 'python');
+
+	if (typingInProgress) {
+		disableTyping();
+		sourceEditor.getModel().setValue(sampleCode);
+	}
 
 	diffEditor.updateOptions({
 		wordWrap: isDiffTextWrapEnabled ? 'on' : 'off'
@@ -1078,24 +1053,14 @@ function minifiedTabs() {
 	return nonEmptyCount;
 }
 
-dwButton.addEventListener('click', () => shareOrDownload('download'));
+dwButton.addEventListener('click', downloadDialog);
 
 document.addEventListener("keydown", (event) => {
 	if ((event.ctrlKey || event.metaKey) && event.key === "s") {
 		event.preventDefault();
-		shareOrDownload('download')
+		downloadDialog()
 	}
 });
-
-async function createShareLink(file, filename) {
-	const response = await fetch('https://file.io/?expires=2d', {
-		method: 'POST',
-		body: createFormData(file, filename)
-	});
-
-	const result = await response.json();
-	return result;
-}
 
 function getCompressMimetype(fileFormat) {
 	const fileType = fileFormat.trim().toLowerCase();
@@ -1109,99 +1074,23 @@ function getCompressMimetype(fileFormat) {
 	}
 }
 
-function shareLink(content, filename, isCompressed, fileFormat) {
-	handleTabsOverlay(false);
-	fileLinkLoad.innerHTML = `<span class="font-bold text-gray-500">loading ${addFontAwesomeIcon('fa-solid fa-spinner fa-spin')}</span>`;
-
-	createShareLink(content, filename).then(result => {
-		if (result.success) {
-			const fileLink = result.link;
-			const finalFileFormat = fileFormat.trim().toLowerCase() !== "7z" ? fileFormat.toUpperCase().trim() : fileFormat.trim();
-			const expTime = `${isCompressed ? finalFileFormat + ' File' : 'Python file'} will be deleted after download.<br> Link expires on <span class="font-bold">${new Date(result.expires).toLocaleDateString('en-US', dateformat)}</span>`;
-
-			shareOverlay.classList.remove("hidden");
-			popup.classList.remove("hidden");
-			document.body.classList.add("overflow-y-hidden");
-			document.body.classList.remove("overflow-y-scroll");
-			fileShareLink.classList.add('hidden');
-			copyMsg.textContent = '';
-			helpMsg.innerHTML = '';
-
-			displayQRCode(fileLink);
-
-			setTimeout(() => {
-				copyMsg.innerHTML = `Tap to copy ${addFontAwesomeIcon('fa-solid fa-copy',['hover:text-blue-600'])}`;
-				linkNewtab.href = fileLink;
-				linkNewtab.classList.add('text-white', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5', 'bg-blue-600', 'hover:bg-blue-700');
-				linkNewtab.innerHTML = addFontAwesomeIcon('fa-solid fa-up-right-from-square');
-				linkNewtab.target = "_blank";
-				linkNewtab.title = 'Open in new tab';
-				orScan.innerHTML = `or Scan ${addFontAwesomeIcon('fa-solid fa-expand')}`;
-				downloadLinkUrl.classList.remove('hidden');
-				helpMsg.innerHTML = `${addFontAwesomeIcon('fa-solid fa-question-circle' ,['text-blue-500' ,'text-2xl'])}<div class="help-content rounded-lg"><p class="text-sm text-center">${expTime}</span></p></div>`;
-				orScan.classList.add('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
-				closePopupOverlay.classList.remove('hidden');
-				qrCode.title = "Double Click to zoom-in and zoom-out";
-				qrCode.classList.add('!bg-white', 'rounded-lg', 'border-2', 'border-dashed', 'border-black', 'w-36', 'ml-12', 'p-3', 'mr-12', 'mt-2');
-				qrCode.classList.remove('hidden');
-				fileShareLink.classList.remove('hidden');
-				fileLinkLoad.innerHTML = '';
-				qrCode.classList.remove('inline');
-				fileShareLink.href = fileLink;
-				fileShareLink.value = fileLink;
-				downloadLinkUrl.innerHTML = `Download ${finalFileFormat} ${addFontAwesomeIcon('fa-solid fa-file-zipper')}`
-
-				if (isCompressed) {
-					downloadLinkUrl.onclick = () => {
-						downloadFile(content, getCompressMimetype(fileFormat), filename.trim());
-					};
-					downloadLinkUrl.classList.remove('hidden');
-				} else {
-					downloadLinkUrl.classList.add('hidden');
-				}
-			}, 1500);
-		} else {
-			throw new Error('Failed to create share link');
-		}
-	}).catch(error => {
-		showSweetAlert({
-			html: `${addFontAwesomeIcon('fa-solid fa-circle-exclamation')} ${error.message}, try again later`,
-			icon: "error",
-			confirmButtonColor: "#179fff"
-		});
-		disableDwSrCpBtn(false);
-	});
-}
-
-qrCode.addEventListener('dblclick', () => {
-	animateIcon("qrCode", "fa-fade", 300);
-	setTimeout(() => {
-		qrCode.classList.remove('w-39');
-		qrCode.classList.toggle('w-60');
-	}, 400)
-});
-
-function shareOrDownload(type) {
+function downloadDialog() {
 	const content = minifiedEditor.getModel().getValue();
 	const tabFileName = getCurrentTabName().replace(/\.py$/, "");
 
 	if (content === "") return;
 
 	disableDwSrCpBtn(true);
-	animateIcon(type === 'download' ? "fade-1" : "fade-2", "fa-fade", 3000);
+	animateIcon("fade-1", "fa-fade", 3000);
 
 	if (minifiedTabs() === 1) {
-		if (type === 'download') {
-			downloadFile(content, "text/x-python", getCurrentTabName());
-		} else if (type === 'share') {
-			shareLink(content, getCurrentTabName(), false, 'python');
-		}
+		downloadFile(content, "text/x-python", getCurrentTabName());
 		disableDwSrCpBtn(false);
 		return;
 	}
 
 	showSweetAlert({
-		title: type === 'download' ? "Download" : "Share",
+		title: "Download",
 		showDenyButton: true,
 		showCancelButton: true,
 		allowOutsideClick: false,
@@ -1214,99 +1103,20 @@ function shareOrDownload(type) {
 			confirmButton.title = tabFileName.trim();
 		},
 		preConfirm: () => {
-			if (type === 'download') {
-				downloadFile(content, "text/x-python", getCurrentTabName());
-				return false;
-			} else if (type === 'share') {
-				shareLink(content, getCurrentTabName(), false, 'python');
-			}
+			downloadFile(content, "text/x-python", getCurrentTabName());
 			disableDwSrCpBtn(false);
+			return false;
 		}
 	}).then((result) => {
 		if (result.isDenied) {
-			if (type === 'download') {
-				compressPyFiles(false);
-			} else if (type === 'share') {
-				compressPyFiles(true);
-			}
+			compressPyFiles();
 		} else if (result.isDismissed) {
 			disableDwSrCpBtn(false);
 		}
 	});
 }
 
-shareButton.addEventListener('click', () => shareOrDownload('share'));
-
-function createFormData(content, fileName) {
-	shuffleArray(sentences);
-	const formData = new FormData();
-	const blob = new Blob([content], {
-		type: 'application/x-python'
-	});
-
-	formData.append('file', blob, fileName);
-	formData.append('description', `Python Minifier - Glad432 (glad432.github.io)\n${sentences[0]}`);
-	return formData;
-}
-
-async function displayQRCode(fileLink) {
-	const {
-		default: QRCode
-	} = await import('qrcode-generator');
-
-	const qr = QRCode(10, 'M');
-	qr.addData(fileLink.trim());
-	qr.make();
-
-	const imgTag = qr.createImgTag(6, 0);
-	qrCode.innerHTML = imgTag;
-}
-
-function closePopup() {
-	animateIcon("closePopup", "fa-fade", 700);
-	setTimeout(() => {
-		disableDwSrCpBtn(false);
-		qrCode.classList.remove('!bg-white', 'rounded-lg', 'border-2', 'border-dashed', 'border-black', 'w-36', 'ml-12', 'p-3', 'mr-12', 'mt-2');
-		orScan.classList.remove('block', 'pt-2', 'mb-2', 'text-lg', 'text-neutral-500', 'font-medium');
-		linkNewtab.classList.remove('text-white', 'bg-blue-600', 'hover:bg-blue-700', 'focus:ring-4', 'font-medium', 'rounded-lg', 'text-sm', 'px-5', 'py-2.5');
-		closePopupOverlay.classList.add('hidden');
-		shareOverlay.classList.add("hidden");
-		downloadLinkUrl.classList.add('hidden');
-		popup.classList.add("hidden");
-		document.body.classList.remove("overflow-y-hidden");
-		document.body.classList.add("overflow-y-scroll");
-		qrCode.classList.add('hidden');
-		qrCode.innerHTML = '';
-		qrCode.title = '';
-		fileLinkLoad.innerHTML = '';
-		fileShareLink.value = '';
-		copyMsg.innerHTML = '';
-		orScan.innerHTML = '';
-		helpMsg.innerHTML = '';
-		linkNewtab.innerHTML = '';
-		linkNewtab.href = '';
-		linkNewtab.target = '';
-		downloadLinkUrl.innerHTML = '';
-	}, 800);
-}
-
-closePopupOverlay.addEventListener('click', closePopup);
-
-async function copyfilelink() {
-	await navigator.clipboard.writeText(fileShareLink.value);
-	if (cpyTimeout1) {
-		clearTimeout(cpyTimeout1);
-	}
-	copyMsg.innerHTML = `Copied ${addFontAwesomeIcon('fa-solid fa-copy fa-fade')}`;
-	cpyTimeout1 = setTimeout(() => {
-		copyMsg.innerHTML = `Tap to copy ${addFontAwesomeIcon('fa-solid fa-copy')}`;
-		cpyTimeout1 = null;
-	}, 3000);
-}
-
-fileShareLink.addEventListener('click', copyfilelink);
-
-async function compressFiles(selectedIndices, sortedKeys, maxLength, baseFileName, fileFormat, addReadme, fastCompress, generateLink) {
+async function compressFiles(selectedIndices, sortedKeys, maxLength, baseFileName, fileFormat, addReadme, fastCompress) {
 	const {
 		default: JSZip
 	} = await import('jszip');
@@ -1387,26 +1197,22 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, baseFileNam
 	});
 
 	setTimeout(() => {
-		if (!generateLink) {
-			if (compressedBlob) {
-				showSweetAlert({
-					title: `Download`,
-					html: `<p class="pb-3 font-bold text-neutral-500 hover:underline" title="${baseFileName}.${fileFormat}">${baseFileName.length > 25 ? `${baseFileName.slice(0, 11)}...${baseFileName.slice(-12)}.${fileFormat}` : `${baseFileName}.${fileFormat}`}</p><button id="download-btn" class="swal2-confirm swal2-styled bg-red-500 rounded text-white hover:bg-red-600">Download</button><button id="close-btn" class="swal2-cancel swal2-styled">Close</button>`,
-					showConfirmButton: false,
-					allowOutsideClick: false,
-					didOpen: (Swal) => {
-						Swal.getPopup().querySelector('#download-btn').addEventListener('click', () => {
-							downloadFile(compressedBlob, getCompressMimetype(fileFormat), `${baseFileName.trim()}.${fileFormat.trim().toLowerCase()}`);
-						});
-						Swal.getPopup().querySelector('#close-btn').addEventListener('click', () => {
-							disableDwSrCpBtn(false);
-							Swal.close();
-						});
-					}
-				});
-			}
-		} else {
-			shareLink(compressedBlob, `${baseFileName.trim()}.${fileFormat.trim().toLowerCase()}`, true, fileFormat);
+		if (compressedBlob) {
+			showSweetAlert({
+				title: `Download`,
+				html: `<p class="pb-3 font-bold text-neutral-500 hover:underline" title="${baseFileName}.${fileFormat}">${addFontAwesomeIcon('fa-regular fa-file-zipper', ["mr-1"], false)} ${baseFileName.length > 25 ? `${baseFileName.slice(0, 11)}...${baseFileName.slice(-12)}.${fileFormat}` : `${baseFileName}.${fileFormat}`}</p><button id="download-btn" class="swal2-confirm swal2-styled bg-red-500 rounded text-white hover:bg-red-600">Download</button><button id="close-btn" class="swal2-cancel swal2-styled">Close</button>`,
+				showConfirmButton: false,
+				allowOutsideClick: false,
+				didOpen: (Swal) => {
+					Swal.getPopup().querySelector('#download-btn').addEventListener('click', () => {
+						downloadFile(compressedBlob, getCompressMimetype(fileFormat), `${baseFileName.trim()}.${fileFormat.trim().toLowerCase()}`);
+					});
+					Swal.getPopup().querySelector('#close-btn').addEventListener('click', () => {
+						disableDwSrCpBtn(false);
+						Swal.close();
+					});
+				}
+			});
 		}
 
 		handleTabsOverlay(false);
@@ -1441,7 +1247,7 @@ async function filterFileNames() {
 	return tabFileNamesFiltered;
 }
 
-function compressOptions(isShareLink) {
+function compressOptions() {
 	const fragment = document.createDocumentFragment();
 
 	const div1 = document.createElement('div');
@@ -1509,15 +1315,6 @@ function compressOptions(isShareLink) {
 		labelClass: "relative right-[7px]"
 	}));
 
-	if (isShareLink) {
-		checkboxDiv.appendChild(checkboxField({
-			id: 'generate-link',
-			label: 'Generate Share Link',
-			checked: true,
-			labelClass: "relative left-[2px]"
-		}));
-	}
-
 	fragment.appendChild(checkboxDiv);
 	const tempDiv = document.createElement('div');
 	tempDiv.appendChild(fragment);
@@ -1525,7 +1322,7 @@ function compressOptions(isShareLink) {
 	return tempDiv.innerHTML;
 }
 
-async function showMinifiedFilesPopup(isShareLink) {
+async function showMinifiedFilesPopup() {
 	const ul = document.createElement("ul");
 	ul.className = "max-h-60 overflow-y-auto overflow-x-hidden list-none p-4 text-center [scrollbar-width:thin] dark:[color-scheme:dark] dark:border-[#736b5e] dark:text-[#e8e6e3]";
 
@@ -1556,11 +1353,11 @@ async function showMinifiedFilesPopup(isShareLink) {
 	if (isConfirmed) {
 		disableDwSrCpBtn(false);
 		handleTabsOverlay(false);
-		compressPyFiles(isShareLink);
+		compressPyFiles();
 	}
 }
 
-async function compressPyFiles(isShareLink = false) {
+async function compressPyFiles() {
 	const sortedKeys = Object.keys(tempStorage)
 		.filter(key => key.startsWith("#PyFile-out-"))
 		.sort((a, b) => {
@@ -1584,14 +1381,13 @@ async function compressPyFiles(isShareLink = false) {
 	const selectedIndices = relevantTabs.map(tab => tab.index);
 
 	handleTabsOverlay(true);
-	shareButton.disabled = true;
 
 	const {
 		value,
 		isDismissed,
 		isDenied
 	} = await showSweetAlert({
-		html: compressOptions(isShareLink),
+		html: compressOptions(),
 		inputValidator: (value) => {
 			if (!value.fileFormat) {
 				return "You need to choose one file format!";
@@ -1618,10 +1414,6 @@ async function compressPyFiles(isShareLink = false) {
 				fastCompress: document.getElementById('fast-compression').checked
 			};
 
-			if (isShareLink) {
-				result.generateLink = document.getElementById('generate-link').checked;
-			}
-
 			return result;
 		}
 	});
@@ -1631,7 +1423,7 @@ async function compressPyFiles(isShareLink = false) {
 		handleTabsOverlay(false);
 		return;
 	} else if (isDenied) {
-		await showMinifiedFilesPopup(isShareLink);
+		await showMinifiedFilesPopup();
 		return;
 	}
 
@@ -1639,11 +1431,10 @@ async function compressPyFiles(isShareLink = false) {
 		fileFormat,
 		fileName,
 		addReadme,
-		fastCompress,
-		generateLink
+		fastCompress
 	} = value;
 
-	await compressFiles(selectedIndices, sortedKeys, Math.min(20, maxLength), fileName, fileFormat, addReadme, fastCompress, generateLink);
+	await compressFiles(selectedIndices, sortedKeys, Math.min(20, maxLength), fileName, fileFormat, addReadme, fastCompress);
 
 }
 
@@ -1889,7 +1680,6 @@ document.getElementById('clearAll').addEventListener('click', () => {
 
 function disableDwSrCpBtn(disable) {
 	copyButton.disabled = disable;
-	shareButton.disabled = disable;
 	dwButton.disabled = disable;
 }
 
