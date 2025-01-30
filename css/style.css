@@ -1,7 +1,6 @@
 @import url(https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap);
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
 
 :root {
   --primary-color: #3b82f6;

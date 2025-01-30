@@ -73,6 +73,7 @@ const defaultFilename = 'default.py';
 const defaultContent = "#Empty Python file, Enter code to minify";
 const defaultOutput = "Compiled but no output!";
 const maxFileSizeInBytes = 800 * 1024;
+const sweetAlertTimeout = 3000;
 
 const fontSizeMap = {
 	pc: 14,
@@ -616,11 +617,14 @@ async function codeCompile() {
 		}
 
 		const data = await response.json();
+
 		pyCompileAtTabIndex = currentTabIndex;
 		compileTime = new Date();
 		compileData = /\r|\n/.test(data.output) || data.output.length !== 0 ? data.output : defaultOutput;
 		terminalText.textContent = `[${compileTime.toLocaleTimeString()}] ~/temp/${Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('')}$ python "${truncatedFileName.trim()}"\n${compileData}`;
 		pyTerminal.classList.remove("hidden");
+
+		autoMiddleScroll(pyTerminal, "center");
 	} catch {
 		pyTerminal.classList.remove("hidden");
 		terminalText.textContent = 'Error occurred while running the code. Please check your code and try again.';
@@ -754,8 +758,9 @@ function showDiffPopup() {
 		showSweetAlert({
 			text: "Diff Editor is not available, reload the page and try again!",
 			icon: "warning",
-			confirmButtonColor: "#6E7881",
-			confirmButtonText: "Close"
+			confirmButtonColor: "#d33",
+			confirmButtonText: "Close",
+			timer: sweetAlertTimeout,
 		}).then((result) => {
 			if (result.isConfirmed) {
 				disableDwSrCpBtn(false);
@@ -1053,12 +1058,14 @@ function minifiedTabs() {
 	return nonEmptyCount;
 }
 
-dwButton.addEventListener('click', downloadDialog);
+dwButton.addEventListener('click', () => {
+	downloadDialog(false)
+});
 
 document.addEventListener("keydown", (event) => {
 	if ((event.ctrlKey || event.metaKey) && event.key === "s") {
 		event.preventDefault();
-		downloadDialog()
+		downloadDialog(true);
 	}
 });
 
@@ -1074,11 +1081,21 @@ function getCompressMimetype(fileFormat) {
 	}
 }
 
-function downloadDialog() {
+function downloadDialog(fromShortcut) {
 	const content = minifiedEditor.getModel().getValue();
 	const tabFileName = getCurrentTabName().replace(/\.py$/, "");
 
-	if (content === "") return;
+	if (content === "") {
+		showSweetAlert({
+			title: "Minification Required",
+			text: "Switch to a minified tab to download",
+			icon: "info",
+			confirmButtonColor: "#d33",
+			confirmButtonText: "Close",
+			timer: sweetAlertTimeout,
+		});
+		return;
+	};
 
 	disableDwSrCpBtn(true);
 	animateIcon("fade-1", "fa-fade", 3000);
@@ -1109,14 +1126,14 @@ function downloadDialog() {
 		}
 	}).then((result) => {
 		if (result.isDenied) {
-			compressPyFiles();
+			compressPyFiles(fromShortcut);
 		} else if (result.isDismissed) {
 			disableDwSrCpBtn(false);
 		}
 	});
 }
 
-async function compressFiles(selectedIndices, sortedKeys, maxLength, baseFileName, fileFormat, addReadme, fastCompress) {
+async function compressFiles(selectedIndices, sortedKeys, maxLength, baseFileName, fileFormat, addReadme, fastCompress, fromShortcut) {
 	const {
 		default: JSZip
 	} = await import('jszip');
@@ -1159,6 +1176,10 @@ async function compressFiles(selectedIndices, sortedKeys, maxLength, baseFileNam
 	for (const index of selectedIndices) {
 		const fileKey = sortedKeys[index];
 		const fileName = finalFileNames[selectedIndices.indexOf(index)];
+
+		if (fromShortcut && !fastCompress && minifiedTabs() >= 5) {
+			autoMiddleScroll(compressProgress, "center");
+		}
 
 		if (fileName) {
 			const minifiedCode = tempStorage[fileKey] || "";
@@ -1316,13 +1337,14 @@ function compressOptions() {
 	}));
 
 	fragment.appendChild(checkboxDiv);
+
 	const tempDiv = document.createElement('div');
 	tempDiv.appendChild(fragment);
 
 	return tempDiv.innerHTML;
 }
 
-async function showMinifiedFilesPopup() {
+async function showMinifiedFilesPopup(fromShortcut) {
 	const ul = document.createElement("ul");
 	ul.className = "max-h-60 overflow-y-auto overflow-x-hidden list-none p-4 text-center [scrollbar-width:thin] dark:[color-scheme:dark] dark:border-[#736b5e] dark:text-[#e8e6e3]";
 
@@ -1353,11 +1375,11 @@ async function showMinifiedFilesPopup() {
 	if (isConfirmed) {
 		disableDwSrCpBtn(false);
 		handleTabsOverlay(false);
-		compressPyFiles();
+		compressPyFiles(fromShortcut);
 	}
 }
 
-async function compressPyFiles() {
+async function compressPyFiles(fromShortcut) {
 	const sortedKeys = Object.keys(tempStorage)
 		.filter(key => key.startsWith("#PyFile-out-"))
 		.sort((a, b) => {
@@ -1384,6 +1406,7 @@ async function compressPyFiles() {
 
 	const {
 		value,
+		isConfirmed,
 		isDismissed,
 		isDenied
 	} = await showSweetAlert({
@@ -1418,23 +1441,23 @@ async function compressPyFiles() {
 		}
 	});
 
-	if (isDismissed) {
+	if (isConfirmed) {
+		const {
+			fileFormat,
+			fileName,
+			addReadme,
+			fastCompress
+		} = value;
+
+		await compressFiles(selectedIndices, sortedKeys, Math.min(20, maxLength), fileName, fileFormat, addReadme, fastCompress, fromShortcut);
+	} else if (isDismissed) {
 		disableDwSrCpBtn(false);
 		handleTabsOverlay(false);
 		return;
 	} else if (isDenied) {
-		await showMinifiedFilesPopup();
+		await showMinifiedFilesPopup(fromShortcut);
 		return;
 	}
-
-	const {
-		fileFormat,
-		fileName,
-		addReadme,
-		fastCompress
-	} = value;
-
-	await compressFiles(selectedIndices, sortedKeys, Math.min(20, maxLength), fileName, fileFormat, addReadme, fastCompress);
 
 }
 
@@ -1658,7 +1681,8 @@ document.getElementById('clearAll').addEventListener('click', () => {
 						text: "All the tabs are Cleared.",
 						icon: "success",
 						confirmButtonColor: "#179fff",
-						confirmButtonText: "Ok"
+						confirmButtonText: "Ok",
+						timer: sweetAlertTimeout
 					});
 				} else if (result.isDenied) {
 					minifiedEditor.getModel().setValue('');
@@ -2511,7 +2535,8 @@ function addEmptyTab() {
 		showSweetAlert({
 			icon: "error",
 			html: `${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} You can't add more than ${getMaxTabs()} tabs.`,
-			confirmButtonColor: "#179fff"
+			confirmButtonColor: "#179fff",
+			timer: sweetAlertTimeout
 		});
 		return;
 	}
@@ -2776,14 +2801,14 @@ document.getElementById("file-1").addEventListener('click', () => {
 	switchTab(0);
 })
 
-function autoMiddleScroll(tab) {
+function autoMiddleScroll(tab, scrollBlock = "nearest") {
 	if (!(tab instanceof HTMLElement))
 		return;
 
 	tab.scrollIntoView({
 		behavior: 'smooth',
 		inline: 'center',
-		block: 'nearest'
+		block: scrollBlock
 	});
 }
 
