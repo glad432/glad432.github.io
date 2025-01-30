@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { terser } from 'rollup-plugin-terser';
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   base: 'https://glad432.github.io/',
   plugins: [
+    tailwindcss(),
     createHtmlPlugin({
       minify: {
         collapseWhitespace: true,

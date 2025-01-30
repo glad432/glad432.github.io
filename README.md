@@ -22,8 +22,6 @@ Python Minifier is a web tool that demonstrates how various technologies collabo
 - [Monaco Editor](https://microsoft.github.io/monaco-editor/) - For code editing
 - [Font Awesome](https://fontawesome.com/) - For icons
 - [JSZip](https://stuk.github.io/jszip/) - To compress files in the browser
-- [Autoprefixer](https://github.com/postcss/autoprefixer) - For automatically adding vendor prefixes  
-- [PostCSS](https://postcss.org/) - For transforming CSS with plugins  
 - [Sass](https://sass-lang.com/) - For CSS pre-processing  
 - [Terser](https://terser.org/) - For JavaScript mangler and compressor  
 - [Typewriterjs](https://github.com/tameemsafi/typewriterjs/) - For typing effects
