@@ -54,7 +54,7 @@ const headerMenuToggle = document.getElementById('menuToggle');
 const headerMenu = document.getElementById('menu');
 const showOptionsContent = document.getElementById('showOptionsContent');
 const optionContainer = document.getElementById('minifyOptionContainer');
-let errorTimeout, cpyTimeout0, btnTimeout, typingTimeout, sourceEditor, minifiedEditor, diffEditor, darkModeEnabled, compileTime, compileData;
+let errorTimeout, cpyTimeout0, btnTimeout, typingTimeout, sourceEditor, minifiedEditor, diffEditor, darkModeEnabled, compileTime, compileData, lastLoadedUrl;
 let typingInProgress = false;
 var sources = ['#PyFile-1'];
 var sourcesOut = ['#PyFile-out-1'];
@@ -1647,6 +1647,7 @@ function clearSource() {
 	handleErrorMessage();
 	clearPyComplier(true);
 	fileInput.value = '';
+	lastLoadedUrl = '';
 	minifiedEditor.getModel().setValue('');
 	sourceEditor.getModel().setValue('');
 	fileLinkInput.value = '';
@@ -1890,8 +1891,6 @@ function inputFromUrl() {
 document.getElementById("from_url").addEventListener("click", inputFromUrl);
 
 function fileUpload() {
-	let lastLoadedUrl = '';
-
 	async function loadFileContent(fileUrl) {
 		try {
 			loadFileBtn.innerHTML = `Loading ${addFontAwesomeIcon('fa-solid fa-spinner fa-spin')}`;
