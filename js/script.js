@@ -1688,6 +1688,7 @@ document.getElementById('clearAll').addEventListener('click', () => {
 				} else if (result.isDenied) {
 					minifiedEditor.getModel().setValue('');
 					sourceEditor.getModel().setValue('');
+					lastLoadedUrl = '';
 					handleErrorMessage();
 					disableTyping();
 					clearPyComplier();
