@@ -1279,7 +1279,7 @@ function compressOptions() {
 			div.className = "mr-5";
 		}
 		const input = document.createElement('input');
-		input.className = "mr-1";
+		input.className = "mr-1 cursor-pointer";
 		input.type = 'radio';
 		input.id = `format-${labelText.toLowerCase()}`;
 		input.name = 'file-format';
@@ -2610,7 +2610,7 @@ function updateTabStyles() {
 				if (!tab.querySelector('.edit-tab-icon')) {
 					const editBtn = document.createElement('button');
 					editBtn.id = `editbtn-${currentTabIndex + 1}`;
-					editBtn.className = 'edit-tab-icon mr-0.5 ml-[3px] hover:text-blue-400 text-blue-600';
+					editBtn.className = 'edit-tab-icon mr-0.5 ml-[3px] cursor-pointer hover:text-blue-400 text-blue-600';
 					editBtn.title = 'Edit file name';
 					editBtn.innerHTML = addFontAwesomeIcon('fa-solid fa-pen-to-square');
 					editBtn.addEventListener('click', () => {
@@ -2932,7 +2932,7 @@ function updateTabStylesOut() {
 				if (!tab.querySelector('.edit-tab-icon-out')) {
 					const editBtn = document.createElement('button');
 					editBtn.id = `editbtnout-${currentTabIndexOut + 1}`;
-					editBtn.className = 'edit-tab-icon-out mr-0.5 ml-[3px] hover:text-blue-400 text-blue-600';
+					editBtn.className = 'edit-tab-icon-out mr-0.5 ml-[3px] cursor-pointer hover:text-blue-400 text-blue-600';
 					editBtn.title = 'Edit file name';
 					editBtn.innerHTML = addFontAwesomeIcon('fa-solid fa-pen-to-square');
 					editBtn.addEventListener('click', () => {
