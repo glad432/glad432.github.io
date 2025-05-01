@@ -2466,7 +2466,7 @@ function editTabName() {
 	});
 
 	const saveIcon = document.createElement('button');
-	saveIcon.className = 'save-tab-icon hover:text-green-400 text-green-500';
+	saveIcon.className = 'save-tab-icon cursor-pointer hover:text-green-400 text-green-500';
 	saveIcon.title = 'Save or press enter';
 	saveIcon.innerHTML = addFontAwesomeIcon('fa-solid fa-floppy-disk', ['px-0.5']);
 
@@ -2864,7 +2864,7 @@ function editTabNameOut() {
 	});
 
 	const saveIcon = document.createElement('button');
-	saveIcon.className = 'save-tab-icon hover:text-green-400 text-green-500';
+	saveIcon.className = 'save-tab-icon cursor-pointer hover:text-green-400 text-green-500';
 	saveIcon.title = 'Save or press enter';
 	saveIcon.innerHTML = addFontAwesomeIcon('fa-solid fa-floppy-disk', ['px-0.5']);
 
