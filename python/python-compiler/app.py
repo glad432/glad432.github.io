@@ -50,6 +50,7 @@ FORBIDDEN_MODULES = (
     "turtle",
     "http",
     "sqlite3",
+    "importlib",
 )
 
 FORBIDDEN_IMPORTS = (
@@ -101,7 +102,7 @@ def run_code() -> Dict[str, Any]:
         )
 
         try:
-            stdout, stderr = process.communicate(input=code, timeout=60)
+            stdout, stderr = process.communicate(input=code, timeout=300)
         except subprocess.TimeoutExpired:
             process.kill()
             stdout, stderr = process.communicate()
