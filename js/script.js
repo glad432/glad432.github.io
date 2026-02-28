@@ -58,6 +58,7 @@ let errorTimeout, cpyTimeout0, btnTimeout, typingTimeout, sourceEditor, minified
 let typingInProgress = false;
 var sources = ['#PyFile-1'];
 var sourcesOut = ['#PyFile-out-1'];
+let uniqueTabCounter = 2;
 var currentTabIndex = 0;
 var currentTabIndexOut = 0;
 var currentTabIndexDiff = 0;
@@ -562,14 +563,16 @@ window.addEventListener('resize', () => {
 });
 
 async function truncateCode(content) {
-	const pyblob = new Blob([content]);
-	if (pyblob.size > maxFileSizeInBytes) {
-		return new Promise(resolve => {
-			const pyreader = new FileReader();
-			pyreader.onloadend = () => resolve(pyreader.result);
-			pyreader.readAsText(pyblob.slice(0, maxFileSizeInBytes));
-		});
+	const encoder = new TextEncoder();
+	const encodedBytes = encoder.encode(content);
+
+	if (encodedBytes.length > maxFileSizeInBytes) {
+		const slicedBytes = encodedBytes.slice(0, maxFileSizeInBytes);
+
+		const decoder = new TextDecoder("utf-8");
+		return decoder.decode(slicedBytes);
 	}
+
 	return content;
 }
 
@@ -735,8 +738,18 @@ function updateDiffEditor() {
 	const originalSource = typingInProgress ? sampleCode : ((originalContent && originalContent.length) > 0 ? originalContent : "#Original code is empty!");
 	const minifiedSource = minifiedContent && minifiedContent.length > 0 ? minifiedContent : "#Not Minified!";
 
-	const originalEditorModel = monaco.editor.createModel(originalSource, 'python');
-	const minifiedEditorModel = monaco.editor.createModel(minifiedSource, 'python');
+	const currentModels = diffEditor.getModel();
+	if (currentModels && currentModels.original && currentModels.modified) {
+		currentModels.original.setValue(originalSource);
+		currentModels.modified.setValue(minifiedSource);
+	} else {
+		const originalEditorModel = monaco.editor.createModel(originalSource, 'python');
+		const minifiedEditorModel = monaco.editor.createModel(minifiedSource, 'python');
+		diffEditor.setModel({
+			original: originalEditorModel,
+			modified: minifiedEditorModel
+		});
+	}
 
 	if (typingInProgress) {
 		disableTyping();
@@ -745,11 +758,6 @@ function updateDiffEditor() {
 
 	diffEditor.updateOptions({
 		wordWrap: isDiffTextWrapEnabled ? 'on' : 'off'
-	});
-
-	diffEditor.setModel({
-		original: originalEditorModel,
-		modified: minifiedEditorModel
 	});
 }
 
@@ -844,11 +852,6 @@ function hideDiffPopup() {
 		document.body.classList.add("overflow-y-scroll");
 		closeDiffPopupBtn.classList.add('hidden');
 		diffTabs.innerHTML = '';
-
-		if (diffEditor) {
-			diffEditor.dispose();
-			diffEditor = null;
-		}
 	}, 300);
 }
 
@@ -983,39 +986,42 @@ function setupFileInput() {
 		dropArea.classList.remove('!bg-blue-100/[.2]', '!border-blue-400/[.2]', 'scale-x-105', 'scale-y-110');
 	});
 
-	function handleFiles(files) {
+	async function handleFiles(files) {
 		var fileCount = 0;
-
-		Array.from(files).forEach((file) => {
+		for (const file of Array.from(files)) {
 			if (fileCount < getMaxTabs()) {
 				handleErrorMessage();
-				handleFile(file);
+				await handleFilePromise(file);
 				fileCount++;
 			}
-		});
+		}
 	}
 
-	function handleFile(file) {
-		if (file.size <= maxFileSizeInBytes) {
-			const reader = new FileReader();
-			reader.onload = (e) => {
-				if (sourceEditor.getModel().getValue().trim() !== '' && (sources.length < getMaxTabs() && sourcesOut.length < getMaxTabs())) {
-					addEmptyTab();
-				}
+	function handleFilePromise(file) {
+		return new Promise((resolve) => {
+			if (file.size <= maxFileSizeInBytes) {
+				const reader = new FileReader();
+				reader.onload = (e) => {
+					if (sourceEditor.getModel().getValue().trim() !== '' && (sources.length < getMaxTabs() && sourcesOut.length < getMaxTabs())) {
+						addEmptyTab();
+					}
 
-				sourceEditor.getModel().setValue(fileContent(e));
-				sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
-				handleErrorMessage();
-				updateNametoTab(file.name.trim());
-				minifiedEditor.getModel().setValue('');
-				handleAutoScroll();
-				updateGraph();
-			};
-			reader.readAsText(file);
-		} else {
-			handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} File size exceeds ${maxFileSizeInBytes / 1024} KB. Please select a smaller file.`);
-			fileInput.value = '';
-		}
+					sourceEditor.getModel().setValue(fileContent(e));
+					sourceEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
+					handleErrorMessage();
+					updateNametoTab(file.name.trim());
+					minifiedEditor.getModel().setValue('');
+					handleAutoScroll();
+					updateGraph();
+					resolve();
+				};
+				reader.readAsText(file);
+			} else {
+				handleErrorMessage(`${addFontAwesomeIcon('fa-solid fa-file-circle-exclamation')} File size exceeds ${maxFileSizeInBytes / 1024} KB. Please select a smaller file.`);
+				fileInput.value = '';
+				resolve();
+			}
+		});
 	}
 }
 
@@ -1532,30 +1538,64 @@ function initializeMinifier() {
 
 		const code = typingInProgress ? sampleCode.replace(/\r/g, '') : sourceEditor.getModel().getValue();
 
+		const capturedTabIndexOut = currentTabIndexOut;
+		const capturedStorageKey = sourcesOut[capturedTabIndexOut];
+
 		if (code !== '' && minifiedEditor.getModel().getValue() === '') {
 			try {
 				minifyBtnText.innerHTML = `Minifying ${addFontAwesomeIcon('fa-solid fa-down-left-and-up-right-to-center fa-sm fa-fade')}`;
 				minifyButton.classList.add("pointer-events-none");
 
-				const response = await fetch(`https://python-minify.vercel.app/minify?${buildQuery()}`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'text/plain'
-					},
-					body: code
-				});
+				let response;
+				let retries = 3;
+
+				while (retries > 0) {
+					response = await fetch(`https://python-minify.vercel.app/minify?${buildQuery()}`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'text/plain'
+						},
+						body: code
+					});
+
+					if (response.ok || (response.status !== 429 && response.status !== 504)) {
+						break;
+					}
+					const backoffDelay = (1500 * (4 - retries)) + Math.floor(Math.random() * 500);
+					await new Promise(r => setTimeout(r, backoffDelay));
+					retries--;
+				}
 
 				if (response.ok) {
-					const minified = await response.json();
-					minifiedEditor.getModel().setValue(minified.minified_code);
-					saveEditorContent(true);
-					minifiedEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
-					disableDwSrCpBtn(false);
-					graphContainer.classList.remove("hidden");
+					try {
+						const minified = await response.json();
+
+						if (!sourcesOut.includes(capturedStorageKey)) {
+							return;
+						}
+
+						tempStorage[capturedStorageKey] = minified.minified_code;
+
+						if (currentTabIndexOut === capturedTabIndexOut) {
+							minifiedEditor.getModel().setValue(minified.minified_code);
+							minifiedEditor.revealLine(1, monaco.editor.ScrollType.Immediate);
+							disableDwSrCpBtn(false);
+							graphContainer.classList.remove("hidden");
+						}
+
+					} catch (parseError) {
+						disableDwSrCpBtn(true);
+						clearPyComplier(true);
+						minifiedSize.innerHTML = `${addFontAwesomeIcon('fa-solid fa-circle-exclamation')} Invalid server response!`;
+					}
 				} else {
 					disableDwSrCpBtn(true);
 					clearPyComplier(true);
-					minifiedSize.innerHTML = `${addFontAwesomeIcon('fa-solid fa-circle-exclamation')} Minification failed!`;
+					if (response.status === 429) {
+						minifiedSize.innerHTML = `${addFontAwesomeIcon('fa-solid fa-circle-exclamation')} Rate limit exceeded. Try later.`;
+					} else {
+						minifiedSize.innerHTML = `${addFontAwesomeIcon('fa-solid fa-circle-exclamation')} Server error (${response.status})!`;
+					}
 				}
 			} catch {
 				disableDwSrCpBtn(true);
@@ -2524,7 +2564,8 @@ function updateNametoTab(fileName, isOut = false) {
 	const tabToUpdate = fileTabsToUpdate.children[activeTabIndex];
 
 	if (tabToUpdate) {
-		tabToUpdate.innerHTML = `${addFontAwesomeIcon('fa-brands fa-python', ['text-blue-600', 'pr-2'])}${fileName.trim()}`;
+		tabToUpdate.innerHTML = addFontAwesomeIcon('fa-brands fa-python', ['text-blue-600', 'pr-2']);
+		tabToUpdate.appendChild(document.createTextNode(fileName.trim()));
 	}
 }
 
@@ -2547,11 +2588,12 @@ function addEmptyTab() {
 	minifyAllBtn.classList.remove("hidden");
 
 	const newFileIndex = sources.length;
-	const newSourceId = `#PyFile-${newFileIndex + 1}`;
+	const currentUniqueId = uniqueTabCounter++;
+	const newSourceId = `#PyFile-${currentUniqueId}`;
 	const newTab = document.createElement('li');
 	newTab.className = 'file-tab relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity';
 	newTab.innerHTML = `${addFontAwesomeIcon('fa-brands fa-python', ['text-blue-600', 'pr-2'])}File ${newFileIndex + 1}.py`;
-	newTab.id = `file-${newFileIndex + 1}`;
+	newTab.id = `file-${currentUniqueId}`;
 	newTab.title = `${getOrdinalSuffix(newFileIndex)} Tab`;
 
 	newTab.addEventListener("click", () => {
@@ -2685,7 +2727,7 @@ function deleteFile(index, isOut = false) {
 function confirmDeleteFile(index) {
 	const tabFileName = getCurrentTabName().replace(/\.py$/, "");
 	const fileNameDisplay = tabFileName.length > 15 ? `${tabFileName.slice(0,7)}...${tabFileName.slice(-3)}` : tabFileName;
-	const confirmationMessage = `Are you sure you want to delete <span class="font-bold text-neutral-500 hover:underline" title="${tabFileName.trim()}">${fileNameDisplay}</span> tab?`;
+	const confirmationMessage = `Are you sure you want to delete <span class="font-bold text-neutral-500 hover:underline" title="${escapeHtml(tabFileName.trim())}">${escapeHtml(fileNameDisplay)}</span> tab?`;
 
 	showSweetAlert({
 		html: confirmationMessage,
@@ -2888,12 +2930,12 @@ function addTabOut() {
 	saveEditorContent(true);
 
 	const newFileIndexOut = sourcesOut.length;
-	const newSourceId = `#PyFile-out-${newFileIndexOut + 1}`;
+	const newSourceId = `#PyFile-out-${uniqueTabCounter - 1}`;
 
 	const newTab = document.createElement('li');
 	newTab.className = 'file-tab-out relative cursor-pointer bg-[#f0f0f0] border-[#ccc] px-[25px] py-2 mb-[5px] border border-solid rounded mr-[5px] transition-opacity';
 	newTab.innerHTML = `${addFontAwesomeIcon('fa-brands fa-python', ['text-blue-600', 'pr-2'])}File ${newFileIndexOut + 1}.py`;
-	newTab.id = `file-out-${newFileIndexOut + 1}`;
+	newTab.id = `file-out-${uniqueTabCounter - 1}`;
 	newTab.title = `${getOrdinalSuffix(newFileIndexOut)} Tab`;
 
 	newTab.addEventListener("click", () => {
